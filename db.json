@@ -11,6 +11,11 @@
     {
       "id": "1234f",
       "password": "asd123"
+    },
+    {
+      "id": "hetame",
+      "password": "asd5050",
+      "profile_image": "/images/user.png"
     }
   ]
 }

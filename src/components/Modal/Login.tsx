@@ -12,6 +12,7 @@ type FormValues = {
   id: string;
   password: string;
   passwordCheck?: string;
+  profile_image?: string;
 }
 
 const Login = ({register}: LoginProps) => {
@@ -62,6 +63,9 @@ const Login = ({register}: LoginProps) => {
 
   const onSubmit = async (data: FormValues) => {
     if (register) {
+      data.passwordCheck = undefined;
+      data = {...data, profile_image: '/images/user.png'};
+
       try {
         await axios.post('http://localhost:3001/accounts', data);
       }
@@ -118,7 +122,7 @@ const Login = ({register}: LoginProps) => {
         variant='contained' 
         sx={{mb: 3, width: '100%'}}
         {...(idError || passwordError || passwordCheckError || idCheckError || !form.id || !form.password || (register && !form.passwordCheck) ) && {disabled: true}}
-        onClick={() => onSubmit({...form, passwordCheck: undefined})}
+        onClick={() => onSubmit(form)}
       >
       {register ? '회원가입' : '로그인'}
       </Button>

@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage/'
 import Nav from './components/Nav'
 import './App.css'
 import SearchPage from './pages/SearchPage'
+import RecentPage from './pages/RecentPage'
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path='/login' element={<LoginPage />} />
+            <Route path='/recent' element={<RecentPage />} />
           </Route>
         </Routes>
       </div>
