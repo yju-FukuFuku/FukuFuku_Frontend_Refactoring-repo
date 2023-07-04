@@ -7,11 +7,13 @@ import
 import { Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoginModal from './Modal/LoginModal';
 
 
 const Nav = () => {
   const [headMargin, setHeadMargin] = useState<number>(0);
   const [prevScrollY, setPrevScrollY] = useState<number>(0);
+  const [modalopen, setModalopen] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -39,31 +41,41 @@ const Nav = () => {
   }
   
   return (
-    <Container headMargin={headMargin}>
-      <Wrapper>
-        <Typography 
-          sx={{cursor: "pointer"}} 
-          variant='h3'
-          onClick={() => navigate('/')}
-        >
-        Fukufuku
-        </Typography>
+    <>
+    
+      <Container headMargin={headMargin}>
+        <Wrapper>
+          <Typography 
+            sx={{cursor: "pointer"}} 
+            variant='h3'
+            onClick={() => navigate('/')}
+          >
+          Fukufuku
+          </Typography>
 
-        <Item>
-          <Icon>
-            <LightMode />
-          </Icon>
-          <Icon onClick={handleClick}>
-            <SearchRounded />
-          </Icon>
+          <Item>
+            <Icon>
+              <LightMode />
+            </Icon>
+            <Icon onClick={handleClick}>
+              <SearchRounded />
+            </Icon>
 
-          <Login>
-            <Typography sx={{color: 'white'}}>로그인</Typography>
-          </Login>
-        </Item>
+            <Login onClick={() => {setModalopen(true)}}>
+              <Typography sx={{color: 'white'}}>로그인</Typography>
+            </Login>
+          </Item>
 
-      </Wrapper>
-    </Container>
+        </Wrapper>
+      </Container>
+
+      {
+        modalopen && (
+          <LoginModal setModalopen={setModalopen} />
+        )
+      }
+
+    </>
   )
 }
 
