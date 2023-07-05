@@ -103,15 +103,17 @@ const Modal = styled.div`
   background-color: white;
   position: relative;
   display: flex;
-  min-width: 800px;
-  max-width: 1000px;
+  width: 800px;
+  height: 700px;
   border-radius: 8px;
   animation: fadeIn 400ms;
-  min-height: 700px;
-  max-height: 800px;
-
-  @media (max-width: 800px) {
-    min-width: 400px;
+  
+  @media all and (min-width:768px) and (max-width:1023px) {
+    width: 600px;
+  } 
+  
+  @media all and (max-width:767px) {
+    width: 400px;
   }
 
   @keyframes fadeIn {
