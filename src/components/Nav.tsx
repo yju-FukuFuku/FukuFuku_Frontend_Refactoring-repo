@@ -47,8 +47,8 @@ const Nav = () => {
       <Container headMargin={headMargin}>
         <Wrapper>
           <Typography 
-            sx={{cursor: "pointer"}} 
-            variant='h5'
+            sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
+            variant='h4'
             onClick={() => navigate('/')}
           >
           Fukufuku

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 import
 {
@@ -35,6 +35,14 @@ const Category = () => {
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname === '/') {
+      setPage(0);
+    } else if (pathname === '/recent') {
+      setPage(1);
+    }
+  }, [pathname])  
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
