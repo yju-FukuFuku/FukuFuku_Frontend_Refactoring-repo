@@ -1,11 +1,13 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage/'
+import MyPage from './pages/MyPage/'
+import MyListPage from './pages/MyPage/WriteList'
+import MyIntroPage from './pages/MyPage/MyIntro'
 import Nav from './components/Nav'
 import './App.css'
 
 function App() {
-
   const Layout = () => {
     return (
       <>
@@ -23,6 +25,9 @@ function App() {
           <Route path='/' element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path='/login' element={<LoginPage />} />
+            <Route path='/myPage' element={<MyPage/>} />
+            <Route path='/myList' element={<MyListPage/>} />
+            <Route path='/myIntro' element={<MyIntroPage/>} />
           </Route>
         </Routes>
       </div>
