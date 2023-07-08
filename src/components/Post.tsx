@@ -2,14 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 interface PostProps {
-    postTitle: string;
-    postContent: string;
-    postDate: string;
-    postComment: number;
-    postWriter: string;
-    postLike: number;
-    postImg: string;
-    postProfileImg: string;
+    postTitle: string; // 게시물 제목
+    postContent: string; // 게시물 내용
+    postDate: string; // 게시물 작성 일자
+    postComment: number; // 게시물 댓글 개수
+    postWriter: string; // 게시물 작성자 이름
+    postLike: number; // 게시물 좋아요 개수
+    postImg: string; // 게시물 이미지
+    postProfileImg: string; // 게시물 작성자 이미지
 }
 
 // Post > PostCase
@@ -19,7 +19,7 @@ const PostCase = styled.div`
     width: 18%;
     margin: 16px;
     height: 377px;
-    background-color: #1e1e1e;
+    background-color: ${props => props.theme.bgColor2};
     border-radius: 4px;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", 나눔고딕, "Nanum Gothic", "Noto Sans KR", "Noto Sans CJK KR", arial, 돋움, Dotum, Tahoma, Geneva, sans-serif;
 `
@@ -47,7 +47,6 @@ const PostMiddle = styled.div`
     height: 133px;
     width: 288px;
     padding: 16px;
-    background-color: yellow;
 `
 // Post > PostCase > PostMiddle > PostMiddleLink
 // 게시물의 제목, 내용을 감싸는 링크
@@ -62,6 +61,7 @@ const PostTitle = styled.h4`
     margin: 0px;
     margin-bottom: 4px;
     height: 24px;
+    color: ${props => props.theme.textColor1};
 `
 // Post > PostCase > PostMiddle > PostMiddleLink > PostContentCase
 // 게시물의 내용을 감싸는 div
@@ -76,6 +76,7 @@ const PostContent = styled.p`
     margin-bottom: 24px;
     height: 63px;
     font-size: 14px;
+    color: ${props => props.theme.textColor2};
 `
 // Post > PostCase > PostMiddle > PostSubInfo
 // 게시물의 날짜, 댓글수를 포함하는 부가 정보
@@ -87,6 +88,7 @@ const PostSubInfo = styled.div`
 // 게시물의 날짜, 댓글수
 const PostDateAndComment = styled.span`
     font-size: 12px;
+    color: ${props => props.theme.textColor3};
 `
 
 // Post > PostCase > PostFooter
@@ -94,19 +96,23 @@ const PostDateAndComment = styled.span`
 const PostFooter = styled.div`
     height: 24px;
     width: 288px;
-    border-top: 1px solid gray;
+    border-top: 1px solid ${props => props.theme.borderColor};
     padding: 10px 16px;
-    background-color: teal;
     display: flex;
     justify-content: space-between;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
 `
 
+// Post > PostCase > PostFooter > PostProfileLink
+// 게시물 작성자의 프로필 링크 (작성자의 프로필 사진, 이름 포함)
 const PostProfileLink = styled.a`
     display: flex;
+    text-decoration: none;
 `
 
+// Post > PostCase > PostFooter > PostProfileLink > PostProfileImg
+// 게시물 작성자의 프로필 이미지
 const PostProfileImg = styled.img`
     width: 24px;
     height: 24px;
@@ -114,19 +120,33 @@ const PostProfileImg = styled.img`
     margin-right: 8px;
 `
 
-const PostProfileName = styled.span`
+// Post > PostCase > PostFooter > PostProfileLink > PostProfileText
+// 게시물 작성자의 이름을 포함하는 text
+const PostProfileText = styled.span`
     font-size: 14px;
     text-align: center;
     line-height: 1.5;
+    color: ${props => props.theme.textColor3};
 `
 
+// Post > PostCase > PostFooter > PostProfileLink > PostProfileText > PostProfileWriter
+// 게시물 작성자의 이름
+const PostProfileWriter = styled.b`
+    color: ${props => props.theme.textColor1};
+`
+
+// Post > PostCase > PostFooter > PostProfileLike
+// 게시물의 좋아요 이미지 및 좋아요 수를 포함
 const PostProfileLike = styled.div`
     font-size: 12px;
     text-align: center;
     display: flex;
     align-items: center;
+    color: ${props => props.theme.textColor1};
 `
 
+// Post > PostCase > PostFooter > PostProfileLike > PostProfileLikeImg
+// 게시물의 좋아요 이미지
 const PostProfileLikeImg = styled.svg`
     width: 12px;
     height: 12px;
@@ -153,9 +173,9 @@ const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLi
                 </PostSubInfo>
             </PostMiddle>
             <PostFooter>
-                <PostProfileLink>
+                <PostProfileLink href="/작성자">
                     <PostProfileImg src={postProfileImg} />
-                    <PostProfileName>by <b>{ postWriter }</b></PostProfileName>
+                    <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
                 </PostProfileLink>
                 <PostProfileLike >
                     <PostProfileLikeImg viewBox="0 0 24 24">

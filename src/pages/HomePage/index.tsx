@@ -5,12 +5,12 @@ import { styled } from 'styled-components'
 
 const MainPage = () => {
   return (
-    <>
+    <Container>
       <div>MainPage
         <Link to='/login'>Login</Link>
         <Board />
       </div>
-    </>
+    </Container>
    
   )
 }
