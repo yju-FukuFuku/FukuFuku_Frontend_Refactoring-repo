@@ -10,6 +10,8 @@ interface PostProps {
     postLike: number; // 게시물 좋아요 개수
     postImg: string; // 게시물 이미지
     postProfileImg: string; // 게시물 작성자 이미지
+    postLink: string; // 게시물 주소
+    postWriterLink: string; // 게시물 작성자 프로필 주소
 }
 
 // Post > PostCase
@@ -153,14 +155,14 @@ const PostProfileLikeImg = styled.svg`
     margin-right: 8px;
 `
 
-const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLike, postImg, postProfileImg}:PostProps) => {
+const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLike, postImg, postProfileImg, postLink, postWriterLink}:PostProps) => {
     return (
         <PostCase>
-            <PostImgLink href="/게시물 링크">
+            <PostImgLink href={postLink}>
                 <PostImg src={postImg} />
             </PostImgLink>
             <PostMiddle>
-                <PostMiddleLink href="/게시물 링크">
+                <PostMiddleLink href={postLink}>
                     <PostTitle>{postTitle}</PostTitle>
                     <PostContentCase>
                         <PostContent>{postContent}</PostContent>
@@ -173,7 +175,7 @@ const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLi
                 </PostSubInfo>
             </PostMiddle>
             <PostFooter>
-                <PostProfileLink href="/작성자">
+                <PostProfileLink href={postWriterLink}>
                     <PostProfileImg src={postProfileImg} />
                     <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
                 </PostProfileLink>
