@@ -1,15 +1,19 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
 import myImage from '../../assets/짱구.jpeg'
 
 const MyPage = () => {
   const [userId, setId] = React.useState('');
-  const [userName, setName] = React.useState('');
-  const [reName, setReName] = React.useState<boolean>(false)
+  const [userName, setName] = useState('');
+  const [reName, setReName] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // 함수로 넣기
   useEffect(() => {
+    getData()
+  }, [userId, userName]);
+
+  // GetFetch
+  const getData = () => {
     fetch("https://jsonplaceholder.typicode.com/posts/1")
       .then((response) => response.json())
       .then((data) => {
@@ -18,7 +22,7 @@ const MyPage = () => {
         setName(data.id)
       })
       .catch((error) => console.log(error));
-  }, []);
+  }
 
   // 이미지 변경 fetch요청
   const handleImageUpdate = () => {
@@ -86,15 +90,70 @@ const MyPage = () => {
       .catch((error) => console.log(error)) 
   }
 
+  // INTRO
+  const [content, setContent] = useState('')
+  const [introCheck, setIntroCheck] = useState<boolean>(false)
+  let userData = ''
+
+  // intro 수정 요청
+  const handleUpdateCheck = () => {
+    console.log("수정 요청")
+    setIntroCheck(true)
+  }
+
+  // intro 내용 수정
+  const changeContent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    userData = e.target.value
+    console.log(userData)
+    console.log("값 변경")
+  }
+  
+  // 서버로 데이터 전송
+  const handleUpdateContent = () => { 
+    setContent(userData)
+    fetch("", {
+      method: "POST",
+      headers: {
+        "Content-type" : "application/json"
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((error) => console.log(error))
+    console.log("수정 완료")
+    setIntroCheck(false)
+  }
+
   
   return (
       <div className={style.myPage}>
-        <div className={style.profile}>
-          <div className={style.myImage}>
-            <img src={myImage} alt="image" className={style.myImage}/>
+        <div className={style.profileBox}>
+          <div className={style.profile}>
+            <div className={style.myImage}>
+              <img src={myImage} alt="image" className={style.myImage}/>
+            </div>
+            <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
+            <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange}/>
           </div>
-          <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
-          <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange}/>
+          {/* intro 수정 */}
+          {introCheck ? (
+            <div className={style.introBox}>
+              <input type="text" defaultValue={content} onChange={changeContent}/>
+              <div className={style.inputBlock}>
+                <button className={style.modifyBtn} onClick={handleUpdateContent}>완료</button>
+              </div>
+            </div>
+          ) : (
+            <div className={style.introBox}>
+              <h2>한 줄 소개</h2>
+              <div className={style.intro}>
+                hello my name is mini nice me too. <br></br>i can't speak english
+              </div>
+              <button className={style.modifyBtn} onClick={handleUpdateCheck}>수정</button>
+            </div>
+          )}
         </div>
         <hr />
         <div className={style.setting}>
@@ -106,6 +165,7 @@ const MyPage = () => {
             <p>회원가입 하신 ID입니다.</p>
           </div>
           <div className={style.wrapper}>
+            {/* nickname 수정 */}
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>

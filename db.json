@@ -1,0 +1,21 @@
+{
+  "accounts": [
+    {
+      "name": "test",
+      "password": "test"
+    },
+    {
+      "id": "1234",
+      "password": "asd5050"
+    },
+    {
+      "id": "1234f",
+      "password": "asd123"
+    },
+    {
+      "id": "hetame",
+      "password": "asd5050",
+      "profile_image": "/images/user.png"
+    }
+  ]
+}
