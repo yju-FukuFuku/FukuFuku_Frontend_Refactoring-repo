@@ -7,6 +7,8 @@ import Nav from './components/Nav'
 import './App.css'
 import SearchPage from './pages/SearchPage'
 import RecentPage from './pages/RecentPage'
+import PostPage from './pages/PostPage'
+import WritePage from './pages/WritePage'
 
 function App() {
   const Layout = () => {
@@ -28,10 +30,13 @@ function App() {
             <Route path='/search' element={<SearchPage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/recent' element={<RecentPage />} />
+            <Route path=':postId' element={<PostPage />} />
             <Route path='/myPage' element={<MyPage/>} />
             <Route path='/myList' element={<MyListPage/>} />
             {/* <Route path='/myIntro' element={<MyIntroPage/>} /> */}
           </Route>
+          
+          <Route path='/write' element={<WritePage />} />
         </Routes>
       </div>
     </>

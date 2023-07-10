@@ -1,12 +1,16 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
+import Board from "../../components/Board"
 import { styled } from 'styled-components'
 
 const MainPage = () => {
   return (
-    <>
-      <Container>
-
-      </Container>
-    </>
+    <Container>
+      <div>MainPage
+        <Link to='/login'>Login</Link>
+        <Board />
+      </div>
+    </Container>
    
   )
 }

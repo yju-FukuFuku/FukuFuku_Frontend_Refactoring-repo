@@ -1,20 +1,37 @@
 import { TextField } from '@mui/material'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components'
 
 const SearchPage = () => {
+  const [searchValue, setSearchValue] = useState<string>('');
+
+  const navigate = useNavigate();
+
+  const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+    navigate(`/search?q=${searchValue}`)
+  }
+
   return (
     <Container>
       <Content>
-        <TextField 
+        <TextField
+          onChange={handleChange}
+          value={searchValue}
           id="outlined-search" 
           label="검색어를 입력하세요" 
           type="search"
           size="medium"
           sx={{minHeight: '100px'}}
         />
-      </Content>   
+      </Content>
+
+      <Wrapper>
+
+      </Wrapper>
+       
     </Container>
-    
   )
 }
 
@@ -33,4 +50,10 @@ const Content = styled.div`
   position: relative;
   top: 100px;
   width: 800px;
+`
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `

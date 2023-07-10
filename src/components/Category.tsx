@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 import
 {
@@ -35,6 +35,15 @@ const Category = () => {
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname === '/') {
+      setPage(0);
+      setDate('이번 주');
+    } else if (pathname === '/recent') {
+      setPage(1);
+    }
+  }, [pathname])  
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setPage(newValue);
@@ -134,8 +143,7 @@ const CategoryWrapper = styled.div`
   align-items: center;
   height: 100%;
   margin: 0 auto;
-  width: 1500px;
-  position: relative;
+  width: 1700px;
 
   @media screen and (max-width: 1023px) {
     width: 900px;

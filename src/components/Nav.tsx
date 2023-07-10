@@ -22,7 +22,7 @@ const Nav = () => {
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     if (currentScrollY > prevScrollY) {
-      setHeadMargin(-72);
+      setHeadMargin(-140);
     } else {
       setHeadMargin(0);
     }
@@ -47,8 +47,8 @@ const Nav = () => {
       <Container headMargin={headMargin}>
         <Wrapper>
           <Typography 
-            sx={{cursor: "pointer"}} 
-            variant='h5'
+            sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
+            variant='h4'
             onClick={() => navigate('/')}
           >
           Fukufuku
@@ -92,7 +92,6 @@ export default Nav
 const Container = styled.div<{headMargin: number}>`
   position: fixed;
   width: 100%;
-  height: 72px;
   background-color: #fff;
   margin-top: ${props => props.headMargin}px;
   transition: all 0.3s ease-in-out;
@@ -103,8 +102,8 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  margin: 0 auto;
-  width: 1500px;
+  margin: 20px auto;
+  width: 1700px;
 
   @media screen and (max-width: 1023px) {
     width: 900px;
