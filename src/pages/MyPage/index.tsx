@@ -155,7 +155,9 @@ const MyPage = () => {
             </div>
           )}
         </div>
-        <hr />
+        <div>
+          <hr />
+        </div>
         <div className={style.setting}>
           <div className={style.wrapper}>
             <div className={style.wrapperList}>

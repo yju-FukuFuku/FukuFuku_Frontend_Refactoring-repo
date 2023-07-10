@@ -7,7 +7,10 @@
   margin: 0 auto;
 }
 .myPage hr {
+  width: 100%;
   opacity: 20%;
+  margin: auto;
+  box-sizing: border-box;
 }
 .myPage button {
   color: white;
@@ -170,6 +173,7 @@
 }
 .introBox .inputBlock {
   width: 100%;
+  /* height: auto; */
   box-sizing: content-box;
 }
 .introBox input {
@@ -185,6 +189,10 @@
 }
 .introBox .modifyBtn {
   float: right;
+  background-color: white;
+  text-decoration: underline;
+  color: rgb(5, 199, 199);
+  box-sizing: border-box;
 }
 /*
 .introBox .saveBtn {
@@ -222,13 +230,13 @@
     display: block;
   }
   .setting {
-    margin: 30px 10px;
+    margin: 30px 20px;
   }
   .myList {
     margin-top: 30px;
   }
   .myList .body {
-    margin: 30px 10px;
+    margin: 30px 20px;
   }
   .myList .list {
     margin-bottom: 30px;
