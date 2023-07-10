@@ -1,6 +1,8 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage/'
+import MyPage from './pages/MyPage/'
+import MyListPage from './pages/MyPage/WriteList'
 import Nav from './components/Nav'
 import './App.css'
 import SearchPage from './pages/SearchPage'
@@ -9,7 +11,6 @@ import PostPage from './pages/PostPage'
 import WritePage from './pages/WritePage'
 
 function App() {
-
   const Layout = () => {
     return (
       <>
@@ -30,6 +31,9 @@ function App() {
             <Route path='/login' element={<LoginPage />} />
             <Route path='/recent' element={<RecentPage />} />
             <Route path=':postId' element={<PostPage />} />
+            <Route path='/myPage' element={<MyPage/>} />
+            <Route path='/myList' element={<MyListPage/>} />
+            {/* <Route path='/myIntro' element={<MyIntroPage/>} /> */}
           </Route>
           
           <Route path='/write' element={<WritePage />} />
