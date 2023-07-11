@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
-import myImage from '../../assets/짱구.jpeg'
 
 const MyPage = () => {
   const [userId, setId] = React.useState('');
@@ -132,7 +131,7 @@ const MyPage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src={myImage} alt="image" className={style.myImage}/>
+              <img src="/assets/짱구.jpeg" alt="image" className={style.myImage}/>
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
             <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange}/>

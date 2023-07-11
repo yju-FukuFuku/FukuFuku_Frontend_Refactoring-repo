@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import style from './myPage.module.css'
-import myImage from '../../assets/짱구.jpeg'
-import listImage from '../../assets/배경.webp'
 import { Link } from 'react-router-dom'
+
+type MyData = {
+  postId: number;
+  id: number;
+  name: string;
+  email: string;
+  body: string;
+}
 
 const MyWritePage = () => {
   // const [lock, setLock] = useState<boolean>(false) 부가기능 추후 추가
-  const [myData, setData] = useState([])
-  useEffect(() => {
-    getData()
-  }, []);
+  const [myData, setData] = useState<MyData[]>([])
 
-    // GetFetch
-  const getData = () => {
+
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/posts/1/comments")
       .then((response) => response.json())
       .then((data) => {
@@ -20,16 +23,16 @@ const MyWritePage = () => {
         console.log(myData)
       })
       .catch((error) => console.log(error));
-  }
+  }, [myData]);
 
   const getList = () => {
     return (
       <div>
-        {myData.map((item, index) => (
+        {myData.map((item) => (
           // <div key={index}>{ item.name }</div>
           <div className={style.list} >
             <div className={style.contentImg}>
-              <img src={listImage} alt="img" />
+              <img src="/assets/배경.webp" alt="img" />
             </div>
             <h2>{ item.name }</h2>
             <p>{ item.body }</p>
@@ -60,7 +63,7 @@ const MyWritePage = () => {
       <div className={style.profileBox}>
         <div className={style.profile}>
           <div className={style.myImage}>
-            <img src={myImage} alt="image" className={style.myImage}/>
+            <img src="/assets/짱구.jpeg" alt="image" className={style.myImage}/>
           </div>
           <h2>profile</h2>
         </div>

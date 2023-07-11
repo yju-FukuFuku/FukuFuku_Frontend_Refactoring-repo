@@ -95,6 +95,7 @@ const Container = styled.div<{headMargin: number}>`
   background-color: #fff;
   margin-top: ${props => props.headMargin}px;
   transition: all 0.3s ease-in-out;
+  z-index: 10;
 `
 
 const Wrapper = styled.div`
