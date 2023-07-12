@@ -8,6 +8,7 @@ import styles from './loginModal.module.scss'
 import { Typography } from '@mui/material';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import Login from './Login';
+import axios from 'axios';
 
 interface LoginModalProps {
   setModalopen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +19,10 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
 
   const ref = useRef<HTMLDivElement>(null);
   useOutsideClick({ divRef: ref, handler: () => setModalopen(false) });
+
+  const googleHandler = async () => {
+    await axios.get('http://localhost:3000/google')
+  }
 
   return (
     <Container>
@@ -57,7 +62,8 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
               </Typography>
 
               <Google
-                sx={{cursor: 'pointer', fontSize: '40px', alignSelf: 'center', border: '1px solid gray', borderRadius: '50%', p: 1}} 
+                sx={{cursor: 'pointer', fontSize: '40px', alignSelf: 'center', border: '1px solid gray', borderRadius: '50%', p: 1}}
+                onClick={googleHandler}
               />
             </div>
 
