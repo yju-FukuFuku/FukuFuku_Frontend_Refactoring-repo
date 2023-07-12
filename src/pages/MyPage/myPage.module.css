@@ -100,24 +100,33 @@
 .myList {
   margin-top: 50px;
 }
-.myList .head {
-  text-align: center;
-  width: 20%;
-  margin: auto;
-}
-.myList .Link {
-  text-decoration: none;
-  font-size: 1.325rem;
-  color: black;
-  box-sizing: border-box;
-  padding: 5px;
-  transition: color 0.25s ease-in-out 0s;
-}
-.myList .Link:active {
-  color: aqua;
-} 
 .myList .body {
-  margin-top: 80px;
+  margin-top: 6rem;
+}
+.serBox {
+  box-sizing: inherit;
+  /* margin-bottom: 30px; */
+}
+.serSec {
+  display: flex;
+  justify-content: end;
+  margin-bottom: 2rem;
+}
+.search {
+  border: 1px solid gray;
+  display: flex;
+  align-items: center;
+  height: 2.25rem;
+  padding: 0 10px;
+}
+.search svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.search input {
+  font-size: 0.875rem;
+  border: 0;
+  color: gray;
 }
 .list {
   margin-bottom: 60px;
@@ -148,6 +157,13 @@
 .list span {
   color: rgb(119, 119, 119);
   margin-right: 10px;
+}
+.body .notFound {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  text-align: center;
 }
 
 

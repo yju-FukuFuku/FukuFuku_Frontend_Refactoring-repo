@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
-import myImage from '../../assets/짱구.jpeg'
 
 const MyPage = () => {
-  const [userId, setId] = React.useState('');
-  const [userName, setName] = useState('');
+  const [userId, setId] = useState<string>('');
+  const [userName, setName] = useState<string>('');
   const [reName, setReName] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -27,9 +26,7 @@ const MyPage = () => {
   // 이미지 변경 fetch요청
   const handleImageUpdate = () => {
     console.log("이미지 변경")
-    if(fileInputRef.current){
-      fileInputRef.current.click();
-    }
+    fileInputRef.current?.click();
   }
 
   // 올바른 파일인지 체크 후 fetch요청
@@ -91,7 +88,7 @@ const MyPage = () => {
   }
 
   // INTRO
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState<string>('')
   const [introCheck, setIntroCheck] = useState<boolean>(false)
   let userData = ''
 
@@ -132,7 +129,7 @@ const MyPage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src={myImage} alt="image" className={style.myImage}/>
+              <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
             <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange}/>
