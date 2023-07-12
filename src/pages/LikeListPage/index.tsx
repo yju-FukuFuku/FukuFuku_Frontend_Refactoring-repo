@@ -39,21 +39,23 @@ const LikePage = () => {
         {
           posts?.map((item, index) => (
             <Post>
-              <PostImgBox>
-                <PostImg src="/public/images/배경.webp" alt="image" />
-              </PostImgBox>
+              <PostLink to='/'>
+                <PostImgBox>
+                  <PostImg src="/public/images/배경.webp" alt="image" />
+                </PostImgBox>
+              </PostLink>
               <Body>
-                <BodyLink to='/'>
+                <PostLink to='/'>
                   <H4>
                     { item.name }
                   </H4>
                   <BodyContent>
                     { item.body }
                   </BodyContent>
-                </BodyLink>
+                </PostLink>
                 <SubInfo>
                   <span>2023-time</span>
-                  <span>·</span>
+                  <Separator>·</Separator>
                   <span>comment</span>
                 </SubInfo>
               </Body>
@@ -97,7 +99,19 @@ const Content = styled.div`
   margin: 1.5rem auto;
   position: relative;
   top: 100px;
-  width: 1024px;
+  width: 1728px;
+
+  @media all and (max-width:1919px) {
+    width: 1376px;
+  }
+
+  @media all and (max-width:1440px) {
+    width: 1024px;
+  }
+
+  @media all and (max-width:1056px) {
+    width: calc(100% - 2rem);
+  } 
 `
 
 const H2 = styled.h2`
@@ -109,6 +123,10 @@ const PostList = styled.div`
   display: flex;
   margin: -1rem;
   flex-wrap: wrap;
+
+  @media (max-width: 767px){
+      margin: 0px;
+  }
 `
 
 const Post = styled.div`
@@ -121,6 +139,14 @@ const Post = styled.div`
   margin: 1rem;
   overflow: hidden;
   box-sizing: inherit;
+
+  @media all and (max-width:1056px) {
+    width: calc(50% - 2rem);
+  }
+  @media (max-width: 767px){
+    margin: 0;
+    width: 100%;
+  }
 `
 
 const PostImgBox = styled.div`
@@ -171,7 +197,7 @@ const BodyContent = styled.div`
   line-height: 1.5;
 `
 
-const BodyLink = styled(Link)`
+const PostLink = styled(Link)`
   color: inherit;
   text-decoration: none;
 `
@@ -194,6 +220,10 @@ const WriterBox = styled.div`
 const Writer = styled.div`
   display: flex;
   align-items:center;
+`
+
+const Separator = styled.div`
+  margin: 0px 0.5rem;
 `
 
 const Profile = styled.img`

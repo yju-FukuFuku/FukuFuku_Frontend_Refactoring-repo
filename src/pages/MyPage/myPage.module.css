@@ -1,4 +1,10 @@
 /* MY PAGE */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 .myPage {
   position: relative;
   top: 72px;
@@ -6,6 +12,7 @@
   width: 768px;
   margin: 0 auto;
 }
+
 .myPage hr {
   width: 100%;
   opacity: 20%;
@@ -24,6 +31,7 @@
 /* PROFILE */
 .profileBox {
   display: flex;
+  margin-top: 3.5rem;
 }
 .profile {
   text-align: center;

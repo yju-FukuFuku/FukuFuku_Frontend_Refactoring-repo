@@ -53,7 +53,7 @@ const MyWritePage = () => {
   // SearchFilter 함수 
   const filterTitle = myData?.filter((p) => {
     // 대소문자 통일 후 배열에 요소가 존재하는지 확인
-    return p.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+    return p.name.replace(" ", "").toLocaleLowerCase().includes(search.replace(" ", "").toLocaleLowerCase())
   })
 
   // 배열에서 검색한 값만 불러오기
@@ -102,7 +102,7 @@ const MyWritePage = () => {
     return (
       <div>
         {myData?.map((item, index) => (
-          <div key={item.id}>
+          <div key={ index }>
             <div className={style.list} >
               <div className={style.contentImg}>
                 <img src='/public/images/배경.webp' alt="img" />
@@ -132,37 +132,39 @@ const MyWritePage = () => {
   }
 
   return (
-    <div className={style.myPage}>
-      <div className={style.profileBox}>
-        <div className={style.profile}>
-          <div className={style.myImage}>
-            <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
+    <div className={style.container}>
+      <div className={style.myPage}>
+        <div className={style.profileBox}>
+          <div className={style.profile}>
+            <div className={style.myImage}>
+              <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
+            </div>
+            <h2>profile</h2>
           </div>
-          <h2>profile</h2>
+          <div className={style.introBox}>
+            <h2>한 줄 소개</h2>
+            <div className={style.intro}>
+              hello my name is mini nice me too. <br></br>i can't speak english
+            </div>
+          </div>
         </div>
-        <div className={style.introBox}>
-          <h2>한 줄 소개</h2>
-          <div className={style.intro}>
-            hello my name is mini nice me too. <br></br>i can't speak english
+        <hr />
+        <div className={style.myList}>
+          {/* 목록 */}
+          <div className={style.body}>
+            <div className={style.serBox}>
+              <section className={style.serSec}>
+                <div className={style.search}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M796-121 533-384q-30 26-69.959 40.5T378-329q-108.162 0-183.081-75Q120-479 120-585t75-181q75-75 181.5-75t181 75Q632-691 632-584.85 632-542 618-502q-14 40-42 75l264 262-44 44ZM377-389q81.25 0 138.125-57.5T572-585q0-81-56.875-138.5T377-781q-82.083 0-139.542 57.5Q180-666 180-585t57.458 138.5Q294.917-389 377-389Z"/></svg>
+                  <input type="text" placeholder='검색어를 입력하세요.' onChange={inputSearch}/>
+                </div>
+              </section>
+            </div>
+            {/* 글 목록 */}
+            { search ? getSearchList()
+              :getList()
+            }
           </div>
-        </div>
-      </div>
-      <hr />
-      <div className={style.myList}>
-        {/* 목록 */}
-        <div className={style.body}>
-          <div className={style.serBox}>
-            <section className={style.serSec}>
-              <div className={style.search}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M796-121 533-384q-30 26-69.959 40.5T378-329q-108.162 0-183.081-75Q120-479 120-585t75-181q75-75 181.5-75t181 75Q632-691 632-584.85 632-542 618-502q-14 40-42 75l264 262-44 44ZM377-389q81.25 0 138.125-57.5T572-585q0-81-56.875-138.5T377-781q-82.083 0-139.542 57.5Q180-666 180-585t57.458 138.5Q294.917-389 377-389Z"/></svg>
-                <input type="text" placeholder='검색어를 입력하세요.' onChange={inputSearch}/>
-              </div>
-            </section>
-          </div>
-          {/* 글 목록 */}
-          { search ? getSearchList()
-            :getList()
-          }
         </div>
       </div>
     </div>

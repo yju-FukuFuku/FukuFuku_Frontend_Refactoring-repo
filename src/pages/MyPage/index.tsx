@@ -125,6 +125,7 @@ const MyPage = () => {
 
   
   return (
+    <div className={style.container}>
       <div className={style.myPage}>
         <div className={style.profileBox}>
           <div className={style.profile}>
@@ -146,7 +147,7 @@ const MyPage = () => {
             <div className={style.introBox}>
               <h2>한 줄 소개</h2>
               <div className={style.intro}>
-                hello my name is mini nice me too. <br></br>i can't speak english
+                { content }
               </div>
               <button className={style.modifyBtn} onClick={handleUpdateCheck}>수정</button>
             </div>
@@ -193,6 +194,7 @@ const MyPage = () => {
           </div>
         </div>
       </div>
+    </div>
       
   )
 }

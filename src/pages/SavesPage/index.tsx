@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
+import { Link } from 'react-router-dom'
 
 const SavesPage = () => {
   // 배열 데이터 타입 지정
@@ -9,6 +10,11 @@ const SavesPage = () => {
     body: string;
     id: string;
   }
+
+  // 렌더링
+  useEffect(() => {
+    getData()
+  }, [])
 
   // Data 불러오기
   const [savesData, setSaves] = useState<save[]>()
@@ -28,15 +34,14 @@ const SavesPage = () => {
     
   }
 
-  useEffect(() => {
-    getData()
-  }, [])
 
   // 임시 글 삭제 버튼
-  const handleRemoveSaves = () => {
+  const handleRemoveSaves = (e: string) => {
+    console.log(e)
     fetch("")
       .then((response) => response.json())
       .then((data) => {
+        console.log(data)
         console.log("삭제 성공")
       })
   }
@@ -48,11 +53,15 @@ const SavesPage = () => {
       <div>
         {savesData?.map((item, index) => (
         <List key={index}>
-          <H3>{ item.name }</H3>
-          <Body>{ item.body }</Body>
+          <WriteLink to='/'>
+            <H3>{ item.name }</H3>
+          </WriteLink>
+          <WriteLink to='/'>
+            <Body>{ item.body }</Body>
+          </WriteLink>
           <Section>
             <SubInfo>약 17시간 전</SubInfo>
-            <Button onClick={handleRemoveSaves}>삭제</Button>
+            <Button onClick={() => handleRemoveSaves(item.id)}>삭제</Button>
           </Section>
         </List>
         ))}
@@ -87,6 +96,18 @@ const Content = styled.div`
   position: relative;
   top: 100px;
   width: 768px;
+
+  @media all and (max-width:767px) {
+    margin: 0 1rem;
+    overflow: hidden;
+    width: 100%;
+  } 
+`
+
+const H1 = styled.h1`
+  font-size: 3rem;
+  margin: 3rem 0;
+  line-height: 1.5;
 `
 
 const List = styled.div`
@@ -94,10 +115,11 @@ const List = styled.div`
   border-bottom: 1px solid rgb(215, 215, 215);
 `
 
-const H1 = styled.h1`
-  font-size: 3rem;
-  margin: 3rem 0;
+const WriteLink = styled(Link)`
+color: inherit;
+text-decoration: none;
 `
+
 const H3 = styled.h3`
   font-size: 1.5rem;
   margin-top: 0px;

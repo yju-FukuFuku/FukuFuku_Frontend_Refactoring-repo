@@ -36,7 +36,7 @@ function App() {
             <Route path='/setting' element={<MyPage/>} />
             <Route path='/myList' element={<MyListPage/>} />
             <Route path='/saves' element={<SavesPage/>} />
-            <Route path='/Like' element={<LikePage/>} />
+            <Route path='/like' element={<LikePage/>} />
           </Route>
           
           <Route path='/write' element={<WritePage />} />
