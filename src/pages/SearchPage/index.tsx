@@ -51,19 +51,14 @@ const SearchPage = () => {
     changeNavigate(searchValue)
   }, [searchValue])
 
-  // SearchFilter 함수 
-  const filterTitle = postData?.filter((p) => {
-    // 대소문자 통일 후 배열에 요소가 존재하는지 확인
-    return p.name.replace(" ", "").toLocaleLowerCase().includes(searchValue.replace(" ", "").toLocaleLowerCase())
-  })
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
-    if(filterTitle?.length !== 0 && searchValue != ""){
+    if(postData?.length !== 0 && searchValue != ""){
       return (
         <Wrapper>
-            <SearchLength>총 <Length>{ filterTitle?.length }</Length> 개의 포스터를 찾았습니다.</SearchLength>
-          {filterTitle?.map((item, index) => (
+            <SearchLength>총 <Length>{ postData?.length }</Length> 개의 포스터를 찾았습니다.</SearchLength>
+          {postData?.map((item, index) => (
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
               <Profile>

@@ -41,8 +41,8 @@
   display: none;
 }
 .profile .myImage {
-  width: 150px;
-  height: 150px;
+  width: 8rem;
+  height: 8rem;
   border: 1px white;
   border-radius: 50%;
   margin: auto;
@@ -55,6 +55,12 @@
 .profile .imgBtn {
   font-weight: 600;
   margin-top: 10px;
+}
+
+.profile .modifyBtn {
+  background: none;
+  padding: 1rem;
+  color: rgb(5, 199, 199);
 }
 
 /* SETTING - 회원정보수정 */
@@ -85,7 +91,7 @@
   margin-left: auto;
 }
 .setting .modifyBtn {
-  background-color: white;
+  background: none;
   text-decoration: underline;
   color: rgb(5, 199, 199);
 }
@@ -213,7 +219,7 @@
 }
 .introBox .modifyBtn {
   float: right;
-  background-color: white;
+  background: none;
   text-decoration: underline;
   color: rgb(5, 199, 199);
   box-sizing: border-box;

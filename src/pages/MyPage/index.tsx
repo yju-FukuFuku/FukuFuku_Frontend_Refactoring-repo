@@ -30,11 +30,26 @@ const MyPage = () => {
   }
 
   // 올바른 파일인지 체크 후 fetch요청
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files
-    if (file) {
-      console.log(file[0])
+  const extension = ['.img', '.png', '.jpg']
+  const [file, setFile] = useState<string>('')
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileCheck = (e.target.files? e.target.files[0].name : null)
+    // 파일이 제대로 들어왔는지 확인
+    if (fileCheck) {
+      setFile(fileCheck)
+      console.log(file.substring((file.length-4), file.length))
+      // 파일 확장자 제한
+      handlePostImg()
+
+    } else {
+      console.log("파일이 선택되지 않았습니다.");
+    }
+  };
+
+  // 이미지 변경 fetch
+  const handlePostImg = () => {
+    if (extension.includes(file.substring(file.length-4, file.length))){
       fetch("", {
         method: "POST",
         headers: {
@@ -45,11 +60,25 @@ const MyPage = () => {
         .then((data) => {
           console.log(data)
           console.log("이미지 전송성공")
-        })
-    } else {
-      console.log("파일이 선택되지 않았습니다.");
+      })
     }
-  };
+    else{
+      console.log("확장자가 틀립니다.")
+    }
+  }
+
+  // 이미지 삭제
+  const handleImageRemove = () => {
+   fetch("", {
+    headers: {
+      "Content-type" : "application/json"
+    }
+   }) 
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+    })
+  }
 
   // 닉네임 변경 요청
   const checkTry = () => {
@@ -133,7 +162,8 @@ const MyPage = () => {
               <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
-            <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange}/>
+            <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button>
+            <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange} accept='image/*'/>
           </div>
           {/* intro 수정 */}
           {introCheck ? (
