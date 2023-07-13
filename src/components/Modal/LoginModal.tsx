@@ -21,7 +21,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
   useOutsideClick({ divRef: ref, handler: () => setModalopen(false) });
 
   const googleHandler = async () => {
-    await axios.get('http://localhost:3000/google')
+    await axios.get('http://localhost:3000/auth')
   }
 
   return (

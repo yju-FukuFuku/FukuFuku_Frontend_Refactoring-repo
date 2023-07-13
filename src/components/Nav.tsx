@@ -12,7 +12,7 @@ import LoginModal from './Modal/LoginModal';
 import Category from './Category';
 
 const Nav = () => {
-  const [headMargin, setHeadMargin] = useState<number>(0);
+  const [headMargin, setHeadMargin] = useState<boolean>(true);
   const [prevScrollY, setPrevScrollY] = useState<number>(0);
   const [modalopen, setModalopen] = useState<boolean>(false);
 
@@ -22,9 +22,9 @@ const Nav = () => {
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     if (currentScrollY > prevScrollY) {
-      setHeadMargin(-140);
+      setHeadMargin(false);
     } else {
-      setHeadMargin(0);
+      setHeadMargin(true);
     }
     setPrevScrollY(currentScrollY);
   }, [prevScrollY]);
@@ -44,7 +44,7 @@ const Nav = () => {
   
   return (
     <>
-      <Container headMargin={headMargin}>
+      <Container headMargin={headMargin ? 'true' : 'false'}>
         <Wrapper>
           <Typography 
             sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
@@ -89,11 +89,11 @@ const Nav = () => {
 
 export default Nav
 
-const Container = styled.div<{headMargin: number}>`
+const Container = styled.div<{headMargin: string}>`
   position: fixed;
   width: 100%;
   background-color: #fff;
-  margin-top: ${props => props.headMargin}px;
+  margin-top: ${props => (props.headMargin === 'true' ? '0px' : '-140px')};
   transition: all 0.3s ease-in-out;
   z-index: 10;
 `

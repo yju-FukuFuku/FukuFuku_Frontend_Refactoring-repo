@@ -28,7 +28,7 @@ const SearchPage = () => {
       </Content>
 
       <Wrapper>
-
+        
       </Wrapper>
        
     </Container>
