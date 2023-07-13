@@ -45,6 +45,15 @@ const WritePage = () => {
     }
   }, []);
 
+  const getBoard = async () => {
+    const response = await axios.get('http://localhost:3000/boards')
+    console.log(response.data);
+  }
+
+  useEffect(() => {
+    getBoard();
+  })
+
   const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
@@ -62,9 +71,7 @@ const WritePage = () => {
     
     const data = {
       title: title,
-      content: content?.getHTML(),
-      tags: tag,
-      date: new Date()
+      content: content?.getHTML()
     }
     
     console.log(data);
