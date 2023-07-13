@@ -6,6 +6,7 @@ import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const StyledTextField = styled(TextField) (
   {
@@ -44,7 +45,6 @@ const WritePage = () => {
     }
   }, []);
 
-
   const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
@@ -63,11 +63,13 @@ const WritePage = () => {
     const data = {
       title: title,
       content: content?.getHTML(),
-      tags: tag
+      tags: tag,
+      date: new Date()
     }
     
     console.log(data);
     
+    await axios.post('http://localhost:3000/boards', data)
   } 
 
   return (
