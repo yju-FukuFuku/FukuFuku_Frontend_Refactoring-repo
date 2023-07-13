@@ -9,6 +9,8 @@ import SearchPage from './pages/SearchPage'
 import RecentPage from './pages/RecentPage'
 import PostPage from './pages/PostPage'
 import WritePage from './pages/WritePage'
+import SavesPage from './pages/SavesPage'
+import LikePage from './pages/LikeListPage'
 
 function App() {
   const Layout = () => {
@@ -31,9 +33,10 @@ function App() {
             <Route path='/login' element={<LoginPage />} />
             <Route path='/recent' element={<RecentPage />} />
             <Route path=':postId' element={<PostPage />} />
-            <Route path='/myPage' element={<MyPage/>} />
+            <Route path='/setting' element={<MyPage/>} />
             <Route path='/myList' element={<MyListPage/>} />
-            {/* <Route path='/myIntro' element={<MyIntroPage/>} /> */}
+            <Route path='/saves' element={<SavesPage/>} />
+            <Route path='/like' element={<LikePage/>} />
           </Route>
           
           <Route path='/write' element={<WritePage />} />
