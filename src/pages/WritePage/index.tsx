@@ -7,6 +7,7 @@ import { Button, TextField } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { postBoard } from '../../api/Board';
 
 const StyledTextField = styled(TextField) (
   {
@@ -73,10 +74,9 @@ const WritePage = () => {
       title: title,
       content: content?.getHTML()
     }
+
+    postBoard(data);
     
-    console.log(data);
-    
-    await axios.post('http://localhost:3000/boards', data)
   } 
 
   return (
