@@ -118,20 +118,26 @@ const Category = () => {
       onClick={menuHandleClick}
     />
 
-    <Menu 
-      open={open}
-      onClose={handleClose}
-      anchorEl={anchorEl}
-    >
-      <MenuItem 
-        onClick={handleClose}
-        sx={{fontWeight: 700, width: '150px', height: '40px', borderBottom: '1px solid lightgray', display: 'flex', alignItems: 'center'}}
-      >공지사항</MenuItem>
-      <MenuItem 
-        onClick={handleClose}
-        sx={{fontWeight: 700, width: '150px', height: '40px', display: 'flex', alignItems: 'center'}}
-      >태그 목록</MenuItem>
-    </Menu>
+    <MenuWrapper>
+      <Menu 
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        sx={{left: 0}}
+      >
+        <MenuItem 
+          onClick={handleClose}
+          sx={{fontWeight: 700, width: '150px', height: '40px', borderBottom: '1px solid lightgray', display: 'flex', alignItems: 'center'}}
+        >공지사항</MenuItem>
+
+        <MenuItem 
+          onClick={handleClose}
+          sx={{fontWeight: 700, width: '150px', height: '40px', display: 'flex', alignItems: 'center'}}
+        >태그 목록</MenuItem>
+
+      </Menu>
+    </MenuWrapper>
+    
   </CategoryWrapper>
   )
 }
@@ -144,6 +150,7 @@ const CategoryWrapper = styled.div`
   height: 100%;
   margin: 0 auto;
   width: 1700px;
+  position: relative;
 
   @media screen and (max-width: 1023px) {
     width: 900px;
@@ -161,4 +168,8 @@ const CategoryItem = styled.div`
   cursor: pointer;
   width: 90px;
   height: 20px;
+`
+
+const MenuWrapper = styled.div`
+  position: absolute;
 `
