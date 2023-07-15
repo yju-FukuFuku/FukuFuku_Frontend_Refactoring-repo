@@ -5,6 +5,11 @@ export const themeState = atom({
   default: true,
 });
 
+export const prevThemeState = atom({
+    key: "prevThemeState",
+    default: true,
+})
+
 type postType = {
         // title: string; // 게시물 제목
         // content: string; // 게시물 내용

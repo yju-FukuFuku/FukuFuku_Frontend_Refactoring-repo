@@ -2,8 +2,8 @@ import React, {useState, useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import Spinner from "./Spinner";
-import { boardNumber, postState } from "../../atom";
-import { useRecoilState } from "recoil";
+import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Posts = () => {
     return 
@@ -69,9 +69,16 @@ const Board = () => {
         };
     }, [handleScroll]);
 
+    const [prevTheme, setPrevTheme] = useRecoilState(prevThemeState);
+    const nowTheme = useRecoilValue(themeState);
+
     // boardPage가 변경되면 data 호출
     useEffect(() => {
-        getData()
+        if (prevTheme === nowTheme) {
+            getData()
+        } else {
+            setPrevTheme(nowTheme);
+        }
     }, [boardPage])
     
     type postType = {
