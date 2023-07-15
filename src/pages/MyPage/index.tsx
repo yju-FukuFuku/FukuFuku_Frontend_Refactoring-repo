@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
+import useDebounce from '../../hooks/useDebounce';
 
 const MyPage = () => {
   const [userEmail, setId] = useState<string>('');
@@ -11,7 +12,7 @@ const MyPage = () => {
 
   useEffect(() => {
     getData()
-  }, [userName, content, file]);
+  }, [content, file]);
 
   // GetFetch
   const getData = () => {
@@ -84,20 +85,33 @@ const MyPage = () => {
     setReName(true)
   }
 
-  // 닉네임 중복 체크
-  const handleNameCheck = () => {
-    setTimeout(() => {
-      fetch("", {
-        headers: {
-          "Content-type" : "application/json"
-        }
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-        })
-    }, 1000)
+  // 닉네임 중복 체크 - debounce
+  const debounceVal = useDebounce(userName)
+
+  const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+    // console.log(e.target.value)
+    // console.log(debounceVal)
   }
+
+  const handleNameOverlap = () => {
+    console.log(debounceVal)
+    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
+      headers: {
+        "Content-type" : "application/json"
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("hi")
+      })
+  }
+
+  useEffect(() => {
+    if(debounceVal != ''){
+      handleNameOverlap()
+    }
+  }, [debounceVal])
 
   // 닉네임 수정 fetch요청
   const handleNameUpdate = () => {
@@ -212,7 +226,7 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} placeholder={userName} onChange={handleNameCheck}/>
+                <input type="text" className={style.username} placeholder={userName} onChange={handleInputName}/>
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>
