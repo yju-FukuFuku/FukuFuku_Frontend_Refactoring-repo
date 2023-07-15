@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import style from './myPage.module.css'
-import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 
 const MyWritePage = () => {
@@ -13,9 +12,6 @@ const MyWritePage = () => {
 
   // const [lock, setLock] = useState<boolean>(false) 부가기능 추후 추가
   const [myData, setData] = useState<my[]>()
-  useEffect(() => {
-    getData()
-  }, []);
 
 
   useEffect(() => {
