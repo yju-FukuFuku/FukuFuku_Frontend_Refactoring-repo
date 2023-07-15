@@ -22,20 +22,29 @@ const BoardCenter = styled.div`
 const BoardCase = styled.div`
     // 일반 크기
     background-color: ${props => props.theme.bgColor1};
-    width: 95vw;
     max-width: 1760px;
     display: flex;
     flex-wrap: wrap;
 
-   // 테블릿 크기
- @media all and (min-width:768px) and (max-width:1023px) {
-    background-color: black;
-  } 
+    // 4칸
+    @media all and (min-width: 1441px) and (max-width: 1919px) {
+        max-width: 1408px;
+    }
+
+    // 3칸
+    @media all and (min-width:1057px) and (max-width:1440px) {
+        max-width: 1056px;
+    } 
+
+    // 2칸
+    @media all and (min-width:768px) and (max-width:1056px) {
+
+    } 
   
-  // 모바일 크기
-  @media all and (max-width:767px) {
-    background-color: yellow;
-  }
+    // 모바일 크기
+    @media all and (max-width:767px) {
+
+    }
 `
 
 // 게시물의 개수 만큼 post 컴포넌트를 가져오는 컴포넌트

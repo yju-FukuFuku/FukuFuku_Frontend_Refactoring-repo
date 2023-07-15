@@ -27,6 +27,28 @@ const PostCase = styled.div`
     &:hover {
         margin-top: 6px;
     }
+
+    // 4칸
+    @media all and (min-width: 1441px) and (max-width: 1919px) {
+        flex-basis: calc(25% - 32px);
+    }
+
+    // 3칸
+    @media all and (min-width:1057px) and (max-width:1440px) {
+        flex-basis: calc(33% - 32px);
+    } 
+
+    // 2칸
+    @media all and (min-width:768px) and (max-width:1056px) {
+        flex-basis: calc(50% - 32px);
+        height: calc((100vw - 768px) / 3 + 377px);
+    } 
+  
+    // 모바일 크기
+    @media all and (max-width:767px) {
+        flex-basis: calc(100% - 32px);
+        height: calc((100vw / 2 + 210px));
+    }
 `
 
 // Post > PostCase > PostImgLink
@@ -34,6 +56,16 @@ const PostCase = styled.div`
 const PostImgLink = styled.a`
     height: 167px;
     display: block;
+
+    // 2칸
+    @media all and (min-width:768px) and (max-width:1056px) {
+        height: calc((100vw - 768px) / 3 + 167px);
+    } 
+  
+    // 모바일 크기
+    @media all and (max-width:767px) {
+        height: calc((100vw / 2));
+    }
 `
 
 // Post > PostCase > PostImgLink > PostImg
@@ -50,7 +82,7 @@ const PostImg = styled.img`
 // 게시물의 제목, 내용, 날짜, 댓글 수가 포함
 const PostMiddle = styled.div`
     height: 133px;
-    width: 288px;
+    width: calc(100% - 32px);
     padding: 16px;
 `
 // Post > PostCase > PostMiddle > PostMiddleLink
@@ -100,7 +132,7 @@ const PostDateAndComment = styled.span`
 // 게시물의 작성자, 하트수를 표시
 const PostFooter = styled.div`
     height: 24px;
-    width: 288px;
+    width: calc(100% - 32px);
     border-top: 1px solid ${props => props.theme.borderColor};
     padding: 10px 16px;
     display: flex;
