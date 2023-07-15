@@ -2,6 +2,8 @@ import React, {useState, useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import Spinner from "./Spinner";
+import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Posts = () => {
     return 
@@ -9,6 +11,8 @@ const Posts = () => {
 
 // 게시판 중앙 정렬 및 마진
 const BoardCenter = styled.div`
+    background-color: ${props => props.theme.bgColor1};
+    width: 100vw;
     display: flex;
     justify-content: center;
     margin-top: 120px;
@@ -18,27 +22,36 @@ const BoardCenter = styled.div`
 const BoardCase = styled.div`
     // 일반 크기
     background-color: ${props => props.theme.bgColor1};
-    width: 95vw;
     max-width: 1760px;
     display: flex;
     flex-wrap: wrap;
 
-   // 테블릿 크기
- @media all and (min-width:768px) and (max-width:1023px) {
-    background-color: black;
-  } 
+    // 4칸
+    @media all and (min-width: 1441px) and (max-width: 1919px) {
+        max-width: 1408px;
+    }
+
+    // 3칸
+    @media all and (min-width:1057px) and (max-width:1440px) {
+        max-width: 1056px;
+    } 
+
+    // 2칸
+    @media all and (min-width:768px) and (max-width:1056px) {
+
+    } 
   
-  // 모바일 크기
-  @media all and (max-width:767px) {
-    background-color: yellow;
-  }
+    // 모바일 크기
+    @media all and (max-width:767px) {
+
+    }
 `
 
 // 게시물의 개수 만큼 post 컴포넌트를 가져오는 컴포넌트
 const Board = () => {
 
     const [prevScrollY, setPrevScrollY] = useState<number>(0);
-    const [boardPage, setBoardPage] = useState<number>(1); // 가져올 페이지 번호
+    const [boardPage, setBoardPage] = useRecoilState<number>(boardNumber); // 가져올 페이지 번호
     const [targetY, setTargetY] = useState<number>(0);
     const [scrollCheck, setScrollCheck] = useState<boolean>(true);
 
@@ -67,9 +80,16 @@ const Board = () => {
         };
     }, [handleScroll]);
 
+    const [prevTheme, setPrevTheme] = useRecoilState(prevThemeState);
+    const nowTheme = useRecoilValue(themeState);
+
     // boardPage가 변경되면 data 호출
     useEffect(() => {
-        getData()
+        if (prevTheme === nowTheme) {
+            getData()
+        } else {
+            setPrevTheme(nowTheme);
+        }
     }, [boardPage])
     
     type postType = {
@@ -92,7 +112,9 @@ const Board = () => {
         thumbnailUrl: string;
     }
 
-    const [post, setPost] = useState<postType[]>();
+    // const [post, setPost] = useState<postType[]>();
+
+    const [post, setPost] = useRecoilState<postType[]>(postState);
 
     const boardCaseRef = useRef<HTMLDivElement>(null);
 
@@ -107,7 +129,6 @@ const Board = () => {
             // 목표 높이 설정
             setTargetY(height - userHeight);
             console.log("목표높이", targetY);
-            
         }
     }, [post]);
     

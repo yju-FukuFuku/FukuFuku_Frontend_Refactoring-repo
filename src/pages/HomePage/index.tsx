@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import Board from "../../components/Board/Board"
 import { styled } from 'styled-components'
@@ -18,5 +17,5 @@ const MainPage = () => {
 export default MainPage
 
 const Container = styled.div`
-  height: 1000vh;
+
 `
