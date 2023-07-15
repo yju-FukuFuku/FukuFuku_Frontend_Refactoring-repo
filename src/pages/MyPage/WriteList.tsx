@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import style from './myPage.module.css'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const MyWritePage = () => {
+  const { userId } = useParams();
 
   type my = {
     name: string;
@@ -40,9 +42,9 @@ const MyWritePage = () => {
   // router 반영
   const changeNavigate = (url: string) => {
     if(url != '')
-      navigate(`/myList?q=${url}`)
+      navigate(`/${userId}?q=${url}`)
     else 
-      navigate('/myList')
+      navigate(`/${userId}`)
   }
 
   // 함수 호출

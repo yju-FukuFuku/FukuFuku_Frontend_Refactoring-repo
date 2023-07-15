@@ -84,6 +84,21 @@ const MyPage = () => {
     setReName(true)
   }
 
+  // 닉네임 중복 체크
+  const handleNameCheck = () => {
+    setTimeout(() => {
+      fetch("", {
+        headers: {
+          "Content-type" : "application/json"
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+        })
+    }, 1000)
+  }
+
   // 닉네임 수정 fetch요청
   const handleNameUpdate = () => {
     console.log("이름 변경")
@@ -197,7 +212,7 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} placeholder={userName} />
+                <input type="text" className={style.username} placeholder={userName} onChange={handleNameCheck}/>
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>

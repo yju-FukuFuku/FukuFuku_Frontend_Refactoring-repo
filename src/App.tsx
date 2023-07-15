@@ -32,9 +32,9 @@ function App() {
             <Route path='/search' element={<SearchPage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/recent' element={<RecentPage />} />
-            <Route path=':postId' element={<PostPage />} />
+            <Route path=':userId/:postId' element={<PostPage />} />
             <Route path='/setting' element={<MyPage/>} />
-            <Route path='/myList' element={<MyListPage/>} />
+            <Route path=':userId' element={<MyListPage/>} />
             <Route path='/saves' element={<SavesPage/>} />
             <Route path='/like' element={<LikePage/>} />
           </Route>
