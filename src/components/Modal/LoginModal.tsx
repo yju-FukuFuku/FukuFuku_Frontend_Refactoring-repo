@@ -8,7 +8,7 @@ import styles from './loginModal.module.scss'
 import { Typography } from '@mui/material';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import Login from './Login';
-import axios from 'axios';
+import { onLogin } from '../../api/Login';
 
 interface LoginModalProps {
   setModalopen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,7 +21,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
   useOutsideClick({ divRef: ref, handler: () => setModalopen(false) });
 
   const googleHandler = async () => {
-    await axios.get('http://localhost:3000/auth')
+    await onLogin();
   }
 
   return (
