@@ -10,6 +10,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LoginModal from './Modal/LoginModal';
 import Category from './Category';
+import { useRecoilState } from "recoil";
+import { themeState } from '../atom';
 
 const Nav = () => {
   const [headMargin, setHeadMargin] = useState<boolean>(true);
@@ -41,6 +43,14 @@ const Nav = () => {
   const handleClick = () => {
     navigate('/search');
   }
+
+  const [theme, setTheme] = useRecoilState(themeState);
+
+  const handleTheme = () => {
+    theme === true ? setTheme(false) : setTheme(true)
+    console.log("밝은 테마", theme);
+    
+  }
   
   return (
     <>
@@ -50,20 +60,21 @@ const Nav = () => {
             sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
             variant='h4'
             onClick={() => navigate('/')}
+            color={theme === true ? "#212529" : "#ECECEC"}
           >
           Fukufuku
           </Typography>
 
           <Item>
             <Icon>
-              <LightMode />
+              <LightMode onClick={handleTheme} />
             </Icon>
             <Icon onClick={handleClick}>
               <SearchRounded />
             </Icon>
 
             <Login onClick={() => {setModalopen(true)}}>
-              <Typography sx={{color: 'white'}}>로그인</Typography>
+              <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}` }}>로그인</Typography>
             </Login>
           </Item>
 
@@ -94,6 +105,7 @@ const Container = styled.div<{headMargin: string}>`
   width: 100%;
   background-color: #fff;
   margin-top: ${props => (props.headMargin === 'true' ? '0px' : '-140px')};
+  background-color: ${props => props.theme.bgColor1};
   transition: all 0.3s ease-in-out;
   z-index: 10;
 `
@@ -128,7 +140,7 @@ const Login = styled.div`
   width: 100px;
   height: 40px;
   border-radius: 20px;
-  background-color: #000;
+  background-color: ${props => props.theme.textColor1};
   cursor: pointer;
   margin-left: 10px;
 `

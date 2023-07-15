@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
 
 const MyPage = () => {
-  const [userId, setId] = React.useState('');
-  const [userName, setName] = useState('');
+  const [userId, setId] = useState<string>('');
+  const [userName, setName] = useState<string>('');
   const [reName, setReName] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -26,17 +26,30 @@ const MyPage = () => {
   // 이미지 변경 fetch요청
   const handleImageUpdate = () => {
     console.log("이미지 변경")
-    if(fileInputRef.current){
-      fileInputRef.current.click();
-    }
+    fileInputRef.current?.click();
   }
 
   // 올바른 파일인지 체크 후 fetch요청
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files
-    if (file) {
-      console.log(file[0])
+  const extension = ['.img', '.png', '.jpg']
+  const [file, setFile] = useState<string>('')
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileCheck = (e.target.files? e.target.files[0].name : null)
+    // 파일이 제대로 들어왔는지 확인
+    if (fileCheck) {
+      setFile(fileCheck)
+      console.log(file.substring((file.length-4), file.length))
+      // 파일 확장자 제한
+      handlePostImg()
+
+    } else {
+      console.log("파일이 선택되지 않았습니다.");
+    }
+  };
+
+  // 이미지 변경 fetch
+  const handlePostImg = () => {
+    if (extension.includes(file.substring(file.length-4, file.length))){
       fetch("", {
         method: "POST",
         headers: {
@@ -47,11 +60,25 @@ const MyPage = () => {
         .then((data) => {
           console.log(data)
           console.log("이미지 전송성공")
-        })
-    } else {
-      console.log("파일이 선택되지 않았습니다.");
+      })
     }
-  };
+    else{
+      console.log("확장자가 틀립니다.")
+    }
+  }
+
+  // 이미지 삭제
+  const handleImageRemove = () => {
+   fetch("", {
+    headers: {
+      "Content-type" : "application/json"
+    }
+   }) 
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+    })
+  }
 
   // 닉네임 변경 요청
   const checkTry = () => {
@@ -90,7 +117,7 @@ const MyPage = () => {
   }
 
   // INTRO
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState<string>('')
   const [introCheck, setIntroCheck] = useState<boolean>(false)
   let userData = ''
 
@@ -127,14 +154,16 @@ const MyPage = () => {
 
   
   return (
+    <div className={style.container}>
       <div className={style.myPage}>
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src="/assets/짱구.jpeg" alt="image" className={style.myImage}/>
+              <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
-            <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange}/>
+            <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button>
+            <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange} accept='image/*'/>
           </div>
           {/* intro 수정 */}
           {introCheck ? (
@@ -148,7 +177,7 @@ const MyPage = () => {
             <div className={style.introBox}>
               <h2>한 줄 소개</h2>
               <div className={style.intro}>
-                hello my name is mini nice me too. <br></br>i can't speak english
+                { content }
               </div>
               <button className={style.modifyBtn} onClick={handleUpdateCheck}>수정</button>
             </div>
@@ -195,6 +224,7 @@ const MyPage = () => {
           </div>
         </div>
       </div>
+    </div>
       
   )
 }

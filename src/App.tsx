@@ -9,6 +9,8 @@ import RecentPage from './pages/RecentPage'
 import BoardPage from './pages/BoardPage'
 import WritePage from './pages/WritePage'
 import ErrorPage from './pages/404Page'
+import SavesPage from './pages/SavesPage'
+import LikePage from './pages/LikeListPage'
 
 function App() {
   const Layout = () => {
@@ -29,11 +31,11 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path='/recent' element={<RecentPage />} />
-            <Route path=':boardId' element={<BoardPage />} />
+            <Route path=':postId' element={<PostPage />} />
             <Route path='/myPage' element={<MyPage/>} />
             <Route path='/myList' element={<MyListPage/>} />
-            <Route path='/error' element={<ErrorPage/>} />
-            {/* <Route path='/myIntro' element={<MyIntroPage/>} /> */}
+            <Route path='/saves' element={<SavesPage/>} />
+            <Route path='/like' element={<LikePage/>} />
           </Route>
           
           <Route path='/write' element={<WritePage />} />
