@@ -6,7 +6,11 @@ import { setRefreshToken } from "../store/Cookie";
 export function onLogin() {
   console.log("onLogin");
   
-  axios.get('/auth/google')
+  axios.get('/auth', {
+    headers: {
+      'Access-Control-Allow-Origin': 'http://localhost:5173'
+    }
+  })
     .then(response => {
       console.log(response);
     })

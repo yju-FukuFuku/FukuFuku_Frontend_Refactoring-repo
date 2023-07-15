@@ -8,6 +8,7 @@ import SearchPage from './pages/SearchPage'
 import RecentPage from './pages/RecentPage'
 import BoardPage from './pages/BoardPage'
 import WritePage from './pages/WritePage'
+import ErrorPage from './pages/404Page'
 
 function App() {
   const Layout = () => {
@@ -31,6 +32,7 @@ function App() {
             <Route path=':boardId' element={<BoardPage />} />
             <Route path='/myPage' element={<MyPage/>} />
             <Route path='/myList' element={<MyListPage/>} />
+            <Route path='/error' element={<ErrorPage/>} />
             {/* <Route path='/myIntro' element={<MyIntroPage/>} /> */}
           </Route>
           

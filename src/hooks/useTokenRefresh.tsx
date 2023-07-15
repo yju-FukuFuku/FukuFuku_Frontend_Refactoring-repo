@@ -3,19 +3,27 @@ import { store } from "../store";
 import { setAccessToken } from "../store/Auth";
 import { getRefreshToken } from "../store/Cookie";
 
-export const refreshToken = async () => {
+export const refreshToken = async (accessToken: string | null) => {
 
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
     return Promise.reject();
   }
-
+  
   try {
-    const response = await axios.post("/auth/refresh");
-    const { accessToken } = response.data;
-    store.dispatch(setAccessToken(accessToken));
-    return await Promise.resolve();
+    const response = await axios.post("/auth/refresh", {
+      refreshToken,
+    }, {
+      headers: {
+        Authorization: `${accessToken}`,
+      }
+    });
+    console.log(response);
+  
+    
+    // store.dispatch(setAccessToken(accessToken));
+    // return accessToken;
   } catch (error) {
     console.log(error);
     return await Promise.reject();

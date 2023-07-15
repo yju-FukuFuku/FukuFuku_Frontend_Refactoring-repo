@@ -10,7 +10,7 @@ interface AuthState {
 export const authSlice = createSlice({
   name: "authToken",
   initialState: {
-    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODkzMTEyOTQsImV4cCI6MTY4OTMxMTU5NH0.6zR8E_5lbu9-yhrCOwj1dN3sxlTZz-r4mv0xzkpaGzY",
+    accessToken: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODk0MDEyNTIsImV4cCI6MTY4OTQwMTU1Mn0.h_CmulTQcCaGX_RyrizcfYA1ZWvncFQ4Dmox74FqJ30",
     expireTime: 0,
   } as AuthState,
   reducers: {

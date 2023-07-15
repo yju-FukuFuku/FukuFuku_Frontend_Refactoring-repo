@@ -7,13 +7,21 @@ type Board = {
 }
 
 export async function postBoard(board: Board) {
-  
-  const accessToken = await tokenAccess();
-  console.log(accessToken);
 
-  await axios.post('/boards', board, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    }
+  await axios.post('/boards', board).then((response) => {
+    console.log(response);
+  }).catch((error) => {
+    console.log(error);
   })
+  
+  // await tokenAccess().then((accessToken) => {
+  //   axios.post('/boards', board, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     }
+  //   })
+  // }).catch((error) => {
+  //   console.log(error);
+  // })
 }
+
