@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import style from './myPage.module.css'
-import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 
 const MyWritePage = () => {
@@ -13,12 +12,9 @@ const MyWritePage = () => {
 
   // const [lock, setLock] = useState<boolean>(false) 부가기능 추후 추가
   const [myData, setData] = useState<my[]>()
-  useEffect(() => {
-    getData()
-  }, []);
 
-    // GetFetch
-  const getData = () => {
+
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/posts/1/comments")
       .then((response) => response.json())
       .then((data) => {
@@ -26,7 +22,7 @@ const MyWritePage = () => {
         console.log(myData)
       })
       .catch((error) => console.log(error));
-  }
+  }, [myData]);
 
   // Search
   const [search, setSearch] = useState<string>('')

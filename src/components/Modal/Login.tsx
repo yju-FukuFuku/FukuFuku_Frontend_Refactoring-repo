@@ -9,16 +9,15 @@ interface LoginProps {
 }
 
 type FormValues = {
-  id: string;
+  username: string;
   password: string;
   passwordCheck?: string;
-  profile_image?: string;
 }
 
 const Login = ({register}: LoginProps) => {
   
   const [form, setForm] = useState<FormValues>({
-    id: '',
+    username: '',
     password: ''
   } as FormValues);
 
@@ -28,10 +27,10 @@ const Login = ({register}: LoginProps) => {
   const [passwordCheckError, setPasswordCheckError] = useState<boolean>(true);
 
   useEffect(() => {
-    if (form.id.length >= 4) {
+    if (form.username.length >= 4) {
       setIdError(false);
       if (register) {
-        axios.get(`http://localhost:3001/accounts/${form.id}`)
+        axios.get(`http://localhost:3000/auth/${form.username}`)
         .then(() => {
           setIdCheckError(true);
         })
@@ -42,7 +41,7 @@ const Login = ({register}: LoginProps) => {
     } else {
       setIdError(true);
     }
-  }, [form.id, register])
+  }, [form.username, register])
 
   useEffect(() => {
     const regExp = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,}$/;
@@ -64,10 +63,9 @@ const Login = ({register}: LoginProps) => {
   const onSubmit = async (data: FormValues) => {
     if (register) {
       data.passwordCheck = undefined;
-      data = {...data, profile_image: '/images/user.png'};
 
       try {
-        await axios.post('http://localhost:3001/accounts', data);
+        await axios.post('http://localhost:3000/auth/signup', data);
       }
       catch (error) {
         console.log();
@@ -78,10 +76,10 @@ const Login = ({register}: LoginProps) => {
   return (
     <div className={styles.modal__right__body}>
       <TextField
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, id: e.target.value})}
-        {...(idError && form.id ) && {error: true, helperText: '아이디는 4자 이상 입력해주세요.'}}
-        {...(idCheckError && form.id && !idError && register ) && {error: true, helperText: '이미 존재하는 아이디입니다.'}}
-        {...(!idCheckError && form.id && !idError && register) && {error: false, helperText: '사용 가능한 아이디입니다.', color: 'success'}}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, username: e.target.value})}
+        {...(idError && form.username ) && {error: true, helperText: '아이디는 4자 이상 입력해주세요.'}}
+        {...(idCheckError && form.username && !idError && register ) && {error: true, helperText: '이미 존재하는 아이디입니다.'}}
+        {...(!idCheckError && form.username && !idError && register) && {error: false, helperText: '사용 가능한 아이디입니다.', color: 'success'}}
         required
         id="outlined-required"
         label="아이디"
@@ -121,7 +119,7 @@ const Login = ({register}: LoginProps) => {
         type='submit'
         variant='contained' 
         sx={{mb: 3, width: '100%'}}
-        {...(idError || passwordError || passwordCheckError || idCheckError || !form.id || !form.password || (register && !form.passwordCheck) ) && {disabled: true}}
+        {...(idError || passwordError || passwordCheckError || idCheckError || !form.username || !form.password || (register && !form.passwordCheck) ) && {disabled: true}}
         onClick={() => onSubmit(form)}
       >
       {register ? '회원가입' : '로그인'}
