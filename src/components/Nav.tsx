@@ -10,6 +10,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LoginModal from './Modal/LoginModal';
 import Category from './Category';
+import { useRecoilState } from "recoil";
+import { themeState } from '../atom';
 
 const Nav = () => {
   const [headMargin, setHeadMargin] = useState<number>(0);
@@ -41,6 +43,14 @@ const Nav = () => {
   const handleClick = () => {
     navigate('/search');
   }
+
+  const [theme, setTheme] = useRecoilState(themeState);
+
+  const handleTheme = () => {
+    theme === true ? setTheme(false) : setTheme(true)
+    console.log("현재 테마", theme);
+    
+  }
   
   return (
     <>
@@ -56,7 +66,7 @@ const Nav = () => {
 
           <Item>
             <Icon>
-              <LightMode />
+              <LightMode onClick={handleTheme} />
             </Icon>
             <Icon onClick={handleClick}>
               <SearchRounded />

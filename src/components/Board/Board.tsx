@@ -2,6 +2,8 @@ import React, {useState, useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import Spinner from "./Spinner";
+import { boardNumber, postState } from "../../atom";
+import { useRecoilState } from "recoil";
 
 const Posts = () => {
     return 
@@ -38,7 +40,7 @@ const BoardCase = styled.div`
 const Board = () => {
 
     const [prevScrollY, setPrevScrollY] = useState<number>(0);
-    const [boardPage, setBoardPage] = useState<number>(1); // 가져올 페이지 번호
+    const [boardPage, setBoardPage] = useRecoilState<number>(boardNumber); // 가져올 페이지 번호
     const [targetY, setTargetY] = useState<number>(0);
     const [scrollCheck, setScrollCheck] = useState<boolean>(true);
 
@@ -92,7 +94,9 @@ const Board = () => {
         thumbnailUrl: string;
     }
 
-    const [post, setPost] = useState<postType[]>();
+    // const [post, setPost] = useState<postType[]>();
+
+    const [post, setPost] = useRecoilState<postType[]>(postState);
 
     const boardCaseRef = useRef<HTMLDivElement>(null);
 
@@ -107,7 +111,6 @@ const Board = () => {
             // 목표 높이 설정
             setTargetY(height - userHeight);
             console.log("목표높이", targetY);
-            
         }
     }, [post]);
     
