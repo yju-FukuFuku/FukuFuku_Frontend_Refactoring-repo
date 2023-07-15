@@ -18,5 +18,5 @@ const MainPage = () => {
 export default MainPage
 
 const Container = styled.div`
-  height: 1000vh;
+
 `
