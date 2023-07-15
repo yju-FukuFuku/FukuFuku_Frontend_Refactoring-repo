@@ -48,7 +48,7 @@ const Nav = () => {
 
   const handleTheme = () => {
     theme === true ? setTheme(false) : setTheme(true)
-    console.log("현재 테마", theme);
+    console.log("밝은 테마", theme);
     
   }
   
@@ -60,6 +60,7 @@ const Nav = () => {
             sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
             variant='h4'
             onClick={() => navigate('/')}
+            color={theme === true ? "#212529" : "#ECECEC"}
           >
           Fukufuku
           </Typography>
@@ -73,7 +74,7 @@ const Nav = () => {
             </Icon>
 
             <Login onClick={() => {setModalopen(true)}}>
-              <Typography sx={{color: 'white'}}>로그인</Typography>
+              <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}` }}>로그인</Typography>
             </Login>
           </Item>
 
@@ -102,7 +103,7 @@ export default Nav
 const Container = styled.div<{headMargin: number}>`
   position: fixed;
   width: 100%;
-  background-color: #fff;
+  background-color: ${props => props.theme.bgColor1};
   margin-top: ${props => props.headMargin}px;
   transition: all 0.3s ease-in-out;
 `
@@ -137,7 +138,7 @@ const Login = styled.div`
   width: 100px;
   height: 40px;
   border-radius: 20px;
-  background-color: #000;
+  background-color: ${props => props.theme.textColor1};
   cursor: pointer;
   margin-left: 10px;
 `

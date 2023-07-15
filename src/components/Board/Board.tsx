@@ -11,6 +11,8 @@ const Posts = () => {
 
 // 게시판 중앙 정렬 및 마진
 const BoardCenter = styled.div`
+    background-color: ${props => props.theme.bgColor1};
+    width: 100vw;
     display: flex;
     justify-content: center;
     margin-top: 120px;
