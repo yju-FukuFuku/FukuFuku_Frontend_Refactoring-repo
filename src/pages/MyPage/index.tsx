@@ -20,7 +20,7 @@ const MyPage = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
-        setId(data.userEmail)
+        setId(data.userId)
         setName(data.id)
       })
       .catch((error) => console.log(error));
@@ -89,7 +89,11 @@ const MyPage = () => {
   const debounceVal = useDebounce(userName)
 
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value)
+    if(e.target.value.includes(" ")) {
+      console.log("띄어쓰기가 포함되어 있습니다.")
+    } else {
+      setName(e.target.value)
+    }
     // console.log(e.target.value)
     // console.log(debounceVal)
   }
@@ -226,7 +230,7 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} placeholder={userName} onChange={handleInputName}/>
+                <input type="text" className={style.username} value={userName} onChange={handleInputName}/>
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>
