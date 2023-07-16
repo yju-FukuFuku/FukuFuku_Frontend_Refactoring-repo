@@ -4,21 +4,25 @@ import styles from './board.module.scss';
 
 interface CommentProps {
   item: {
-    userImg: string;
-    userName: string;
-    date: string;
-    comment: string;
+    id: number;
+    content: string;
+    boardId?: number;
+    c_id?: number;
+    commenter: string;
   }[]
 }
 
-const Comment = ({item}: CommentProps) => {
 
+const Comment = ({item}: CommentProps) => {
   return (
     <Container>
-        {item.map((item, index) => (
+
+        {item.map((reply, index) => (
+        <>
           <div className={styles.comment__list}>
-            <ReComment key={index} item={item} />
+            <ReComment key={index} item={reply} />
           </div>
+        </>
         ))}
     </Container>
   );

@@ -17,27 +17,20 @@ interface Board {
   like: number;
 }
 
+interface Comment {
+  id: number;
+  content: string;
+  boardId: number;
+  commenter: string;
+}[]
+
 const PostPage = () => {
-
-  const test = [
-    {
-      userImg: 'https://avatars.githubusercontent.com/u/121005861?v=4',
-      userName: 'hetame',
-      date: '1일 전',
-      comment: '댓글입니다.'
-    },
-    {
-      userImg: 'https://avatars.githubusercontent.com/u/121005861?v=4',
-      userName: 'hetame',
-      date: '1일 전',
-      comment: '댓글입니다.'
-    }
-  ]
-
   const { boardId } = useParams();
   const [board, setBoard] = useState<Board | null>({} as Board)
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
+  const [comments, setComments] = useState<Comment[]>([])
+  const [commentValue, setCommentValue] = useState<string>('')
 
   const navigate = useNavigate();
 
@@ -78,10 +71,36 @@ const PostPage = () => {
 
   };
 
-  // 현재 id를 가지고 글 찾고 글이 없으면 error 페이지로 이동
+  async function getComment() {
+    await axios.get(`comments/${boardId}`).then((res) => {
+      setComments(res.data);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  useEffect(() => {
+    getComment();
+  }, []);
+  
+  const handleComment = async () => {
+    const data = {
+      content: commentValue,
+      boardId: Number(boardId),
+      commenter: 'hetame',
+    };
+  
+    try {
+      await axios.post('/comments', data);
+      setCommentValue('');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     async function getBoard() {
-      await axios.get(`http://localhost:3000/boards/${boardId}`).then((response) => {
+      await axios.get(`boards/${boardId}`).then((response) => {
         setBoard(response.data);
       }).catch((error) => {
         console.log(error);
@@ -89,7 +108,7 @@ const PostPage = () => {
       });
     }
     getBoard();
-  }, [boardId, navigate])
+  }, []);
 
   if (!board) {
     return null;
@@ -167,16 +186,25 @@ const PostPage = () => {
             <h4>0개의 댓글</h4>
           </FooterHead>
           
-          <FooterInput>
-            <textarea className={styles.inputComment} placeholder='댓글을 입력하세요' />
+          <FooterInput>            
+            <textarea 
+              className={styles.inputComment} 
+              placeholder='댓글을 입력하세요'
+              value={commentValue}
+              onChange={(e) => setCommentValue(e.target.value)}
+            />
             <ButtonWrapper>
-              <Button variant='contained' color='primary'>댓글 작성</Button>
+              <Button 
+                variant='contained' 
+                color='primary'
+                onClick={handleComment}
+              >댓글 작성</Button>
             </ButtonWrapper>
           </FooterInput>
 
           <FooterBody>
             {
-              <Comment item={test}/>
+              <Comment item={comments}/>
             }
           </FooterBody>
           

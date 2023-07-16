@@ -12,17 +12,17 @@
 }
 
 .comment__list {
-  margin-top: 2rem;
-  border-top: 2px solid #f1f3f5;
+  margin-top: 1rem;
   padding-top: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid grey;;
 
   &:first-child {
-    border-top: none;
-    padding-top: 0;
+    margin-top: 0;
   }
 
   &:last-child {
-    margin-bottom: 2rem;
+    border-bottom: none;
   }
 }
 
