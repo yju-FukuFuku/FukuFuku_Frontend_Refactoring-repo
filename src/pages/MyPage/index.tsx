@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
+import useDebounce from '../../hooks/useDebounce';
 
 const MyPage = () => {
-  const [userId, setId] = useState<string>('');
+  const [userEmail, setId] = useState<string>('');
   const [userName, setName] = useState<string>('');
+  const [file, setFile] = useState<string>('')
+  const [content, setContent] = useState<string>('')
   const [reName, setReName] = useState<boolean>(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     getData()
-  }, [userId, userName]);
+  }, [content, file]);
 
   // GetFetch
   const getData = () => {
@@ -17,7 +20,7 @@ const MyPage = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
-        setId(data.userId)
+        setId(data.userEmail)
         setName(data.id)
       })
       .catch((error) => console.log(error));
@@ -31,25 +34,20 @@ const MyPage = () => {
 
   // 올바른 파일인지 체크 후 fetch요청
   const extension = ['.img', '.png', '.jpg']
-  const [file, setFile] = useState<string>('')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileCheck = (e.target.files? e.target.files[0].name : null)
     // 파일이 제대로 들어왔는지 확인
     if (fileCheck) {
-      setFile(fileCheck)
-      console.log(file.substring((file.length-4), file.length))
-      // 파일 확장자 제한
-      handlePostImg()
-
+      handlePostImg(fileCheck)
     } else {
       console.log("파일이 선택되지 않았습니다.");
     }
   };
 
   // 이미지 변경 fetch
-  const handlePostImg = () => {
-    if (extension.includes(file.substring(file.length-4, file.length))){
+  const handlePostImg = (e:string) => {
+    if (extension.includes(e.substring(e.length-4, e.length))){
       fetch("", {
         method: "POST",
         headers: {
@@ -60,6 +58,7 @@ const MyPage = () => {
         .then((data) => {
           console.log(data)
           console.log("이미지 전송성공")
+          setFile(e)
       })
     }
     else{
@@ -85,6 +84,34 @@ const MyPage = () => {
     console.log("변경 요청")
     setReName(true)
   }
+
+  // 닉네임 중복 체크 - debounce
+  const debounceVal = useDebounce(userName)
+
+  const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+    // console.log(e.target.value)
+    // console.log(debounceVal)
+  }
+
+  const handleNameOverlap = () => {
+    console.log(debounceVal)
+    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
+      headers: {
+        "Content-type" : "application/json"
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("hi")
+      })
+  }
+
+  useEffect(() => {
+    if(debounceVal != ''){
+      handleNameOverlap()
+    }
+  }, [debounceVal])
 
   // 닉네임 수정 fetch요청
   const handleNameUpdate = () => {
@@ -117,7 +144,6 @@ const MyPage = () => {
   }
 
   // INTRO
-  const [content, setContent] = useState<string>('')
   const [introCheck, setIntroCheck] = useState<boolean>(false)
   let userData = ''
 
@@ -136,7 +162,7 @@ const MyPage = () => {
   
   // 서버로 데이터 전송
   const handleUpdateContent = () => { 
-    setContent(userData)
+    
     fetch("", {
       method: "POST",
       headers: {
@@ -146,6 +172,7 @@ const MyPage = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
+        setContent(userData)
       })
       .catch((error) => console.log(error))
     console.log("수정 완료")
@@ -190,7 +217,7 @@ const MyPage = () => {
           <div className={style.wrapper}>
             <div className={style.wrapperList}>
               <label>아이디</label>
-              <div>{userId}</div>
+              <div>{userEmail}</div>
             </div>
             <p>회원가입 하신 ID입니다.</p>
           </div>
@@ -199,7 +226,7 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} placeholder={userName} />
+                <input type="text" className={style.username} placeholder={userName} onChange={handleInputName}/>
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>
@@ -207,7 +234,9 @@ const MyPage = () => {
             ) : (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <div>{userName}</div>
+                <div>
+                  { userName ? userName : userEmail}
+                  </div>
                 <span>
                   <button className={style.modifyBtn} onClick={checkTry}>수정</button>
                 </span>

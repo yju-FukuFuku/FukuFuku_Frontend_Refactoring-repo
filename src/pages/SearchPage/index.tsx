@@ -29,7 +29,7 @@ const SearchPage = () => {
   }
 
   useEffect(() => {
-    getData()
+
   }, [])
 
 
@@ -43,12 +43,25 @@ const SearchPage = () => {
 
   // router 반영
   const changeNavigate = (url: string) => {
-      navigate(`/search?q=${url}`)
+    navigate(`/search?q=${url}`)
+
+    fetch("", {
+      headers: {
+        "Content-type" : "application/json"
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        console.log(url)
+      })
   }
 
   // 함수 호출
   useEffect(() => {
-    changeNavigate(searchValue)
+    setTimeout(() => {
+      changeNavigate(searchValue)
+    }, 500)
   }, [searchValue])
 
 
