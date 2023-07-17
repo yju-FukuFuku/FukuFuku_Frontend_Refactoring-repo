@@ -6,7 +6,7 @@ import {
   Favorite
 }from '@mui/icons-material';
 import { Link } from 'react-scroll';
-import { Button } from '@mui/material';
+import { Button, Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
@@ -35,7 +35,7 @@ interface Author {
 
 const PostPage = () => {
   const { boardId } = useParams();
-  const [board, setBoard] = useState<Board | null>({} as Board)
+  const [board, setBoard] = useState<Board | null>(null)
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
   const [comments, setComments] = useState<Comment[]>([])
@@ -45,7 +45,8 @@ const PostPage = () => {
   const navigate = useNavigate();
 
   const user = store.getState().user;
-
+  console.log(board);
+  
   // 게시글 가져오기
   useEffect(() => {
     async function getBoard() {
@@ -142,8 +143,34 @@ const PostPage = () => {
     }
   };
 
+  // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
   if (!board) {
-    return <div>loading...</div>
+    return (
+      <Container>
+        <Wrapper>
+          <HeadWrapper style={{display: 'flex'}}>
+            <Skeleton sx={{ mr: 1 }} variant='text' width='30%' height='80px' />
+            <Skeleton sx={{ mr: 1 }} variant='text' width='20%' height='80px' />
+            <Skeleton sx={{ mr: 1 }} variant='text' width='20%' height='80px' />
+          </HeadWrapper>
+
+          <InfoWrapper style={{display: 'flex'}}>
+            <Skeleton sx={{mr: 1}} variant='text' width='10%' height='30px' />
+            <Skeleton variant='text' width='10%' height='30px' />
+          </InfoWrapper>
+
+          <TagWrapper style={{display: 'flex', marginTop: '1rem'}}>
+            <Skeleton sx={{mr: 1, ml: 1}} variant='rounded' width='10%' height='40px' />
+            <Skeleton variant='rounded' width='10%' height='40px' />
+          </TagWrapper>
+          
+          <BodyWrapper style={{ marginTop: 0}}>
+            <Skeleton sx={{position: 'relative', top: -220}} variant='text' width='100%' height={1300} />
+          </BodyWrapper>
+
+        </Wrapper>
+      </Container>
+      )
   } else {
     return (
       <Container>
@@ -255,7 +282,6 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin: 0 auto;
   width: 768px;
 
@@ -266,6 +292,14 @@ const Wrapper = styled.div`
   @media screen and (max-width: 767px) {
     width: 400px;
   }
+`
+
+const InfoWrapper = styled.div`
+  width: 100%;
+`
+
+const TagWrapper = styled.div`
+  width: 100%;
 `
 
 const ProfileWrapper = styled.div`
