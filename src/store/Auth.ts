@@ -5,18 +5,25 @@ export const TOKEN_TIME_OUT = 300 * 1000;
 interface AuthState {
   accessToken: string | null;
   expireTime: number;
+  isLogin: boolean;
 }
+
+type SetAccessTokenPayload = {
+  accessToken: string;
+};
 
 export const authSlice = createSlice({
   name: "authToken",
   initialState: {
-    accessToken: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODk0MDEyNTIsImV4cCI6MTY4OTQwMTU1Mn0.h_CmulTQcCaGX_RyrizcfYA1ZWvncFQ4Dmox74FqJ30",
+    accessToken: null,
     expireTime: 0,
+    isLogin: false,
   } as AuthState,
   reducers: {
-    setAccessToken: (state, action: PayloadAction<{ accessToken: string }>) => {
+    setAccessToken: (state, action: PayloadAction<SetAccessTokenPayload>) => {
       const { accessToken } = action.payload;
       state.accessToken = accessToken;
+      state.isLogin = true;
       state.expireTime = new Date().getTime() + TOKEN_TIME_OUT;
     }
   }

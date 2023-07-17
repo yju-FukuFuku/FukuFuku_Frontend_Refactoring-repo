@@ -21,9 +21,8 @@ export const refreshToken = async (accessToken: string | null) => {
     });
     console.log(response);
   
-    
     // store.dispatch(setAccessToken(accessToken));
-    // return accessToken;
+    // return accessToken; 
   } catch (error) {
     console.log(error);
     return await Promise.reject();

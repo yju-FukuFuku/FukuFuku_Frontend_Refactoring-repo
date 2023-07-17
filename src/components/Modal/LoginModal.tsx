@@ -8,7 +8,9 @@ import styles from './loginModal.module.scss'
 import { Typography } from '@mui/material';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import Login from './Login';
-import { onLogin } from '../../api/Login';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { onLoginSuccess } from '../../api/Login';
 
 interface LoginModalProps {
   setModalopen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,12 +18,14 @@ interface LoginModalProps {
 
 const LoginModal = ({setModalopen}: LoginModalProps) => {
   const [register, setRegister] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const ref = useRef<HTMLDivElement>(null);
   useOutsideClick({ divRef: ref, handler: () => setModalopen(false) });
 
   const googleHandler = async () => {
-    await onLogin();
+    onLoginSuccess()
+    setModalopen(false);
   }
 
   return (

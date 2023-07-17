@@ -6,7 +6,6 @@ export const setRefreshToken = (refreshToken: string) => {
   const expires = new Date(Date.now() + 3600 * 1000);
 
   cookies.set("refreshToken", refreshToken, {
-    path: "/",
     expires,
   });
 }
