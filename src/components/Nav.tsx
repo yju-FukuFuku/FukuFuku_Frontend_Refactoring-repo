@@ -12,6 +12,7 @@ import LoginModal from './Modal/LoginModal';
 import Category from './Category';
 import { useRecoilState } from "recoil";
 import { themeState } from '../atom';
+import { store } from '../store';
 
 const Nav = () => {
   const [headMargin, setHeadMargin] = useState<boolean>(true);
@@ -20,6 +21,15 @@ const Nav = () => {
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  const { isLogin } = store.getState().token;
+  const user = store.getState().user;
+
+  useEffect(() => {
+    if (isLogin) {
+      setModalopen(false);
+    }
+  }, [isLogin])
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -54,8 +64,9 @@ const Nav = () => {
   
   return (
     <>
-      <Container headMargin={headMargin ? 'true' : 'false'}>
+      <Container headmargin={headMargin ? 'true' : 'false'}>
         <Wrapper>
+          
           <Typography 
             sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
             variant='h4'
@@ -72,10 +83,34 @@ const Nav = () => {
             <Icon onClick={handleClick}>
               <SearchRounded />
             </Icon>
+            {
+              isLogin ? (
+                <Write onClick={() => {navigate('/write')}}>
+                  <Typography sx={{ color: '#000', fontWeight: 600 }}>새글작성</Typography>
+                </Write>
+              ) : null
+            }
 
-            <Login onClick={() => {setModalopen(true)}}>
-              <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}` }}>로그인</Typography>
-            </Login>
+            {
+              isLogin ? (
+                <Icon onClick={() => navigate('/mypage')}>
+                  { user.picture ? (
+                    <img 
+                      src={user.picture}
+                      alt="profile"
+                      style={{width: '40px', height: '40px', borderRadius: '50%'}}
+                    />
+                    ) : null
+                  }
+                  
+                </Icon>
+              ) : (
+                <Login onClick={() => {setModalopen(true)}}>
+                  <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}` }}>로그인</Typography>
+                </Login>
+              )
+            }
+            
           </Item>
 
         </Wrapper>
@@ -100,13 +135,14 @@ const Nav = () => {
 
 export default Nav
 
-const Container = styled.div<{headMargin: string}>`
+const Container = styled.div<{headmargin?: string}>`
   position: fixed;
-  width: 100%;
+  width: 100vw;
+  justify-content: center;
   background-color: #fff;
-  margin-top: ${props => (props.headMargin === 'true' ? '0px' : '-140px')};
+  margin-top: ${props => props.headmargin === 'true' ? '0' : '-140px'};
   background-color: ${props => props.theme.bgColor1};
-  transition: all 0.3s ease-in-out;
+  transition: margin-top 0.3s ease-in-out;
   z-index: 10;
 `
 
@@ -115,6 +151,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 100%;
+  align-items: center;
   margin: 20px auto;
   width: 1700px;
 
@@ -143,6 +180,19 @@ const Login = styled.div`
   background-color: ${props => props.theme.textColor1};
   cursor: pointer;
   margin-left: 10px;
+`
+
+const Write = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #fff;
+  cursor: pointer;
+  border: 1px solid #000;
+  margin-right: 1rem;
 `
 
 const Icon = styled.div`

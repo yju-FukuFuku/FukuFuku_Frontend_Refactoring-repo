@@ -6,8 +6,8 @@ import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { postBoard } from '../../api/Board';
+import { store } from '../../store';
 
 const StyledTextField = styled(TextField) (
   {
@@ -38,21 +38,13 @@ const WritePage = () => {
 
   const editorRef = useRef<Editor>(null);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     if (editorRef.current) {
       const defaultValue = editorRef.current.getInstance();
       defaultValue.setMarkdown('');
     }
   }, []);
-
-  const getBoard = async () => {
-    const response = await axios.get('http://localhost:3000/boards')
-  }
-
-  useEffect(() => {
-    getBoard();
-  })
 
   const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -68,15 +60,17 @@ const WritePage = () => {
 
   const save = async () => {
     const content = editorRef.current?.getInstance();
+    const { id } = store.getState().user;
     
     const data = {
       title: title,
-      content: content?.getHTML()
+      content: content?.getHTML(),
+      u_id: id,
     }
 
     postBoard(data);
     
-  } 
+  }
 
   return (
     <Container>

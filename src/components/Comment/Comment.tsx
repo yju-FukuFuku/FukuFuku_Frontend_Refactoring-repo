@@ -1,6 +1,6 @@
 import ReComment from './ReComment';
 import { styled } from 'styled-components';
-import styles from './board.module.scss';
+import styles from './comment.module.scss';
 
 interface CommentProps {
   item: {
@@ -9,6 +9,8 @@ interface CommentProps {
     boardId?: number;
     c_id?: number;
     commenter: string;
+    img: string;
+    u_id: number;
   }[]
 }
 
@@ -16,14 +18,11 @@ interface CommentProps {
 const Comment = ({item}: CommentProps) => {
   return (
     <Container>
-
-        {item.map((reply, index) => (
-        <>
-          <div className={styles.comment__list}>
-            <ReComment key={index} item={reply} />
-          </div>
-        </>
-        ))}
+      {item.map((reply, index) => (
+        <div className={styles.comment__list} key={index}>
+          <ReComment key={index} item={reply} />
+        </div>
+      ))}
     </Container>
   );
 };
