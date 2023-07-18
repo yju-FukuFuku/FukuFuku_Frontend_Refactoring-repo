@@ -19,15 +19,6 @@ interface Board {
   u_id: number;
 }
 
-interface Comment {
-  id: number;
-  content: string;
-  boardId: number;
-  commenter: string;
-  img: string;
-  u_id: number;
-}[]
-
 interface Author {
   email: string;
   picture: string;
@@ -38,7 +29,6 @@ const PostPage = () => {
   const [board, setBoard] = useState<Board | null>(null)
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
-  const [comments, setComments] = useState<Comment[]>([])
   const [commentValue, setCommentValue] = useState<string>('')
   const [author, setAuthor] = useState<Author>({} as Author)
 
@@ -53,6 +43,7 @@ const PostPage = () => {
       await axios.get(`boards/${boardId}`).then((response) => {
         setBoard(response.data);
         getAuthor(response.data.u_id);
+        idTag();
       }).catch((error) => {
         console.log(error);
         navigate('/error');
@@ -60,6 +51,12 @@ const PostPage = () => {
     }
     getBoard();
   }, []);  
+
+  // 작성자 정보 가져오기
+  const getAuthor = async (u_id: number) => {
+    const { data } = await axios.get(`user/${u_id}`);
+    setAuthor({ email: data.email, picture: data.picture })
+  }
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
   useEffect(() => {
@@ -75,11 +72,6 @@ const PostPage = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-
-  // 글 내용이 바뀔때마다 idTag 실행
-  useEffect(() => {
-    idTag();
   }, []);
 
   // 글 내용에서 h1~h6 태그를 찾아서 id를 부여해주고 그 id를 배열에 담아줌
@@ -98,25 +90,6 @@ const PostPage = () => {
 
   };
 
-  // 댓글 가져오기
-  async function getComment() {
-    await axios.get(`comments/${boardId}`).then((res) => {
-      setComments(res.data);
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
-
-  // 작성자 정보 가져오기
-  const getAuthor = async (u_id: number) => {
-    const { data } = await axios.get(`users/${u_id}`);
-    setAuthor({ email: data.email, picture: data.picture })
-  }
-
-  useEffect(() => {
-    getComment();
-  }, []);
-  
   // 댓글 작성
   const handleComment = async () => {
     if (!user.id) {
@@ -259,7 +232,7 @@ const PostPage = () => {
   
             <FooterBody>
               {
-                <Comment item={comments}/>
+                <Comment />
               }
             </FooterBody>
             

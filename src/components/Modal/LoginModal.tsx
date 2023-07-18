@@ -10,7 +10,7 @@ import useOutsideClick from '../../hooks/useOutsideClick';
 import Login from './Login';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { onLoginSuccess } from '../../api/Login';
+import { login, onLoginSuccess } from '../../api/Login';
 
 interface LoginModalProps {
   setModalopen: React.Dispatch<React.SetStateAction<boolean>>;

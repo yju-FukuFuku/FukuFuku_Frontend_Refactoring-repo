@@ -2,18 +2,17 @@ import { Add, DeleteForever, Edit } from '@mui/icons-material';
 import styles from './comment.module.scss';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
-import Comment from './Comment';
 import axios from 'axios';
 import { Button } from '@mui/material';
 import { store } from '../../store';
 
 interface ReCommentProps {
-  item: {
+  comment: {
     id: number;
     content: string;
     u_id: number;
-    boardId?: number;
     c_id?: number;
+    boardId?: number;
     commenter: string;
     img: string;
   }
@@ -28,69 +27,46 @@ interface Reply {
   img: string;
 }[]
 
-const ReComment = ({ item }: ReCommentProps) => {
+const ReComment = ({ comment}: ReCommentProps) => {
 
   const [show, setShow] = useState<boolean>(false)
-  const [comment, setComment] = useState<string>('')
+  const [commentValue, setCommentValue] = useState<string>('')
   const [replys, setReplys] = useState<Reply[]>([])
   const [valid, setValid] = useState<boolean>(false)
   const [edit, setEdit] = useState<boolean>(false)
+  const [editComment, setEditComment] = useState<string>('')
 
   const user = store.getState().user;
 
   useEffect(() => {
     const validUser = () => {
-  
-      if (user.id === item.u_id) {
+      if (user.id === comment.u_id) {
         setValid(true)
+        console.log(valid); 
       }
-      
     }
     validUser();
   }, [user])
+
+  const getReply = async () => {
+    await axios.get(`/replys/${comment.id}`)
+      .then((res) => {
+        setReplys(res.data);
+      }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  useEffect(() => {
+    getReply();
+  }, [])
 
   const handleShow = () => {
     setShow(!show)
   }
 
-  const getReply = async () => {
-    await axios.get(`/replys/${item.id}`)
-      .then((res) => {
-        setReplys(res.data)
-      }
-    ).catch((err) => {
-      console.log(err)
-    })
-  }
-  
-  useEffect(() => {
-    getReply();
-  }, [])
-
-  const handleReply = async () => {
-    const name = `${user.firstName ?? ''} ${user.lastName ?? ''}`;
-
-    const data = {
-      content: comment,
-      c_id: Number(item.id),
-      commenter: name,
-      img: user.picture,
-      u_id: user.id,
-    };
-
-    await axios.post('/replys', data)
-      .then(() => {
-        getReply();
-      }
-    ).catch((err) => {
-      console.log(err)
-    })
-
-    setComment('')
-  }
-
   const handleDelete = async () => {
-    await axios.delete(`/comments/${item.id}`)
+    await axios.delete(`/comments/${comment.id}`)
       .then(() => {
         console.log('삭제 성공');
       }
@@ -100,7 +76,35 @@ const ReComment = ({ item }: ReCommentProps) => {
   }
 
   const editShow = () => {
+    setEditComment(comment.content)
     setEdit(!edit)
+  }
+
+  const handleEdit = async () => {
+    const data = {
+      content: editComment,
+    }
+
+    if (comment.boardId) {
+      await axios.patch(`/comments/${comment.id}`, data)
+      .then(() => {
+        setEdit(!edit)
+        console.log('수정 성공');
+      }).catch((err) => {
+        console.log(err);
+      })
+    } else {
+      await axios.patch(`/replys/${comment.id}`, data)
+      .then(() => {
+        setEdit(!edit)
+        console.log("대댓글 수정 성공");
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
+
+    
   }
 
   return (
@@ -108,11 +112,11 @@ const ReComment = ({ item }: ReCommentProps) => {
       <div className={styles.comment__head}>
         <div className={styles.profile}>
           <a href='#'>
-            <img src={item.img} alt='profile' />
+            <img src={comment.img} alt='profile' />
           </a>
 
           <div className={styles.profile__info}>
-            <a href='#'>{item.commenter}</a>
+            <a href='#'>{comment.commenter}</a>
             {/* <span>{item.date}</span> */}
           </div>
         </div>
@@ -121,28 +125,29 @@ const ReComment = ({ item }: ReCommentProps) => {
         {
           edit ? (
             <>
-            <div className={styles.comment__body}>
-              <textarea
-                className={styles.inputComment}
-                value={item.content}
-                onChange={(e) => setComment(e.target.value)}
-              />
-            </div>
-            <Button 
-              variant='contained' 
-              color='primary'
-              sx={{ display: 'flex', justifyContent: 'flex-end'}}
-            >수정</Button>
+              <div className={styles.comment__body}>
+                <textarea
+                  className={styles.inputComment}
+                  value={editComment}
+                  onChange={(e) => setEditComment(e.target.value)}
+                />
+              </div>
+              <Button 
+                variant='contained' 
+                color='primary'
+                sx={{ display: 'flex', justifyContent: 'flex-end'}}
+                onClick={handleEdit}
+              >수정</Button>
             </>
           ) : (
             <div className={styles.comment__body}>
-              <p>{item.content}</p>
+              <p>{comment.content}</p>
               {
                 valid && (
                   <div className={styles.comment__toolbox}>
                     <Edit
                       onClick={editShow}
-                      sx={{ mr: '0.5rem' }}
+                      sx={{ mr: '0.5rem', cursor: 'pointer' }}
                     />
                     <DeleteForever 
                       onClick={handleDelete}
@@ -156,39 +161,38 @@ const ReComment = ({ item }: ReCommentProps) => {
         }
 
         {
-          item?.boardId ? (
+          comment.boardId ? (
             <div className={styles.comment__recomment}>
               <div className={styles.info} onClick={handleShow}>
                 <Add />
                 <span>
                   {
-                    replys.length > 0 ? `${replys.length}개의 답글` : '답글 달기'
+                    replys.length > 0 ? `${replys.length}개의 답글` : "답글이 없습니다."
                   }
                 </span>
               </div>
-            </div>  
+            </div>
           ) : null
         }
-
         {
           show && (
-            <Container>
-              {
-                <Comment item={replys}/>
-              }
+            <ReplyContainer>
+            {
+              replys.map((reply: Reply) => (
+                <ReComment comment={reply} />
+              ))
+            }
 
-              <FooterInput>
-                <textarea 
-                  className={styles.inputComment} 
-                  placeholder='댓글을 입력하세요'
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)} 
-                />
-                <ButtonWrapper>
-                  <Button variant='contained' color='primary' onClick={handleReply}>댓글 작성</Button>
-                </ButtonWrapper>
-              </FooterInput>
-            </Container>
+            <FooterInput>
+              <textarea 
+                className={styles.inputComment} 
+                placeholder='댓글을 입력하세요'
+              />
+              <ButtonWrapper>
+                <Button variant='contained' color='primary'>댓글 작성</Button>
+              </ButtonWrapper>
+            </FooterInput>
+          </ReplyContainer>
           )
         }
     </>
@@ -197,7 +201,7 @@ const ReComment = ({ item }: ReCommentProps) => {
 
 export default ReComment;
 
-const Container = styled.div`
+const ReplyContainer = styled.div`
   padding: 1.5rem;
   border: 1px solid #e1e4e8;
   margin-top: 1.3rem;
@@ -205,7 +209,11 @@ const Container = styled.div`
   background-color: #f1f3f5;
 `
 
-const FooterInput = styled.div``
+const FooterInput = styled.div`
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e1e4e8;
+`
 
 const ButtonWrapper = styled.div`
   display: flex;
