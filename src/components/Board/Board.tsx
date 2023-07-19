@@ -4,6 +4,7 @@ import Post from "./Post";
 import Spinner from "./Spinner";
 import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { themeType } from "../../theme";
 
 const Posts = () => {
     return 
@@ -11,7 +12,7 @@ const Posts = () => {
 
 // 게시판 중앙 정렬 및 마진
 const BoardCenter = styled.div`
-    background-color: ${props => props.theme.bgColor1};
+    background-color: ${(props: themeType) => props.theme.bgColor1};
     width: 100vw;
     display: flex;
     justify-content: center;
@@ -21,7 +22,7 @@ const BoardCenter = styled.div`
 // 게시물 정렬
 const BoardCase = styled.div`
     // 일반 크기
-    background-color: ${props => props.theme.bgColor1};
+    background-color: ${(props: themeType) => props.theme.bgColor1};
     max-width: 1760px;
     display: flex;
     flex-wrap: wrap;
