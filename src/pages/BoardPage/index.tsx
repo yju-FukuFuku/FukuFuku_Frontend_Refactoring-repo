@@ -9,6 +9,7 @@ import { Link } from 'react-scroll';
 import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
+import { store } from '../../store';
 
 interface Board {
   id: number;
@@ -85,8 +86,20 @@ const PostPage = () => {
     
     const headerIds = Array.from(header || []).map((el) => el.textContent || '');
     setHeaderArray(headerIds);
-
   };
+
+  const editBoard = () => {
+    navigate(`/write?id=${boardId}`);
+  }
+
+  const deleteBoard = () => {
+    axios.delete(`boards/${boardId}`)
+    .then(() => {
+      navigate('/');
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
 
   // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
   if (!board) {
@@ -133,6 +146,22 @@ const PostPage = () => {
                   <span className={styles.board__date}>{board.createdAt.slice(0, 10)}</span>
                 }
               </Info>
+              {
+                store.getState().user.id === board.u_id && (
+                <Toolbox>
+                  <span 
+                    className={styles.tool__edit}
+                    onClick={editBoard}
+                  >수정</span>
+                  <span 
+                    className={styles.tool_delete}
+                    onClick={deleteBoard}
+                  >삭제</span>
+                </Toolbox>
+                )
+              }
+              
+
             </InfoWrapper>
 
             <TagWrapper>
@@ -231,10 +260,17 @@ const Wrapper = styled.div`
   }
 `
 
+const Toolbox = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 const Info = styled.div``
 
 const InfoWrapper = styled.div`
   width: 100%;
+  display: flex;
+  justify-content: space-between;
 `
 
 const TagWrapper = styled.div`

@@ -3,11 +3,12 @@ import ReactQuill from "react-quill";
 import './writepage.module.scss'
 import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
-import React, { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { postBoard } from '../../api/Board';
 import { store } from '../../store';
 import { Tag } from "@mui/icons-material";
+import axios from "axios";
 
 const StyledTextField = styled(TextField) (
   {
@@ -41,6 +42,29 @@ const WritePage = () => {
 
   const quillRef = useRef<ReactQuill>(null);
 
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+  }
+  
+  const query = useQuery();
+  const editId = query.get('id');
+
+  useEffect(() => {
+    const getBoard = async () => {
+      if(editId) {
+        await axios.get(`boards/${editId}`)
+        .then((response) => {
+          setTitle(response.data.title);
+          setContent(response.data.content);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+      }
+    }
+    getBoard();
+  }, [editId])
+
   const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
@@ -56,6 +80,22 @@ const WritePage = () => {
   const save = async () => {
     const { id } = store.getState().user;
 
+    if (editId) {
+      const data = {
+        title: title,
+        content: content,
+      }
+
+      await axios.patch(`boards/${editId}`, data)
+      .then(() => {
+        navigate(`/${editId}`);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      return;
+    }
+
     const data = {
       title: title,
       content: content,
@@ -63,9 +103,10 @@ const WritePage = () => {
       tags: tag.map((item) => item.name),
     }
 
-    console.log(data);
-
-    postBoard(data);
+    await postBoard(data)
+    .then(() => {
+      navigate(`/`);
+    })
   }
 
   const imageHandler = () => {

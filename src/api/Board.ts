@@ -17,9 +17,7 @@ export async function postBoard(board: Board) {
 
   await axios.post('/boards', data)
   .then((response) => {
-    console.log(response);
-    
-    postTag(response.data.id, board.tags);
+    return response
   }).catch((error) => {
     console.log(error);
   })
@@ -33,6 +31,15 @@ export async function postBoard(board: Board) {
   // }).catch((error) => {
   //   console.log(error);
   // })
+}
+
+export async function getBoardById(id: number) {
+  await axios.get(`/boards/${id}`)
+  .then((response) => {
+    console.log(response);
+  }).catch((error) => {
+    console.log(error);
+  })
 }
 
 export async function postTag(boardId: number, tag: string[]) {
