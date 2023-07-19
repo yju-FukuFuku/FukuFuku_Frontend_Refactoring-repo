@@ -6,10 +6,11 @@ const MyPage = () => {
   const [userEmail, setId] = useState<string>('');
   const [userName, setName] = useState<string>('');
   const [file, setFile] = useState<string>('')
-  const [content, setContent] = useState<string>('')
-  const [reName, setReName] = useState<boolean>(false)
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [content, setContent] = useState<string>('')    // 한 줄 소개
+  const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
+  const fileInputRef = useRef<HTMLInputElement | null>(null); // 이미지 불러오기
 
+  // 유저 정보 불러오기
   useEffect(() => {
     getData()
   }, [content, file]);
@@ -92,7 +93,7 @@ const MyPage = () => {
     if(e.target.value.includes(" ")) {
       console.log("띄어쓰기가 포함되어 있습니다.")
     } else {
-      setName(e.target.value)
+        setName(e.target.value)
     }
     // console.log(e.target.value)
     // console.log(debounceVal)
@@ -100,15 +101,23 @@ const MyPage = () => {
 
   const handleNameOverlap = () => {
     console.log(debounceVal)
-    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
-      headers: {
-        "Content-type" : "application/json"
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("hi")
-      })
+    // fetch(`http://localhost:3000/check/${e.target.value}`, {
+    //     headers: {
+    //       "Content-type" : "application/json"
+    //     }
+    //   })
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       console.log(data)
+    //       if(data.statusCode == "200"){
+    //         console.log(data.message)
+    //       } else if(data.statusCode == "409") {
+    //         console.log(data.message)
+    //       } else{
+    //         console.log("정의되지 않은 오류입니다.")
+    //       }
+    //     })
+    //     .catch((error) => console.log(error))
   }
 
   useEffect(() => {
@@ -120,28 +129,65 @@ const MyPage = () => {
   // 닉네임 수정 fetch요청
   const handleNameUpdate = () => {
     console.log("이름 변경")
-    fetch("")
-      .then((Response) => Response.json())
-      .then((data) => {
-        console.log(data)
-        console.log("변경완료")
-      })
-      .catch((error) => console.log(error))
-    setReName(false)
+    // fetch("http://localhost:3000/editNickname", {
+    //   headers: {
+    //     "Content-type" : "application/json"
+    //   },
+    //   body: JSON.stringify({
+    //     "data": {
+    //       "where": {
+    //         "email": "9000248@g.yju.ac.kr" // 바꾸려는 유저의 이메일
+    //       },
+    //       "data": {
+    //         "nickName": "test" // 바꾸려는 닉네임 값
+    //       }
+    //     }
+    //   })
+    // })
+    //   .then((Response) => Response.json())
+    //   .then((data) => {
+    //     console.log(data)
+    //     if(data.statusCode == "200"){
+    //       console.log(data.message)
+    //       // setName(data.nickName)
+    //       console.log("변경완료")
+    //     } else if(data.statusCode == "400") {
+    //       console.log(data.message)
+    //     } else if(data.statusCode == "409") {
+    //       console.log(data.message)
+    //     }
+    //   })
+    //   .catch((error) => console.log(error))
+    // setReName(false)
   }
 
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
     console.log("회원 탈퇴")
-    fetch("", {
-      method: "POST",
+    fetch("http://localhost:5173/withdraw", {
+      method: "DELETE",
       headers : {
         "Content-type" : "application/json"
       },
+      body: JSON.stringify({
+        "data": {
+          "where": {
+            "email": userEmail
+          }
+        }
+      })
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
+        if(data.statusCode == "201"){
+          console.log(data.message)
+        } else if(data.statusCode == "400") {
+          console.log(data.message)
+        } else{
+          console.log("정의되지 않은 오류입니다.")
+        }
+
         console.log("탈퇴 성공")
       })
       .catch((error) => console.log(error)) 
@@ -166,17 +212,36 @@ const MyPage = () => {
   
   // 서버로 데이터 전송
   const handleUpdateContent = () => { 
-    
-    fetch("", {
-      method: "POST",
+    // 한 줄 소개 수정
+    fetch("http://localhost:5173/editIntroduction", {
+      method: "PATCH",
       headers: {
         "Content-type" : "application/json"
-      }
+      },
+      body: JSON.stringify({
+        "updateData" : {
+          "email": userEmail
+        },
+        "data": {
+          "introduction": content
+        }
+      })
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
-        setContent(userData)
+        if(data.statusCode == "422") {
+          console.log(data.message)
+        } else if(data.statusCode == "400"){
+          console.log(data.message)
+          // console.log(data.error)
+        } else if(data.statusCode == "200") {
+          console.log(data.message)
+          // 데이터를 다시 받아서 넣어야하나?
+          setContent(userData)
+        } else {
+          console.log("정의되지 않은 오류입니다.")
+        }
       })
       .catch((error) => console.log(error))
     console.log("수정 완료")
