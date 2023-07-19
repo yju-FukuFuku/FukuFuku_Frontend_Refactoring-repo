@@ -1,13 +1,13 @@
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
+import ReactQuill from "react-quill";
 
 import './writepage.module.scss'
 import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postBoard } from '../../api/Board';
 import { store } from '../../store';
+import { Tag } from "@mui/icons-material";
 
 const StyledTextField = styled(TextField) (
   {
@@ -35,16 +35,11 @@ const WritePage = () => {
   const [title, setTitle] = useState<string>("")
   const [tag, setTag] = useState<Tag>([] as Tag)
   const [tagValue, setTagValue] = useState<string>("")
+  const [content, setContent] = useState<string>("")
 
-  const editorRef = useRef<Editor>(null);
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    if (editorRef.current) {
-      const defaultValue = editorRef.current.getInstance();
-      defaultValue.setMarkdown('');
-    }
-  }, []);
+
+  const quillRef = useRef<ReactQuill>(null);
 
   const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -59,18 +54,65 @@ const WritePage = () => {
   };
 
   const save = async () => {
-    const content = editorRef.current?.getInstance();
     const { id } = store.getState().user;
-    
+
     const data = {
       title: title,
-      content: content?.getHTML(),
+      content: content,
       u_id: id,
+      tags: tag.map((item) => item.name),
     }
 
+    console.log(data);
+
     postBoard(data);
-    
   }
+
+  const imageHandler = () => {
+    // 1. 이미지를 저장할 input type=file DOM을 만든다.
+    const input = document.createElement('input');
+    // 속성 써주기
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    // 2. input에 이미지를 넣으면 발생하는 이벤트를 감지한다.
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      console.log(file);
+      
+
+      // 3. 이미지를 서버에 업로드한다.
+      const formData = new FormData();
+      formData.append('image', file);
+
+      // const url = await res.text();
+
+      // 4. quill에 이미지를 삽입한다.
+      // const quill = quillRef.current;
+      // const range = quill?.getEditor().getSelection()?.index;
+      // if (range !== undefined && quill) {
+      //   quill.getEditor().insertEmbed(range, 'image', url);
+      // }
+    }
+  }
+ 
+  const moudles = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic"],
+          ["image"],
+        ],
+        handlers: {
+          image: imageHandler,
+        },
+      }
+    }
+  }, [])
 
   return (
     <Container>
@@ -111,24 +153,21 @@ const WritePage = () => {
       </TagContainer>
       
       <EditorContainer>
-        <Editor
-          ref={editorRef}
-          defaultValue=""
-          previewStyle="vertical"
-          placeholder="글을 작성하세요"
-          initialEditType="wysiwyg"
-          useCommandShortcut={false}
-          hideModeSwitch={true}
+        <ReactQuill
+          ref={quillRef}
+          style={{ height: '400px' }}
+          onChange={setContent}
+          modules={moudles}
+          value={content}
         />
       </EditorContainer>
 
       <EditorFooter>
-        <OutContainer>
-          <Button 
-            variant="contained" color="error"
-            onClick={() => {navigate('/')}}
-          >취소</Button>
-        </OutContainer>
+        <Button 
+          variant="contained" color="error"
+          sx={{ ml: 2 }}
+          onClick={() => {navigate('/')}}
+        >취소</Button>
 
         <Button 
           variant="contained" 
@@ -190,25 +229,15 @@ const TagItem = styled.div`
 `
 
 const EditorContainer = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
 `
 
 const EditorFooter = styled.div`
-  width: 100%;
   height: 40px;
-  padding: 20px 0;
-  display: flex;
-  justify-content: flex-end;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8px;
-  position: relative;
-`
-
-const OutContainer = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
-  position: absolute;
-  left: 0;
-  margin-left: 20px;
+  justify-content: space-between;
+  position: relative;
+  bottom: 0;
 `

@@ -16,6 +16,8 @@ interface ReCommentProps {
     commenter: string;
     img: string;
   }
+
+  handleDelete: (id: number) => void;
 }
 
 interface Reply {
@@ -27,7 +29,7 @@ interface Reply {
   img: string;
 }[]
 
-const ReComment = ({ comment}: ReCommentProps) => {
+const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
 
   const [show, setShow] = useState<boolean>(false)
   const [commentValue, setCommentValue] = useState<string>('')
@@ -42,11 +44,10 @@ const ReComment = ({ comment}: ReCommentProps) => {
     const validUser = () => {
       if (user.id === comment.u_id) {
         setValid(true)
-        console.log(valid); 
       }
     }
     validUser();
-  }, [user])
+  }, [])
 
   const getReply = async () => {
     await axios.get(`/replys/${comment.id}`)
@@ -65,16 +66,6 @@ const ReComment = ({ comment}: ReCommentProps) => {
     setShow(!show)
   }
 
-  const handleDelete = async () => {
-    await axios.delete(`/comments/${comment.id}`)
-      .then(() => {
-        console.log('삭제 성공');
-      }
-    ).catch((err) => {
-      console.log(err)
-    })
-  }
-
   const editShow = () => {
     setEditComment(comment.content)
     setEdit(!edit)
@@ -89,7 +80,7 @@ const ReComment = ({ comment}: ReCommentProps) => {
       await axios.patch(`/comments/${comment.id}`, data)
       .then(() => {
         setEdit(!edit)
-        console.log('수정 성공');
+        comment.content = editComment;
       }).catch((err) => {
         console.log(err);
       })
@@ -97,7 +88,7 @@ const ReComment = ({ comment}: ReCommentProps) => {
       await axios.patch(`/replys/${comment.id}`, data)
       .then(() => {
         setEdit(!edit)
-        console.log("대댓글 수정 성공");
+        comment.content = editComment;
       })
       .catch((err) => {
         console.log(err);
@@ -105,6 +96,42 @@ const ReComment = ({ comment}: ReCommentProps) => {
     }
 
     
+  }
+
+  const handleReply = async () => {
+
+    if (!user.id) {
+      alert('로그인 후 이용해주세요');
+      return;
+    }
+
+    const name = user.nickName ? user.nickName : `${user?.firstName ?? 'Unknown'} ${user?.lastName ?? ''}`;
+
+    const data = {
+      content: commentValue,
+      c_id: comment.id,
+      u_id: user.id,
+      commenter: name,
+      img: user.picture,
+    }
+
+    await axios.post('/replys', data)
+    .then(() => {
+      getReply();
+      setCommentValue('');
+    }
+    ).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  const replyDelete = async (id: number) => {
+    await axios.delete(`/replys/${id}`)
+    .then(() => {
+      getReply();
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 
   return (
@@ -150,7 +177,7 @@ const ReComment = ({ comment}: ReCommentProps) => {
                       sx={{ mr: '0.5rem', cursor: 'pointer' }}
                     />
                     <DeleteForever 
-                      onClick={handleDelete}
+                      onClick={() => handleDelete(comment.id)}
                       sx={{ cursor: 'pointer' }}
                     />
                   </div>
@@ -179,7 +206,7 @@ const ReComment = ({ comment}: ReCommentProps) => {
             <ReplyContainer>
             {
               replys.map((reply: Reply) => (
-                <ReComment comment={reply} />
+                <ReComment comment={reply} handleDelete={replyDelete} />
               ))
             }
 
@@ -187,9 +214,15 @@ const ReComment = ({ comment}: ReCommentProps) => {
               <textarea 
                 className={styles.inputComment} 
                 placeholder='댓글을 입력하세요'
+                value={commentValue}
+                onChange={(e) => setCommentValue(e.target.value)}
               />
               <ButtonWrapper>
-                <Button variant='contained' color='primary'>댓글 작성</Button>
+                <Button 
+                  variant='contained' 
+                  color='primary'
+                  onClick={handleReply}
+                >댓글 작성</Button>
               </ButtonWrapper>
             </FooterInput>
           </ReplyContainer>

@@ -11,12 +11,16 @@ import WritePage from './pages/WritePage'
 import ErrorPage from './pages/404Page'
 import SavesPage from './pages/SavesPage'
 import LikePage from './pages/LikeListPage'
+import { RootState } from './store'
+import { useSelector } from 'react-redux'
 
 function App() {
+  const user = useSelector((state: RootState) => state.user)
+  
   const Layout = () => {
     return (
       <>
-        <Nav />
+        <Nav user={user} />
         
         <Outlet />
       </>

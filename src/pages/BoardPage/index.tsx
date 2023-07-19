@@ -6,10 +6,9 @@ import {
   Favorite
 }from '@mui/icons-material';
 import { Link } from 'react-scroll';
-import { Button, Skeleton } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
-import { store } from '../../store';
 
 interface Board {
   id: number;
@@ -17,11 +16,13 @@ interface Board {
   content: string;
   like: number;
   u_id: number;
+  createdAt: string;
 }
 
 interface Author {
   email: string;
   picture: string;
+  name: string;
 }
 
 const PostPage = () => {
@@ -29,14 +30,10 @@ const PostPage = () => {
   const [board, setBoard] = useState<Board | null>(null)
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
-  const [commentValue, setCommentValue] = useState<string>('')
   const [author, setAuthor] = useState<Author>({} as Author)
 
   const navigate = useNavigate();
 
-  const user = store.getState().user;
-  console.log(board);
-  
   // 게시글 가져오기
   useEffect(() => {
     async function getBoard() {
@@ -55,7 +52,8 @@ const PostPage = () => {
   // 작성자 정보 가져오기
   const getAuthor = async (u_id: number) => {
     const { data } = await axios.get(`user/${u_id}`);
-    setAuthor({ email: data.email, picture: data.picture })
+    const name = data?.firstName + data?.lastName;
+    setAuthor({ email: data.email, picture: data.picture, name: name })
   }
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
@@ -88,32 +86,6 @@ const PostPage = () => {
     const headerIds = Array.from(header || []).map((el) => el.textContent || '');
     setHeaderArray(headerIds);
 
-  };
-
-  // 댓글 작성
-  const handleComment = async () => {
-    if (!user.id) {
-      alert('로그인이 필요합니다.');
-      return;
-    }
-
-    const name = `${user.firstName ?? ''} ${user.lastName ?? ''}`;
-
-    const data = {
-      content: commentValue,
-      boardId: Number(boardId),
-      commenter: name,
-      img: user.picture,
-      u_id: user.id,
-    };
-
-    try {
-      await axios.post('/comments', data);
-      setCommentValue('');
-      getComment();
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
@@ -151,6 +123,21 @@ const PostPage = () => {
   
           <HeadWrapper>
             <Title>{board.title}</Title>
+
+            <InfoWrapper>
+              <Info>
+                <span className={styles.author__Name}>{author.name}</span>
+                <span className={styles.separator}>·</span>
+                {
+                  board.createdAt &&
+                  <span className={styles.board__date}>{board.createdAt.slice(0, 10)}</span>
+                }
+              </Info>
+            </InfoWrapper>
+
+            <TagWrapper>
+              
+            </TagWrapper>
   
             <SideContainer>
               <SideWrapper>
@@ -208,36 +195,13 @@ const PostPage = () => {
               </div>
             </div>
           </ProfileWrapper>
-  
-          <FooterWrapper>
-            <FooterHead>
-              <h4>0개의 댓글</h4>
-            </FooterHead>
-            
-            <FooterInput>            
-              <textarea 
-                className={styles.inputComment} 
-                placeholder='댓글을 입력하세요'
-                value={commentValue}
-                onChange={(e) => setCommentValue(e.target.value)}
-              />
-              <ButtonWrapper>
-                <Button 
-                  variant='contained' 
-                  color='primary'
-                  onClick={handleComment}
-                >댓글 작성</Button>
-              </ButtonWrapper>
-            </FooterInput>
-  
-            <FooterBody>
-              {
-                <Comment />
-              }
-            </FooterBody>
-            
-          </FooterWrapper>
-  
+
+          <FooterBody>
+          {
+            <Comment />
+          }
+          </FooterBody>
+
         </Wrapper>
       </Container>
     )
@@ -267,6 +231,8 @@ const Wrapper = styled.div`
   }
 `
 
+const Info = styled.div``
+
 const InfoWrapper = styled.div`
   width: 100%;
 `
@@ -281,26 +247,8 @@ const ProfileWrapper = styled.div`
   margin-bottom: 10rem;
 `
 
-const FooterWrapper = styled.div`
-  width: 100%;
-  margin-top: 1.5rem;
-`
-
-const FooterHead = styled.div`
-  padding: 0.4rem;
-  line-height: 1.5;
-  font-weight: 600;
-`
-
-const FooterInput = styled.div``
-
 const FooterBody = styled.div`
   margin-top: 1rem;
-`
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
 `
 
 const HeadWrapper = styled.div`
