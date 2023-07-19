@@ -31,13 +31,17 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path='/recent' element={<RecentPage />} />
-            <Route path=':userId/:postId' element={<BoardPage />} />
             <Route path='/myList' element={<MyListPage/>} />
-            <Route path='/error' element={<ErrorPage/>} />
             <Route path='/setting' element={<MyPage/>} />
-            <Route path=':userId' element={<MyListPage/>} />
+            <Route path='@userId' element={<MyListPage/>} />
             <Route path='/write/:postId' element={<SavesPage/>} />
             <Route path='/like' element={<LikePage/>} />
+            <Route path='/:boardId' element={<BoardPage />} />
+            
+            <Route path='/error' element={<ErrorPage />} />
+            <Route path='/*' element={<ErrorPage />} />
+
+
           </Route>
           
           <Route path='/write' element={<WritePage />} />

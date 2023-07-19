@@ -6,40 +6,59 @@ import {
   Favorite
 }from '@mui/icons-material';
 import { Link } from 'react-scroll';
-import styles from './board.module.scss';
 import { Button } from '@mui/material';
-import Comment from './Comment';
+import Comment from '../../components/Comment/Comment';
+import styles from './board.module.scss';
+import { store } from '../../store';
 
 interface Board {
   id: number;
   title: string;
   content: string;
   like: number;
+  u_id: number;
+}
+
+interface Comment {
+  id: number;
+  content: string;
+  boardId: number;
+  commenter: string;
+  img: string;
+  u_id: number;
+}[]
+
+interface Author {
+  email: string;
+  picture: string;
 }
 
 const PostPage = () => {
-
-  const test = [
-    {
-      userImg: 'https://avatars.githubusercontent.com/u/121005861?v=4',
-      userName: 'hetame',
-      date: '1일 전',
-      comment: '댓글입니다.'
-    },
-    {
-      userImg: 'https://avatars.githubusercontent.com/u/121005861?v=4',
-      userName: 'hetame',
-      date: '1일 전',
-      comment: '댓글입니다.'
-    }
-  ]
-
   const { boardId } = useParams();
   const [board, setBoard] = useState<Board | null>({} as Board)
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
+  const [comments, setComments] = useState<Comment[]>([])
+  const [commentValue, setCommentValue] = useState<string>('')
+  const [author, setAuthor] = useState<Author>({} as Author)
 
   const navigate = useNavigate();
+
+  const user = store.getState().user;
+
+  // 게시글 가져오기
+  useEffect(() => {
+    async function getBoard() {
+      await axios.get(`boards/${boardId}`).then((response) => {
+        setBoard(response.data);
+        getAuthor(response.data.u_id);
+      }).catch((error) => {
+        console.log(error);
+        navigate('/error');
+      });
+    }
+    getBoard();
+  }, []);  
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
   useEffect(() => {
@@ -60,7 +79,7 @@ const PostPage = () => {
   // 글 내용이 바뀔때마다 idTag 실행
   useEffect(() => {
     idTag();
-  }, [board]);
+  }, []);
 
   // 글 내용에서 h1~h6 태그를 찾아서 id를 부여해주고 그 id를 배열에 담아줌
   const idTag = () => {
@@ -78,113 +97,152 @@ const PostPage = () => {
 
   };
 
-  // 현재 id를 가지고 글 찾고 글이 없으면 error 페이지로 이동
-  useEffect(() => {
-    async function getBoard() {
-      await axios.get(`http://localhost:3000/boards/${boardId}`).then((response) => {
-        setBoard(response.data);
-      }).catch((error) => {
-        console.log(error);
-        navigate('/error');
-      });
-    }
-    getBoard();
-  }, [boardId, navigate])
-
-  if (!board) {
-    return null;
+  // 댓글 가져오기
+  async function getComment() {
+    await axios.get(`comments/${boardId}`).then((res) => {
+      setComments(res.data);
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
-  // 글이 있으면 글의 제목, 내용, 좋아요를 가져옴
-  const { title, content, like } = board;
+  // 작성자 정보 가져오기
+  const getAuthor = async (u_id: number) => {
+    const { data } = await axios.get(`users/${u_id}`);
+    setAuthor({ email: data.email, picture: data.picture })
+  }
 
-  return (
-    <Container>
-      <Wrapper>
+  useEffect(() => {
+    getComment();
+  }, []);
+  
+  // 댓글 작성
+  const handleComment = async () => {
+    if (!user.id) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
 
-        <HeadWrapper>
-          <Title>{title}</Title>
+    const name = `${user.firstName ?? ''} ${user.lastName ?? ''}`;
 
-          <SideContainer>
-            <SideWrapper>
-              <SideTool fixed={fixed ? 'true' : 'false'}>
-                <Favorite
-                  color='disabled'
-                  sx={{ mb: 1, backgroundColor: 'white',
-                        border: '1px solid lightgrey', borderRadius: '50%', padding: '8px', cursor: 'pointer', 
-                        '&:hover': { color: 'black', border: '1px solid black' 
-                      }}}
-                />
-                {like}
-              </SideTool>
-            </SideWrapper>
-          </SideContainer>
+    const data = {
+      content: commentValue,
+      boardId: Number(boardId),
+      commenter: name,
+      img: user.picture,
+      u_id: user.id,
+    };
 
-          <SideContainer>
-            <SideNavWrapper>
-              <SideNav fixed={fixed ? 'true' : 'false'}>
-              {
-                headerArray.map((item, index) => (
-                  <SideNavTitle key={index}>
-                    <Link 
-                      activeClass='active'
-                      to={item}
-                      spy={true}
-                      smooth={true}
-                      offset={-100}
-                      duration={500}
-                    >
-                      {item}
-                    </Link>
-                  </SideNavTitle>
-                ))
-              }
-              </SideNav>
-            </SideNavWrapper>
-          </SideContainer>
+    try {
+      await axios.post('/comments', data);
+      setCommentValue('');
+      getComment();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-        </HeadWrapper>
-        
-        <BodyWrapper>
-          <Content id='content' dangerouslySetInnerHTML={{__html: content}} />
-        </BodyWrapper>
-
-        <ProfileWrapper>
-          <div className={styles.main__profile}>
-            <a href='javascript:void(0)'>
-              <img src='https://avatars.githubusercontent.com/u/121005861?v=4' alt='profile' />
-            </a>
-
-            <div className={styles.profile__info}>
-              <a href='javascript:void(0)'>hetame</a>
-              <span>한줄소개 적는 부분</span>
+  if (!board) {
+    return <div>loading...</div>
+  } else {
+    return (
+      <Container>
+        <Wrapper>
+  
+          <HeadWrapper>
+            <Title>{board.title}</Title>
+  
+            <SideContainer>
+              <SideWrapper>
+                <SideTool fixed={fixed ? 'true' : 'false'}>
+                  <Favorite
+                    color='disabled'
+                    sx={{ mb: 1, backgroundColor: 'white',
+                          border: '1px solid lightgrey', borderRadius: '50%', padding: '8px', cursor: 'pointer', 
+                          '&:hover': { color: 'black', border: '1px solid black' 
+                        }}}
+                  />
+                  {board.like}
+                </SideTool>
+              </SideWrapper>
+            </SideContainer>
+  
+            <SideContainer>
+              <SideNavWrapper>
+                <SideNav fixed={fixed ? 'true' : 'false'}>
+                {
+                  headerArray.map((item, index) => (
+                    <SideNavTitle key={index}>
+                      <Link 
+                        activeClass='active'
+                        to={item}
+                        spy={true}
+                        smooth={true}
+                        offset={-100}
+                        duration={500}
+                      >
+                        {item}
+                      </Link>
+                    </SideNavTitle>
+                  ))
+                }
+                </SideNav>
+              </SideNavWrapper>
+            </SideContainer>
+  
+          </HeadWrapper>
+          
+          <BodyWrapper>
+            <Content id='content' dangerouslySetInnerHTML={{__html: board.content}} />
+          </BodyWrapper>
+  
+          <ProfileWrapper>
+            <div className={styles.main__profile}>
+              <a href='#'>
+                <img src={author.picture} alt='profile' />
+              </a>
+  
+              <div className={styles.profile__info}>
+                <a href='#'>{author.email}</a>
+                <span>한줄소개 적는 부분</span>
+              </div>
             </div>
-          </div>
-        </ProfileWrapper>
-
-        <FooterWrapper>
-          <FooterHead>
-            <h4>0개의 댓글</h4>
-          </FooterHead>
-          
-          <FooterInput>
-            <textarea className={styles.inputComment} placeholder='댓글을 입력하세요' />
-            <ButtonWrapper>
-              <Button variant='contained' color='primary'>댓글 작성</Button>
-            </ButtonWrapper>
-          </FooterInput>
-
-          <FooterBody>
-            {
-              <Comment item={test}/>
-            }
-          </FooterBody>
-          
-        </FooterWrapper>
-
-      </Wrapper>
-    </Container>
-  )
+          </ProfileWrapper>
+  
+          <FooterWrapper>
+            <FooterHead>
+              <h4>0개의 댓글</h4>
+            </FooterHead>
+            
+            <FooterInput>            
+              <textarea 
+                className={styles.inputComment} 
+                placeholder='댓글을 입력하세요'
+                value={commentValue}
+                onChange={(e) => setCommentValue(e.target.value)}
+              />
+              <ButtonWrapper>
+                <Button 
+                  variant='contained' 
+                  color='primary'
+                  onClick={handleComment}
+                >댓글 작성</Button>
+              </ButtonWrapper>
+            </FooterInput>
+  
+            <FooterBody>
+              {
+                <Comment item={comments}/>
+              }
+            </FooterBody>
+            
+          </FooterWrapper>
+  
+        </Wrapper>
+      </Container>
+    )
+  }
+  
 }
 
 const Container = styled.div`

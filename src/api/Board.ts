@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { tokenAccess } from '../hooks/useTokenAccess';
 
 type Board = {
   title: string;
   content: string;
+  u_id: number | null;
 }
 
 export async function postBoard(board: Board) {
