@@ -35,7 +35,7 @@ const MyPage = () => {
   }
 
   // 올바른 파일인지 체크 후 fetch요청
-  const extension = ['.img', '.png', '.jpg', '.jpeg']
+  const extension = ['.png', '.jpg', '.jpeg']
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileCheck = (e.target.files? e.target.files[0].name : null)
@@ -166,6 +166,7 @@ const MyPage = () => {
     //     if(data.statusCode == "200"){
     //       console.log(data.message)
     //       // setName(data.nickName)
+    //       // setReName(false)
     //       console.log("변경완료")
     //     } else if(data.statusCode == "400") {
     //       console.log(data.message)
