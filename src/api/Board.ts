@@ -7,7 +7,10 @@ type Board = {
   tags: string[];
 }
 
-export async function postBoard(board: Board) {
+// 게시글 작성
+export const postBoard = async (board: Board) => {
+
+  const tagId: number[] = [];
 
   const data = {
     title: board.title,
@@ -15,9 +18,19 @@ export async function postBoard(board: Board) {
     u_id: board.u_id
   }
 
+  board.tags.forEach(async (tag) => {
+    await axios.post('/tags', {
+      name: tag,
+    }).then((res) => {
+      tagId.push(res.data.id);
+    }).catch((error) => {
+      console.log(error);
+    })
+  })
+
   await axios.post('/boards', data)
-  .then((response) => {
-    return response
+  .then((res) => {
+    postBoardTag(res.data.id, tagId);
   }).catch((error) => {
     console.log(error);
   })
@@ -33,27 +46,49 @@ export async function postBoard(board: Board) {
   // })
 }
 
-export async function getBoardById(id: number) {
-  await axios.get(`/boards/${id}`)
-  .then((response) => {
-    console.log(response);
-  }).catch((error) => {
-    console.log(error);
+// 게시물 하나 가져오기
+export async function getBoardById(id: number | null) {
+  const { data } = await axios.get(`/boards/${id}`);
+  return data;
+}
+
+// 게시물 태그 연결
+export async function postBoardTag(boardId: number, tag: number[]) {
+  console.log(boardId, tag);
+  
+  tag.forEach(async (tagId) => {
+    const data = {
+      boardId: boardId,
+      tagId: tagId
+    }
+    await axios.post(`/board-tags`, data)
+    .then((res) => {
+      return res;
+    }).catch((error) => {
+      console.log(error);
+    })
   })
 }
 
-export async function postTag(boardId: number, tag: string[]) {
-  const data = {
-    boardId: boardId,
-    tag: tag
+// 글 id 로 태그 id 가져오기
+export async function getBoardTag(boardId: number): Promise<number[]> {  
+  const { data } = await axios.get(`board-tags/${boardId}`);
+  return data;
+}
+
+// 태그 id로 태그 이름 가져오기
+export async function getTagList(tagList: number[]): Promise<string[]> {
+  const tag: string[] = [];
+
+  for (const tagId of tagList) {
+    const { data } = await axios.get(`tags/${tagId}`);
+    tag.push(data.name);
   }
 
-  console.log(data);
+  return tag;
+}
 
-  await axios.post(`/tags`, data)
-  .then((response) => {
-    console.log(response);
-  }).catch((error) => {
-    console.log(error);
-  })
+// 게시글 수정
+export async function fetchBoard(data: {title: string, content: string}, id:number ) {
+  await axios.patch(`/boards/${id}`, data)
 }

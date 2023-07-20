@@ -10,6 +10,7 @@ import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
+import { getBoardById, getBoardTag, getTagList } from '../../api/Board';
 
 interface Board {
   id: number;
@@ -32,29 +33,37 @@ const PostPage = () => {
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
   const [author, setAuthor] = useState<Author>({} as Author)
+  const [tag, setTag] = useState<string[]>([])
 
   const navigate = useNavigate();
-
+  
   // 게시글 가져오기
   useEffect(() => {
-    async function getBoard() {
-      await axios.get(`boards/${boardId}`).then((response) => {
-        setBoard(response.data);
-        getAuthor(response.data.u_id);
-        idTag();
-      }).catch((error) => {
-        console.log(error);
-        navigate('/error');
-      });
+    const getBoard = async () => {
+      const board = await getBoardById(Number(boardId));
+      getAuthor(board.u_id);      
+      await getTags(board.id);
+      console.log(board);
+      
+      setBoard(board);
+      idTag();
     }
     getBoard();
-  }, []);  
+  }, []);
 
   // 작성자 정보 가져오기
   const getAuthor = async (u_id: number) => {
     const { data } = await axios.get(`user/${u_id}`);
     const name = data?.firstName + data?.lastName;
     setAuthor({ email: data.email, picture: data.picture, name: name })
+  }
+
+  // 태그 가져오기
+  const getTags = async (id: number) => {   
+    const boardTag = await getBoardTag(id);
+    const tagList = await getTagList(boardTag);
+
+    setTag(tagList);
   }
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
@@ -78,7 +87,7 @@ const PostPage = () => {
     if(!document) return;
 
     const content = document.getElementById('content');
-    const header = content?.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const header = content?.querySelectorAll('h1, h2, h3');
 
     header?.forEach((el) => {
       el.setAttribute('id', el.textContent || '');
@@ -102,7 +111,7 @@ const PostPage = () => {
   }
 
   // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
-  if (!board) {
+  if (!board) {   
     return (
       <Container>
         <Wrapper>
@@ -112,14 +121,14 @@ const PostPage = () => {
             <Skeleton sx={{ mr: 1 }} variant='text' width='20%' height='80px' />
           </HeadWrapper>
 
-          <InfoWrapper style={{display: 'flex'}}>
+          <InfoWrapper style={{display: 'flex', justifyContent: 'flex-start'}}>
             <Skeleton sx={{mr: 1}} variant='text' width='10%' height='30px' />
             <Skeleton variant='text' width='10%' height='30px' />
           </InfoWrapper>
 
           <TagWrapper style={{display: 'flex', marginTop: '1rem'}}>
-            <Skeleton sx={{mr: 1, ml: 1}} variant='rounded' width='10%' height='40px' />
-            <Skeleton variant='rounded' width='10%' height='40px' />
+            <Skeleton sx={{mr: 1,}} variant='rounded' width='10%' height='30px' />
+            <Skeleton variant='rounded' width='10%' height='30px' />
           </TagWrapper>
           
           <BodyWrapper style={{ marginTop: 0}}>
@@ -165,9 +174,15 @@ const PostPage = () => {
             </InfoWrapper>
 
             <TagWrapper>
-              
+            {
+              tag ? (
+                tag.map((item, index) => (
+                  <span key={index} className={styles.board__tag}>{item}</span>
+                ))
+              ) : null
+            }
             </TagWrapper>
-  
+              
             <SideContainer>
               <SideWrapper>
                 <SideTool fixed={fixed ? 'true' : 'false'}>
@@ -275,6 +290,7 @@ const InfoWrapper = styled.div`
 
 const TagWrapper = styled.div`
   width: 100%;
+  margin-top: 1rem;
 `
 
 const ProfileWrapper = styled.div`
@@ -290,7 +306,9 @@ const FooterBody = styled.div`
 const HeadWrapper = styled.div`
   width: 100%;
   margin-top: 1.5rem;
-  margin-bottom: 1.rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e9ecef;
 `
 
 const SideContainer = styled.div`

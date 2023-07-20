@@ -9,22 +9,22 @@
     margin-left: 1rem;
 
     a {
-      font-size: 1.7rem;
+      font-size: 1.4rem;
       font-weight: bold;
       color: #000;
       text-decoration: none;
     }
 
     span {
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #495057;
       margin-top: 1rem;
     }
   }
 
   img {
-    width: 8rem;
-    height: 8rem;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     margin-right: 0.5rem;
   }
@@ -94,4 +94,18 @@
 .tool_delete {
   color: #868e96;
   cursor: pointer;
+}
+
+.board__tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #faf9fa;
+  padding: 0 10px;
+  color: #12b886;
+  border-radius: 10%;
+  height: 30px;
+  margin-right: 0.3rem;
+  white-space: nowrap;
 }

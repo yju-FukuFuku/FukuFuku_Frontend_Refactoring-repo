@@ -5,7 +5,7 @@ import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { postBoard } from '../../api/Board';
+import { getBoardTag, getTagList, postBoard } from '../../api/Board';
 import { store } from '../../store';
 import { Tag } from "@mui/icons-material";
 import axios from "axios";
@@ -51,6 +51,7 @@ const WritePage = () => {
 
   useEffect(() => {
     const getBoard = async () => {
+      getTags(Number(editId));
       if(editId) {
         await axios.get(`boards/${editId}`)
         .then((response) => {
@@ -77,13 +78,22 @@ const WritePage = () => {
     setTag([...tag, { name: value }]);
   };
 
+  const getTags = async (id: number) => {   
+    const boardTag = await getBoardTag(id);
+    const tagList = await getTagList(boardTag);
+    
+    const newTagList = tagList.map((tag) => ({ name: tag }));
+    setTag([...tag, ...newTagList]);
+  }
+
   const save = async () => {
     const { id } = store.getState().user;
 
     if (editId) {
+
       const data = {
         title: title,
-        content: content,
+        content: content
       }
 
       await axios.patch(`boards/${editId}`, data)
@@ -196,10 +206,10 @@ const WritePage = () => {
       <EditorContainer>
         <ReactQuill
           ref={quillRef}
-          style={{ height: '400px' }}
           onChange={setContent}
           modules={moudles}
           value={content}
+          style={{ height: '400px', paddingBottom: '40px' }}
         />
       </EditorContainer>
 
@@ -277,6 +287,8 @@ const EditorFooter = styled.div`
   height: 40px;
   width: 100%;
   display: flex;
+  border: 1px solid #e9ecef;
+  padding: 1rem 0;
   align-items: center;
   justify-content: space-between;
   position: relative;
