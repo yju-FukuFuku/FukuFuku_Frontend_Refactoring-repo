@@ -9,13 +9,14 @@ const MyPage = () => {
   const [content, setContent] = useState<string>('')    // 한 줄 소개
   const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
   const fileInputRef = useRef<HTMLInputElement | null>(null); // 이미지 불러오기
+  const [introCheck, setIntroCheck] = useState<boolean>(false)
 
-  // 유저 정보 불러오기
+  // 유저 정보 불러오기 (한 줄 소개, 닉네임, 이미지가 바뀔 떄마다)
   useEffect(() => {
     getData()
   }, [content, file]);
 
-  // GetFetch
+  // GetFetch -> 리덕스에서 뺴오기
   const getData = () => {
     fetch("https://jsonplaceholder.typicode.com/posts/1")
       .then((response) => response.json())
@@ -27,78 +28,97 @@ const MyPage = () => {
       .catch((error) => console.log(error));
   }
 
-  // 이미지 변경 fetch요청
+  // 버튼 클릭 시 이미지 변경 요청
   const handleImageUpdate = () => {
     console.log("이미지 변경")
     fileInputRef.current?.click();
   }
 
   // 올바른 파일인지 체크 후 fetch요청
-  const extension = ['.img', '.png', '.jpg']
+  const extension = ['.img', '.png', '.jpg', '.jpeg']
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileCheck = (e.target.files? e.target.files[0].name : null)
-    // 파일이 제대로 들어왔는지 확인
+    // 들어온 파일이 null인지 아닌지 체크
     if (fileCheck) {
-      handlePostImg(fileCheck)
+      const checkLength = fileCheck.lastIndexOf(".");
+      // 올바른 확장자인지 check
+      if (extension.includes(fileCheck.substring(checkLength, fileCheck.length))){
+        console.log("올바른 확장자입니다.")
+        // handlePostImg(fileCheck)
+      } else{
+        console.log("확장자가 틀립니다.")
+      }
     } else {
       console.log("파일이 선택되지 않았습니다.");
     }
   };
 
-  // 이미지 변경 fetch
+  // 이미지 변경 Post
   const handlePostImg = (e:string) => {
-    if (extension.includes(e.substring(e.length-4, e.length))){
-      fetch("", {
-        method: "POST",
-        headers: {
-          "Content-type" : "application/json"
+    fetch("http://localhost:3000/user/editImage", {
+      method: "POST",
+      headers: {
+        "Content-type" : "application/json",
+        data: userEmail
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if (data.statusCode == "200") {
+          console.log(data.message)
+          setFile(data.picture)
+        } else if (data.statusCode == "415") {
+          console.log(data.message)
+        } else if (data.statusCode == "422") {
+          console.log(data.message)
+        } else {
+          console.log("정의되지 않은 오류입니다.")
         }
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-          console.log("이미지 전송성공")
-          setFile(e)
-      })
-    }
-    else{
-      console.log("확장자가 틀립니다.")
-    }
-  }
-
-  // 이미지 삭제
-  const handleImageRemove = () => {
-   fetch("", {
-    headers: {
-      "Content-type" : "application/json"
-    }
-   }) 
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data)
     })
   }
 
-  // 닉네임 변경 요청
+  // 이미지 삭제 - 보류
+  const handleImageRemove = () => {
+  //  fetch("", {
+  //   headers: {
+  //     "Content-type" : "application/json"
+  //   }
+  //  }) 
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     console.log(data)
+  //   })
+  }
+
+  // 버튼 클릭시 reName 입력
   const checkTry = () => {
-    console.log("변경 요청")
+    console.log("수정 요청")
     setReName(true)
   }
 
   // 닉네임 중복 체크 - debounce
-  const debounceVal = useDebounce(userName)
+  const debounceVal = useDebounce(userName) // hook 불러오기
+  let inputName = ''
 
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 띄어쓰기 막기.
     if(e.target.value.includes(" ")) {
       console.log("띄어쓰기가 포함되어 있습니다.")
     } else {
-        setName(e.target.value)
+      inputName = e.target.value
     }
-    // console.log(e.target.value)
-    // console.log(debounceVal)
   }
 
+  // debounceVal의 값이 변경되고 일정 시간이 지날때마다 함수 실행
+  useEffect(() => {
+    if(debounceVal != '' && debounceVal == userName){
+      handleNameOverlap()
+    }
+  }, [debounceVal])
+
+  // 닉네임 중복 체크 - Get
   const handleNameOverlap = () => {
     console.log(debounceVal)
     // fetch(`http://localhost:3000/check/${e.target.value}`, {
@@ -120,16 +140,12 @@ const MyPage = () => {
     //     .catch((error) => console.log(error))
   }
 
-  useEffect(() => {
-    if(debounceVal != ''){
-      handleNameOverlap()
-    }
-  }, [debounceVal])
 
-  // 닉네임 수정 fetch요청
+  // 닉네임 중복체크 후 닉네임 수정 - Put
   const handleNameUpdate = () => {
     console.log("이름 변경")
     // fetch("http://localhost:3000/editNickname", {
+    //   method: "PUT",
     //   headers: {
     //     "Content-type" : "application/json"
     //   },
@@ -182,19 +198,17 @@ const MyPage = () => {
         console.log(data)
         if(data.statusCode == "201"){
           console.log(data.message)
+          console.log("탈퇴 성공")
         } else if(data.statusCode == "400") {
           console.log(data.message)
         } else{
           console.log("정의되지 않은 오류입니다.")
         }
-
-        console.log("탈퇴 성공")
       })
       .catch((error) => console.log(error)) 
   }
 
   // INTRO
-  const [introCheck, setIntroCheck] = useState<boolean>(false)
   let userData = ''
 
   // intro 수정 요청
