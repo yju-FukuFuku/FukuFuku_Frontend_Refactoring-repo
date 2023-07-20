@@ -10,7 +10,7 @@ interface PostProps {
     postLike: number; // 게시물 좋아요 개수
     postImg: string; // 게시물 이미지
     postProfileImg: string; // 게시물 작성자 이미지
-    postLink: string; // 게시물 주소
+    postLink: string | number; // 게시물 주소
     postWriterLink: string; // 게시물 작성자 프로필 주소
 }
 
