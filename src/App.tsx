@@ -35,13 +35,12 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path='/recent' element={<RecentPage />} />
-            <Route path='/myList' element={<MyListPage/>} />
-            <Route path='/setting' element={<MyPage />} />
-            <Route path='/:userId' element={<MyListPage />} />
-            <Route path='/saves' element={<SavesPage />} />
-            <Route path='/like' element={<LikePage />} />
-            <Route path='/:userId/:boardId' element={<BoardPage />} />
-            
+            <Route path='/setting' element={<MyPage/>} />
+            <Route path='/:userId' element={<MyListPage/>} />
+            <Route path='/write/:postId' element={<SavesPage/>} />
+            <Route path='/like' element={<LikePage/>} />
+            <Route path='/boards/:boardId' element={<BoardPage />} />
+             
             <Route path='/error' element={<ErrorPage />} />
             <Route path='/*' element={<ErrorPage />} />
 
