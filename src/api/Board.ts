@@ -70,24 +70,6 @@ export async function postBoardTag(boardId: number, tag: number[]) {
   })
 }
 
-// 글 id 로 태그 id 가져오기
-export async function getBoardTag(boardId: number): Promise<number[]> {  
-  const { data } = await axios.get(`board-tags/${boardId}`);
-  return data;
-}
-
-// 태그 id로 태그 이름 가져오기
-export async function getTagList(tagList: number[]): Promise<string[]> {
-  const tag: string[] = [];
-
-  for (const tagId of tagList) {
-    const { data } = await axios.get(`tags/${tagId}`);
-    tag.push(data.name);
-  }
-
-  return tag;
-}
-
 // 게시글 수정
 export async function fetchBoard(data: {title: string, content: string}, id:number ) {
   await axios.patch(`/boards/${id}`, data)

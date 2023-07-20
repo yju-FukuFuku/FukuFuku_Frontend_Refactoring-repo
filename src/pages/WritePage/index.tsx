@@ -4,8 +4,8 @@ import './writepage.module.scss'
 import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getBoardTag, getTagList, postBoard } from '../../api/Board';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { postBoard } from '../../api/Board';
 import { store } from '../../store';
 import { Tag } from "@mui/icons-material";
 import axios from "axios";
@@ -32,6 +32,12 @@ type Tag = {
   name: string;
 }[]
 
+interface getTag {
+  tag: {
+    name: string;
+  }
+}
+
 const WritePage = () => {
   const [title, setTitle] = useState<string>("")
   const [tag, setTag] = useState<Tag>([] as Tag)
@@ -51,10 +57,10 @@ const WritePage = () => {
 
   useEffect(() => {
     const getBoard = async () => {
-      getTags(Number(editId));
       if(editId) {
         await axios.get(`boards/${editId}`)
         .then((response) => {
+          getTags(response.data.board_tag)
           setTitle(response.data.title);
           setContent(response.data.content);
         })
@@ -78,12 +84,9 @@ const WritePage = () => {
     setTag([...tag, { name: value }]);
   };
 
-  const getTags = async (id: number) => {   
-    const boardTag = await getBoardTag(id);
-    const tagList = await getTagList(boardTag);
-    
-    const newTagList = tagList.map((tag) => ({ name: tag }));
-    setTag([...tag, ...newTagList]);
+  const getTags = async (getTag: getTag[]) => {   
+    const tags = getTag.map((item) => item.tag.name);
+    setTag(tags.map((item) => ({ name: item })));
   }
 
   const save = async () => {
@@ -189,7 +192,7 @@ const WritePage = () => {
           }}
 
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === "Enter" || e.key === ",") {
+            if (e.key === "Enter") {
               if (tagValue === "") return;
               handleTag(tagValue);
               setTagValue("");

@@ -11,6 +11,7 @@ import WritePage from './pages/WritePage'
 import ErrorPage from './pages/404Page'
 import SavesPage from './pages/SavesPage'
 import LikePage from './pages/LikeListPage'
+import TagPage from './pages/TagPage'
 import { RootState } from './store'
 import { useSelector } from 'react-redux'
 
@@ -40,7 +41,8 @@ function App() {
             <Route path='/write/:postId' element={<SavesPage/>} />
             <Route path='/like' element={<LikePage/>} />
             <Route path='/boards/:boardId' element={<BoardPage />} />
-             
+            <Route path='/tags/:tagId' element={<TagPage />} />
+            
             <Route path='/error' element={<ErrorPage />} />
             <Route path='/*' element={<ErrorPage />} />
 

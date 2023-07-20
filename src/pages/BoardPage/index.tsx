@@ -10,7 +10,7 @@ import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
-import { getBoardById, getBoardTag, getTagList } from '../../api/Board';
+import { getBoardById } from '../../api/Board';
 
 interface Board {
   id: number;
@@ -24,8 +24,15 @@ interface Board {
 interface Author {
   email: string;
   picture: string;
-  name: string;
+  firstName: string;
+  lastName: string;
 }
+
+interface Tag {
+  tag: {
+    name: string;
+  }
+}[]
 
 const PostPage = () => {
   const { boardId } = useParams();
@@ -40,11 +47,14 @@ const PostPage = () => {
   // 게시글 가져오기
   useEffect(() => {
     const getBoard = async () => {
-      const board = await getBoardById(Number(boardId));
-      getAuthor(board.u_id);      
-      await getTags(board.id);
-      console.log(board);
-      
+      const board = await getBoardById(Number(boardId))
+      .then((res) => {
+        return res
+      }).catch(() => {
+        navigate('/error');
+      })
+      getAuthor(board.user);      
+      getTags(board.board_tag);
       setBoard(board);
       idTag();
     }
@@ -52,19 +62,15 @@ const PostPage = () => {
   }, []);
 
   // 작성자 정보 가져오기
-  const getAuthor = async (u_id: number) => {
-    const { data } = await axios.get(`user/${u_id}`);
-    const name = data?.firstName + data?.lastName;
-    setAuthor({ email: data.email, picture: data.picture, name: name })
+  const getAuthor = (user: Author) => {
+    setAuthor(user);
   }
 
   // 태그 가져오기
-  const getTags = async (id: number) => {   
-    const boardTag = await getBoardTag(id);
-    const tagList = await getTagList(boardTag);
-
-    setTag(tagList);
-  } 
+  const getTags = (tags: Tag[]) => {
+    const tagArray = tags.map((item) => item.tag.name);
+    setTag(tagArray);
+  }
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
   useEffect(() => {
@@ -148,7 +154,7 @@ const PostPage = () => {
 
             <InfoWrapper>
               <Info>
-                <span className={styles.author__Name}>{author.name}</span>
+                <span className={styles.author__Name}>{author.firstName + author.lastName}</span>
                 <span className={styles.separator}>·</span>
                 {
                   board.createdAt &&
@@ -169,8 +175,6 @@ const PostPage = () => {
                 </Toolbox>
                 )
               }
-              
-
             </InfoWrapper>
 
             <TagWrapper>
