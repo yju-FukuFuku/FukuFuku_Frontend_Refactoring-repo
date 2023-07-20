@@ -1,13 +1,14 @@
-import { Editor } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
+import ReactQuill from "react-quill";
 
 import './writepage.module.scss'
 import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { postBoard } from '../../api/Board';
 import { store } from '../../store';
+import { Tag } from "@mui/icons-material";
+import axios from "axios";
 
 const StyledTextField = styled(TextField) (
   {
@@ -31,20 +32,45 @@ type Tag = {
   name: string;
 }[]
 
+interface getTag {
+  tag: {
+    name: string;
+  }
+}
+
 const WritePage = () => {
   const [title, setTitle] = useState<string>("")
   const [tag, setTag] = useState<Tag>([] as Tag)
   const [tagValue, setTagValue] = useState<string>("")
+  const [content, setContent] = useState<string>("")
 
-  const editorRef = useRef<Editor>(null);
   const navigate = useNavigate();
+
+  const quillRef = useRef<ReactQuill>(null);
+
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+  }
   
+  const query = useQuery();
+  const editId = query.get('id');
+
   useEffect(() => {
-    if (editorRef.current) {
-      const defaultValue = editorRef.current.getInstance();
-      defaultValue.setMarkdown('');
+    const getBoard = async () => {
+      if(editId) {
+        await axios.get(`boards/${editId}`)
+        .then((response) => {
+          getTags(response.data.board_tag)
+          setTitle(response.data.title);
+          setContent(response.data.content);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+      }
     }
-  }, []);
+    getBoard();
+  }, [editId])
 
   const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -58,19 +84,89 @@ const WritePage = () => {
     setTag([...tag, { name: value }]);
   };
 
+  const getTags = async (getTag: getTag[]) => {   
+    const tags = getTag.map((item) => item.tag.name);
+    setTag(tags.map((item) => ({ name: item })));
+  }
+
   const save = async () => {
-    const content = editorRef.current?.getInstance();
     const { id } = store.getState().user;
-    
-    const data = {
-      title: title,
-      content: content?.getHTML(),
-      u_id: id,
+
+    if (editId) {
+
+      const data = {
+        title: title,
+        content: content
+      }
+
+      await axios.patch(`boards/${editId}`, data)
+      .then(() => {
+        navigate(`/${editId}`);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      return;
     }
 
-    postBoard(data);
-    
+    const data = {
+      title: title,
+      content: content,
+      u_id: id,
+      tags: tag.map((item) => item.name),
+    }
+
+    await postBoard(data)
+    .then(() => {
+      navigate(`/`);
+    })
   }
+
+  const imageHandler = () => {
+    // 1. 이미지를 저장할 input type=file DOM을 만든다.
+    const input = document.createElement('input');
+    // 속성 써주기
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    // 2. input에 이미지를 넣으면 발생하는 이벤트를 감지한다.
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      console.log(file);
+      
+
+      // 3. 이미지를 서버에 업로드한다.
+      const formData = new FormData();
+      formData.append('image', file);
+
+      // const url = await res.text();
+
+      // 4. quill에 이미지를 삽입한다.
+      // const quill = quillRef.current;
+      // const range = quill?.getEditor().getSelection()?.index;
+      // if (range !== undefined && quill) {
+      //   quill.getEditor().insertEmbed(range, 'image', url);
+      // }
+    }
+  }
+ 
+  const moudles = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic"],
+          ["image"],
+        ],
+        handlers: {
+          image: imageHandler,
+        },
+      }
+    }
+  }, [])
 
   return (
     <Container>
@@ -96,7 +192,7 @@ const WritePage = () => {
           }}
 
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === "Enter" || e.key === ",") {
+            if (e.key === "Enter") {
               if (tagValue === "") return;
               handleTag(tagValue);
               setTagValue("");
@@ -111,24 +207,21 @@ const WritePage = () => {
       </TagContainer>
       
       <EditorContainer>
-        <Editor
-          ref={editorRef}
-          defaultValue=""
-          previewStyle="vertical"
-          placeholder="글을 작성하세요"
-          initialEditType="wysiwyg"
-          useCommandShortcut={false}
-          hideModeSwitch={true}
+        <ReactQuill
+          ref={quillRef}
+          onChange={setContent}
+          modules={moudles}
+          value={content}
+          style={{ height: '400px', paddingBottom: '40px' }}
         />
       </EditorContainer>
 
       <EditorFooter>
-        <OutContainer>
-          <Button 
-            variant="contained" color="error"
-            onClick={() => {navigate('/')}}
-          >취소</Button>
-        </OutContainer>
+        <Button 
+          variant="contained" color="error"
+          sx={{ ml: 2 }}
+          onClick={() => {navigate('/')}}
+        >취소</Button>
 
         <Button 
           variant="contained" 
@@ -190,25 +283,17 @@ const TagItem = styled.div`
 `
 
 const EditorContainer = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
 `
 
 const EditorFooter = styled.div`
-  width: 100%;
   height: 40px;
-  padding: 20px 0;
+  width: 100%;
   display: flex;
-  justify-content: flex-end;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 8px;
-  position: relative;
-`
-
-const OutContainer = styled.div`
-  display: flex;
+  border: 1px solid #e9ecef;
+  padding: 1rem 0;
   align-items: center;
-  position: absolute;
-  left: 0;
-  margin-left: 20px;
+  justify-content: space-between;
+  position: relative;
+  bottom: 0;
 `

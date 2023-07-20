@@ -25,6 +25,9 @@ export const authSlice = createSlice({
       state.accessToken = accessToken;
       state.isLogin = true;
       state.expireTime = new Date().getTime() + TOKEN_TIME_OUT;
+    },
+    setLogin: (state, action: PayloadAction<boolean>) => {
+      state.isLogin = action.payload;
     }
   }
 });

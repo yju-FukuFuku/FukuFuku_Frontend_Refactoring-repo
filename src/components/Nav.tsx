@@ -6,7 +6,7 @@ import
 } from '@mui/icons-material';
 
 import { Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LoginModal from './Modal/LoginModal';
 import Category from './Category';
@@ -14,16 +14,24 @@ import { useRecoilState } from "recoil";
 import { themeState } from '../atom';
 import { store } from '../store';
 
-const Nav = () => {
+interface NavProps {
+  user: {
+    id: number | null;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+    picture: string | null;
+  }
+}
+
+const Nav = ({user} : NavProps) => {
   const [headMargin, setHeadMargin] = useState<boolean>(true);
-  const [prevScrollY, setPrevScrollY] = useState<number>(0);
   const [modalopen, setModalopen] = useState<boolean>(false);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const { isLogin } = store.getState().token;
-  const user = store.getState().user;
 
   useEffect(() => {
     if (isLogin) {
@@ -33,22 +41,25 @@ const Nav = () => {
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
-    if (currentScrollY > prevScrollY) {
+    if (currentScrollY > scrollYRef.current) {
       setHeadMargin(false);
     } else {
       setHeadMargin(true);
     }
-    setPrevScrollY(currentScrollY);
-  }, [prevScrollY]);
+    scrollYRef.current = currentScrollY;
+  }, []);
+
+  const scrollYRef = useRef(0);
 
   useEffect(() => {
-    setPrevScrollY(window.scrollY);
+    scrollYRef.current = window.scrollY;
     window.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
+
 
   const handleClick = () => {
     navigate('/search');

@@ -9,22 +9,22 @@
     margin-left: 1rem;
 
     a {
-      font-size: 1.7rem;
+      font-size: 1.4rem;
       font-weight: bold;
       color: #000;
       text-decoration: none;
     }
 
     span {
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #495057;
       margin-top: 1rem;
     }
   }
 
   img {
-    width: 8rem;
-    height: 8rem;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     margin-right: 0.5rem;
   }
@@ -41,4 +41,71 @@
   padding: 0.8rem;
   font-size: 1rem;
   margin-bottom: 1rem;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  .spinner__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    .spinner__item {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.skeleton__content {
+  display: flex;
+  position: relative;
+  top: -250px;
+}
+
+.author__Name {
+  color: #000;
+  font-weight: 600;
+}
+
+.separator {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.board__date {
+  color: #868e96;
+  font-size: 0.9rem;
+}
+
+.tool__edit {
+  color: #868e96;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.tool_delete {
+  color: #868e96;
+  cursor: pointer;
+}
+
+.board__tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #faf9fa;
+  padding: 0 10px;
+  color: #12b886;
+  border-radius: 10%;
+  height: 30px;
+  margin-right: 0.3rem;
+  white-space: nowrap;
 }
