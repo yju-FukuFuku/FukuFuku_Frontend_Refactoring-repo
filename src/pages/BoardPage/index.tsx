@@ -64,7 +64,7 @@ const PostPage = () => {
     const tagList = await getTagList(boardTag);
 
     setTag(tagList);
-  }
+  } 
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
   useEffect(() => {
