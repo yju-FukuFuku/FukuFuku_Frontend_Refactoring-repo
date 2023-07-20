@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { themeType } from "../../theme";
 
 interface PostProps {
     postTitle: string; // 게시물 제목
@@ -20,7 +21,7 @@ const PostCase = styled.div`
     width: 18%;
     margin: 16px;
     height: 377px;
-    background-color: ${props => props.theme.bgColor2};
+    background-color: ${(props: { theme: { bgColor2: string; }}) => props.theme.bgColor2};
     border-radius: 4px;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", 나눔고딕, "Nanum Gothic", "Noto Sans KR", "Noto Sans CJK KR", arial, 돋움, Dotum, Tahoma, Geneva, sans-serif;
     transition: margin-top 0.5s ease;
@@ -98,7 +99,10 @@ const PostTitle = styled.h4`
     margin: 0px;
     margin-bottom: 4px;
     height: 24px;
-    color: ${props => props.theme.textColor1};
+    color: ${(props: themeType) => props.theme.textColor1};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `
 // Post > PostCase > PostMiddle > PostMiddleLink > PostContentCase
 // 게시물의 내용을 감싸는 div
@@ -113,7 +117,14 @@ const PostContent = styled.p`
     margin-bottom: 24px;
     height: 63px;
     font-size: 14px;
-    color: ${props => props.theme.textColor2};
+    line-height: 21px;
+    color: ${(props: themeType) => props.theme.textColor2};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 세 줄까지 표시 */
+    -webkit-box-orient: vertical;
 `
 // Post > PostCase > PostMiddle > PostSubInfo
 // 게시물의 날짜, 댓글수를 포함하는 부가 정보
@@ -125,7 +136,7 @@ const PostSubInfo = styled.div`
 // 게시물의 날짜, 댓글수
 const PostDateAndComment = styled.span`
     font-size: 12px;
-    color: ${props => props.theme.textColor3};
+    color: ${(props: { theme: { textColor3: string; }}) => props.theme.textColor3};
 `
 
 // Post > PostCase > PostFooter
@@ -133,7 +144,7 @@ const PostDateAndComment = styled.span`
 const PostFooter = styled.div`
     height: 24px;
     width: calc(100% - 32px);
-    border-top: 1px solid ${props => props.theme.borderColor};
+    border-top: 1px solid ${(props: themeType) => props.theme.borderColor};
     padding: 10px 16px;
     display: flex;
     justify-content: space-between;
@@ -163,13 +174,13 @@ const PostProfileText = styled.span`
     font-size: 14px;
     text-align: center;
     line-height: 1.5;
-    color: ${props => props.theme.textColor3};
+    color: ${(props: themeType) => props.theme.textColor3};
 `
 
 // Post > PostCase > PostFooter > PostProfileLink > PostProfileText > PostProfileWriter
 // 게시물 작성자의 이름
 const PostProfileWriter = styled.b`
-    color: ${props => props.theme.textColor1};
+    color: ${(props: themeType) => props.theme.textColor1};
 `
 
 // Post > PostCase > PostFooter > PostProfileLike
@@ -179,7 +190,7 @@ const PostProfileLike = styled.div`
     text-align: center;
     display: flex;
     align-items: center;
-    color: ${props => props.theme.textColor1};
+    color: ${(props: themeType) => props.theme.textColor1};
 `
 
 // Post > PostCase > PostFooter > PostProfileLike > PostProfileLikeImg
