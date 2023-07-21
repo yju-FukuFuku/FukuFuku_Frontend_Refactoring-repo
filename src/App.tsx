@@ -35,7 +35,7 @@ function App() {
             <Route path='/:userId' element={<MyListPage/>} />
             <Route path='/write/:postId' element={<SavesPage/>} />
             <Route path='/like' element={<LikePage/>} />
-            <Route path='/:userId/:boardId' element={<BoardPage />} />
+            <Route path='/boards/:boardId' element={<BoardPage />} />
              
             <Route path='/error' element={<ErrorPage />} />
             <Route path='/*' element={<ErrorPage />} />
