@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { styled } from 'styled-components';
@@ -10,7 +9,7 @@ import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
-import { getBoardById } from '../../api/Board';
+import { deleteBoard, getBoardById } from '../../api/Board';
 
 interface Board {
   id: number;
@@ -53,6 +52,8 @@ const PostPage = () => {
       }).catch(() => {
         navigate('/error');
       })
+      console.log(board);
+      
       getAuthor(board.user);      
       getTags(board.board_tag);
       setBoard(board);
@@ -107,8 +108,8 @@ const PostPage = () => {
     navigate(`/write?id=${boardId}`);
   }
 
-  const deleteBoard = () => {
-    axios.delete(`boards/${boardId}`)
+  const delBoard = async () => {
+    await deleteBoard(Number(boardId))
     .then(() => {
       navigate('/');
     }).catch((error) => {
@@ -170,7 +171,7 @@ const PostPage = () => {
                   >수정</span>
                   <span 
                     className={styles.tool_delete}
-                    onClick={deleteBoard}
+                    onClick={delBoard}
                   >삭제</span>
                 </Toolbox>
                 )
