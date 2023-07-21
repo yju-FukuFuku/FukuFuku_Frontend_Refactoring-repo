@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { themeType } from '../../theme';
 
 const Center = styled.div`
     width: 100%;

@@ -6,10 +6,11 @@ import {
   Favorite
 }from '@mui/icons-material';
 import { Link } from 'react-scroll';
-import { Button } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
+import { getBoardById } from '../../api/Board';
 
 interface Board {
   id: number;
@@ -17,48 +18,59 @@ interface Board {
   content: string;
   like: number;
   u_id: number;
+  createdAt: string;
 }
-
-interface Comment {
-  id: number;
-  content: string;
-  boardId: number;
-  commenter: string;
-  img: string;
-  u_id: number;
-}[]
 
 interface Author {
   email: string;
   picture: string;
+  firstName: string;
+  lastName: string;
 }
+
+interface Tag {
+  tag: {
+    name: string;
+  }
+}[]
 
 const PostPage = () => {
   const { boardId } = useParams();
-  const [board, setBoard] = useState<Board | null>({} as Board)
+  const [board, setBoard] = useState<Board | null>(null)
   const [fixed, setFixed] = useState<boolean>(false)
   const [headerArray, setHeaderArray] = useState<string[]>([])
-  const [comments, setComments] = useState<Comment[]>([])
-  const [commentValue, setCommentValue] = useState<string>('')
   const [author, setAuthor] = useState<Author>({} as Author)
+  const [tag, setTag] = useState<string[]>([])
 
   const navigate = useNavigate();
-
-  const user = store.getState().user;
-
+  
   // 게시글 가져오기
   useEffect(() => {
-    async function getBoard() {
-      await axios.get(`boards/${boardId}`).then((response) => {
-        setBoard(response.data);
-        getAuthor(response.data.u_id);
-      }).catch((error) => {
-        console.log(error);
+    const getBoard = async () => {
+      const board = await getBoardById(Number(boardId))
+      .then((res) => {
+        return res
+      }).catch(() => {
         navigate('/error');
-      });
+      })
+      getAuthor(board.user);      
+      getTags(board.board_tag);
+      setBoard(board);
+      idTag();
     }
     getBoard();
-  }, []);  
+  }, []);
+
+  // 작성자 정보 가져오기
+  const getAuthor = (user: Author) => {
+    setAuthor(user);
+  }
+
+  // 태그 가져오기
+  const getTags = (tags: Tag[]) => {
+    const tagArray = tags.map((item) => item.tag.name);
+    setTag(tagArray);
+  }
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
   useEffect(() => {
@@ -76,17 +88,12 @@ const PostPage = () => {
     };
   }, []);
 
-  // 글 내용이 바뀔때마다 idTag 실행
-  useEffect(() => {
-    idTag();
-  }, []);
-
   // 글 내용에서 h1~h6 태그를 찾아서 id를 부여해주고 그 id를 배열에 담아줌
   const idTag = () => {
     if(!document) return;
 
     const content = document.getElementById('content');
-    const header = content?.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const header = content?.querySelectorAll('h1, h2, h3');
 
     header?.forEach((el) => {
       el.setAttribute('id', el.textContent || '');
@@ -94,56 +101,49 @@ const PostPage = () => {
     
     const headerIds = Array.from(header || []).map((el) => el.textContent || '');
     setHeaderArray(headerIds);
-
   };
 
-  // 댓글 가져오기
-  async function getComment() {
-    await axios.get(`comments/${boardId}`).then((res) => {
-      setComments(res.data);
+  const editBoard = () => {
+    navigate(`/write?id=${boardId}`);
+  }
+
+  const deleteBoard = () => {
+    axios.delete(`boards/${boardId}`)
+    .then(() => {
+      navigate('/');
     }).catch((error) => {
       console.log(error);
-    });
+    })
   }
 
-  // 작성자 정보 가져오기
-  const getAuthor = async (u_id: number) => {
-    const { data } = await axios.get(`users/${u_id}`);
-    setAuthor({ email: data.email, picture: data.picture })
-  }
+  // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
+  if (!board) {   
+    return (
+      <Container>
+        <Wrapper>
+          <HeadWrapper style={{display: 'flex'}}>
+            <Skeleton sx={{ mr: 1 }} variant='text' width='30%' height='80px' />
+            <Skeleton sx={{ mr: 1 }} variant='text' width='20%' height='80px' />
+            <Skeleton sx={{ mr: 1 }} variant='text' width='20%' height='80px' />
+          </HeadWrapper>
 
-  useEffect(() => {
-    getComment();
-  }, []);
-  
-  // 댓글 작성
-  const handleComment = async () => {
-    if (!user.id) {
-      alert('로그인이 필요합니다.');
-      return;
-    }
+          <InfoWrapper style={{display: 'flex', justifyContent: 'flex-start'}}>
+            <Skeleton sx={{mr: 1}} variant='text' width='10%' height='30px' />
+            <Skeleton variant='text' width='10%' height='30px' />
+          </InfoWrapper>
 
-    const name = `${user.firstName ?? ''} ${user.lastName ?? ''}`;
+          <TagWrapper style={{display: 'flex', marginTop: '1rem'}}>
+            <Skeleton sx={{mr: 1,}} variant='rounded' width='10%' height='30px' />
+            <Skeleton variant='rounded' width='10%' height='30px' />
+          </TagWrapper>
+          
+          <BodyWrapper style={{ marginTop: 0}}>
+            <Skeleton sx={{position: 'relative', top: -220}} variant='text' width='100%' height={1300} />
+          </BodyWrapper>
 
-    const data = {
-      content: commentValue,
-      boardId: Number(boardId),
-      commenter: name,
-      img: user.picture,
-      u_id: user.id,
-    };
-
-    try {
-      await axios.post('/comments', data);
-      setCommentValue('');
-      getComment();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (!board) {
-    return <div>loading...</div>
+        </Wrapper>
+      </Container>
+      )
   } else {
     return (
       <Container>
@@ -151,7 +151,42 @@ const PostPage = () => {
   
           <HeadWrapper>
             <Title>{board.title}</Title>
-  
+
+            <InfoWrapper>
+              <Info>
+                <span className={styles.author__Name}>{author.firstName + author.lastName}</span>
+                <span className={styles.separator}>·</span>
+                {
+                  board.createdAt &&
+                  <span className={styles.board__date}>{board.createdAt.slice(0, 10)}</span>
+                }
+              </Info>
+              {
+                store.getState().user.id === board.u_id && (
+                <Toolbox>
+                  <span 
+                    className={styles.tool__edit}
+                    onClick={editBoard}
+                  >수정</span>
+                  <span 
+                    className={styles.tool_delete}
+                    onClick={deleteBoard}
+                  >삭제</span>
+                </Toolbox>
+                )
+              }
+            </InfoWrapper>
+
+            <TagWrapper>
+            {
+              tag ? (
+                tag.map((item, index) => (
+                  <span key={index} className={styles.board__tag}>{item}</span>
+                ))
+              ) : null
+            }
+            </TagWrapper>
+              
             <SideContainer>
               <SideWrapper>
                 <SideTool fixed={fixed ? 'true' : 'false'}>
@@ -208,36 +243,13 @@ const PostPage = () => {
               </div>
             </div>
           </ProfileWrapper>
-  
-          <FooterWrapper>
-            <FooterHead>
-              <h4>0개의 댓글</h4>
-            </FooterHead>
-            
-            <FooterInput>            
-              <textarea 
-                className={styles.inputComment} 
-                placeholder='댓글을 입력하세요'
-                value={commentValue}
-                onChange={(e) => setCommentValue(e.target.value)}
-              />
-              <ButtonWrapper>
-                <Button 
-                  variant='contained' 
-                  color='primary'
-                  onClick={handleComment}
-                >댓글 작성</Button>
-              </ButtonWrapper>
-            </FooterInput>
-  
-            <FooterBody>
-              {
-                <Comment item={comments}/>
-              }
-            </FooterBody>
-            
-          </FooterWrapper>
-  
+
+          <FooterBody>
+          {
+            <Comment />
+          }
+          </FooterBody>
+
         </Wrapper>
       </Container>
     )
@@ -255,7 +267,6 @@ const Container = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin: 0 auto;
   width: 768px;
 
@@ -268,38 +279,40 @@ const Wrapper = styled.div`
   }
 `
 
+const Toolbox = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const Info = styled.div``
+
+const InfoWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`
+
+const TagWrapper = styled.div`
+  width: 100%;
+  margin-top: 1rem;
+`
+
 const ProfileWrapper = styled.div`
   width: 100%;
   margin-top: 10rem;
   margin-bottom: 10rem;
 `
 
-const FooterWrapper = styled.div`
-  width: 100%;
-  margin-top: 1.5rem;
-`
-
-const FooterHead = styled.div`
-  padding: 0.4rem;
-  line-height: 1.5;
-  font-weight: 600;
-`
-
-const FooterInput = styled.div``
-
 const FooterBody = styled.div`
   margin-top: 1rem;
-`
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
 `
 
 const HeadWrapper = styled.div`
   width: 100%;
   margin-top: 1.5rem;
-  margin-bottom: 1.rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e9ecef;
 `
 
 const SideContainer = styled.div`

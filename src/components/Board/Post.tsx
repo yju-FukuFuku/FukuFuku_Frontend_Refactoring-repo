@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { themeType } from "../../theme";
+import { Link } from "react-router-dom";
 
 interface PostProps {
     postTitle: string; // 게시물 제목
@@ -99,6 +101,9 @@ const PostTitle = styled.h4`
     margin-bottom: 4px;
     height: 24px;
     color: ${props => props.theme.textColor1};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `
 // Post > PostCase > PostMiddle > PostMiddleLink > PostContentCase
 // 게시물의 내용을 감싸는 div
@@ -113,7 +118,14 @@ const PostContent = styled.p`
     margin-bottom: 24px;
     height: 63px;
     font-size: 14px;
+    line-height: 21px;
     color: ${props => props.theme.textColor2};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 세 줄까지 표시 */
+    -webkit-box-orient: vertical;
 `
 // Post > PostCase > PostMiddle > PostSubInfo
 // 게시물의 날짜, 댓글수를 포함하는 부가 정보
@@ -193,9 +205,11 @@ const PostProfileLikeImg = styled.svg`
 const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLike, postImg, postProfileImg, postLink, postWriterLink}:PostProps) => {
     return (
         <PostCase>
-            <PostImgLink href={postLink}>
-                <PostImg src={postImg} />
-            </PostImgLink>
+            <Link to={postLink}>
+                <PostImgLink>
+                    <PostImg src={postImg} />
+                </PostImgLink>
+            </Link>
             <PostMiddle>
                 <PostMiddleLink href={postLink}>
                     <PostTitle>{postTitle}</PostTitle>
@@ -210,10 +224,12 @@ const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLi
                 </PostSubInfo>
             </PostMiddle>
             <PostFooter>
-                <PostProfileLink href={postWriterLink}>
-                    <PostProfileImg src={postProfileImg} />
-                    <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
-                </PostProfileLink>
+                <Link to={postWriterLink}>
+                    <PostProfileLink>
+                        <PostProfileImg src={postProfileImg} />
+                        <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
+                    </PostProfileLink>
+                </Link>
                 <PostProfileLike >
                     <PostProfileLikeImg viewBox="0 0 24 24">
                         <path fill="currentColor" d="M18 1l-6 4-6-4-6 5v7l12 10 12-10v-7z"></path>
