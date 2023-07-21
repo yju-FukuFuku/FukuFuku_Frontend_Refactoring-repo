@@ -13,7 +13,7 @@ const Spinner = styled.div`
     width: 40px;
     height: 40px;
     border: 3px solid #f3f3f3;
-    border-top-color: ${(props: themeType) => props.theme.textColor1};
+    border-top-color: ${props => props.theme.textColor1};
     border-radius: 50%;
     animation: spin 1s infinite linear;
 
