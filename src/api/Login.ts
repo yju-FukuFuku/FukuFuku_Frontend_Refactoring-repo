@@ -1,3 +1,4 @@
+import axios from "axios";
 import { store } from "../store";
 import { setAccessToken } from "../store/Auth";
 import { setRefreshToken } from "../store/Cookie";
@@ -7,10 +8,14 @@ interface SetAccessTokenPayload {
   accessToken: string;
 }
 
+export async function login() {
+  return await axios.get('auth')
+}
+
 export function onLoginSuccess() {
   const data = {
     "id":1,
-    "email":"hetame@g.yju.ac.kr",
+    "email":"user1@example.com",
     "picture":"https://lh3.googleusercontent.com/a/AAcHTtfpGQDOXCwRj2W5vM44gbITs8mLO23tR3mtFEdBFupc=s96-c",
     "firstName":"김",
     "lastName":"지훈",
