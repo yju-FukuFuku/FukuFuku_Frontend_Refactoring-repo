@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { themeType } from "../../theme";
+import { Link } from "react-router-dom";
 
 interface PostProps {
     postTitle: string; // 게시물 제목
@@ -10,7 +11,7 @@ interface PostProps {
     postLike: number; // 게시물 좋아요 개수
     postImg: string; // 게시물 이미지
     postProfileImg: string; // 게시물 작성자 이미지
-    postLink: string | number; // 게시물 주소
+    postLink: string; // 게시물 주소
     postWriterLink: string; // 게시물 작성자 프로필 주소
 }
 
@@ -21,7 +22,7 @@ const PostCase = styled.div`
     width: 18%;
     margin: 16px;
     height: 377px;
-    background-color: ${(props: { theme: { bgColor2: string; }}) => props.theme.bgColor2};
+    background-color: ${props => props.theme.bgColor2};
     border-radius: 4px;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", 나눔고딕, "Nanum Gothic", "Noto Sans KR", "Noto Sans CJK KR", arial, 돋움, Dotum, Tahoma, Geneva, sans-serif;
     transition: margin-top 0.5s ease;
@@ -99,7 +100,7 @@ const PostTitle = styled.h4`
     margin: 0px;
     margin-bottom: 4px;
     height: 24px;
-    color: ${(props: themeType) => props.theme.textColor1};
+    color: ${props => props.theme.textColor1};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -118,7 +119,7 @@ const PostContent = styled.p`
     height: 63px;
     font-size: 14px;
     line-height: 21px;
-    color: ${(props: themeType) => props.theme.textColor2};
+    color: ${props => props.theme.textColor2};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: pre-line;
@@ -136,7 +137,7 @@ const PostSubInfo = styled.div`
 // 게시물의 날짜, 댓글수
 const PostDateAndComment = styled.span`
     font-size: 12px;
-    color: ${(props: { theme: { textColor3: string; }}) => props.theme.textColor3};
+    color: ${props => props.theme.textColor3};
 `
 
 // Post > PostCase > PostFooter
@@ -144,7 +145,7 @@ const PostDateAndComment = styled.span`
 const PostFooter = styled.div`
     height: 24px;
     width: calc(100% - 32px);
-    border-top: 1px solid ${(props: themeType) => props.theme.borderColor};
+    border-top: 1px solid ${props => props.theme.borderColor};
     padding: 10px 16px;
     display: flex;
     justify-content: space-between;
@@ -174,13 +175,13 @@ const PostProfileText = styled.span`
     font-size: 14px;
     text-align: center;
     line-height: 1.5;
-    color: ${(props: themeType) => props.theme.textColor3};
+    color: ${props => props.theme.textColor3};
 `
 
 // Post > PostCase > PostFooter > PostProfileLink > PostProfileText > PostProfileWriter
 // 게시물 작성자의 이름
 const PostProfileWriter = styled.b`
-    color: ${(props: themeType) => props.theme.textColor1};
+    color: ${props => props.theme.textColor1};
 `
 
 // Post > PostCase > PostFooter > PostProfileLike
@@ -190,7 +191,7 @@ const PostProfileLike = styled.div`
     text-align: center;
     display: flex;
     align-items: center;
-    color: ${(props: themeType) => props.theme.textColor1};
+    color: ${props => props.theme.textColor1};
 `
 
 // Post > PostCase > PostFooter > PostProfileLike > PostProfileLikeImg
@@ -204,9 +205,11 @@ const PostProfileLikeImg = styled.svg`
 const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLike, postImg, postProfileImg, postLink, postWriterLink}:PostProps) => {
     return (
         <PostCase>
-            <PostImgLink href={postLink}>
-                <PostImg src={postImg} />
-            </PostImgLink>
+            <Link to={postLink}>
+                <PostImgLink>
+                    <PostImg src={postImg} />
+                </PostImgLink>
+            </Link>
             <PostMiddle>
                 <PostMiddleLink href={postLink}>
                     <PostTitle>{postTitle}</PostTitle>
@@ -221,10 +224,12 @@ const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLi
                 </PostSubInfo>
             </PostMiddle>
             <PostFooter>
-                <PostProfileLink href={postWriterLink}>
-                    <PostProfileImg src={postProfileImg} />
-                    <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
-                </PostProfileLink>
+                <Link to={postWriterLink}>
+                    <PostProfileLink>
+                        <PostProfileImg src={postProfileImg} />
+                        <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
+                    </PostProfileLink>
+                </Link>
                 <PostProfileLike >
                     <PostProfileLikeImg viewBox="0 0 24 24">
                         <path fill="currentColor" d="M18 1l-6 4-6-4-6 5v7l12 10 12-10v-7z"></path>
