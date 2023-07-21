@@ -1,9 +1,18 @@
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
+import { lightTheme, darkTheme } from "./theme";
 
 export const themeState = atom({
   key: 'themeState',
   default: true,
 });
+
+export const themeSelector = selector({
+    key: "recoilSelector",
+    get: ({ get }) => {
+        const theme = get(themeState);
+        return theme === true ? lightTheme : darkTheme;
+    }
+})
 
 export const prevThemeState = atom({
     key: "prevThemeState",
