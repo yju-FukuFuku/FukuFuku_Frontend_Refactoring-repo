@@ -3,35 +3,36 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
+import axios from 'axios';
+import useDebounce from '../../hooks/useDebounce';
 
+interface Board {
+  id: number;
+  title: string;
+  content: string;
+  view: number;
+  createdAt: string;
+  user: {
+    nickname: string;
+    email: string;
+    lastName: string;
+    firstName: string;
+    picture: string;
+  }
+}[]
 
 const SearchPage = () => {
-  type postType = {
-    id: string;
-    name: string;
-    body: string;
-  }
-
   // data 불러오기
-  const [postData, setPostData] = useState<postType[]>()
+  const [postData, setPostData] = useState<Board[]>()
 
-  const getData = () => {
-    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
-      headers: {
-        "Content-type" : "application/json"
-      }
+  const getData = async (debounce: string) => {
+    await axios.get(`http://localhost:3000/boards/search/${debounce}`)
+    .then((res) => {
+      setPostData(res.data)
+      console.log(res.data);
+      
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        setPostData(data)
-      })
   }
-
-  useEffect(() => {
-
-  }, [])
-
 
   const [searchValue, setSearchValue] = useState<string>('');
   const navigate = useNavigate();
@@ -39,30 +40,17 @@ const SearchPage = () => {
   // 검색 값 가져오기
   const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
+    navigate(`/search?query=${e.target.value}`)
   }
 
-  // router 반영
-  const changeNavigate = (url: string) => {
-    navigate(`/search?q=${url}`)
+  const debounce = useDebounce(searchValue, 500)
 
-    fetch("", {
-      headers: {
-        "Content-type" : "application/json"
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        console.log(url)
-      })
-  }
-
-  // 함수 호출
   useEffect(() => {
-    setTimeout(() => {
-      changeNavigate(searchValue)
-    }, 500)
-  }, [searchValue])
+    if(debounce) {
+      getData(debounce)
+    }
+  }, [debounce])
+
 
 
   // 배열에서 검색한 값만 불러오기
@@ -71,24 +59,28 @@ const SearchPage = () => {
       return (
         <Wrapper>
             <SearchLength>총 <Length>{ postData?.length }</Length> 개의 포스터를 찾았습니다.</SearchLength>
-          {postData?.map((item, index) => (
+          {postData?.map((item) => (
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
               <Profile>
-                <ProfileImg src="/public/images/짱구.jpeg" alt="profile" />
-                <ProfileName>nickname</ProfileName>
+                <ProfileImg src={item.user.picture} />
+                <ProfileName>{item.user.nickname ? item.user.nickname : item.user.firstName + item.user.lastName}</ProfileName>
               </Profile>
-              <PostLink to='/'>
+              <PostLink to={`/boards/${item.id}`}>
                 <PostImgBox>
                   <PostImg src='/public/images/배경.webp' />
                 </PostImgBox>
               </PostLink>
-              <PostLink to='/'>
-                <H3>{ item.name }</H3>
+              <PostLink to={`/boards/${item.id}`}>
+                <H3>{ item.title }</H3>
               </PostLink>
-              <PostContent>{ item.body }</PostContent>
+              <PostContent>
+                <BoardContent dangerouslySetInnerHTML={{__html: item.content}} />
+              </PostContent>
               <SubInFo>
-                <span>time</span>
+                <span>
+                  {item.createdAt.split('T')[0]}
+                </span>
                 <Separator>·</Separator>
                 <span>comment</span>
                 <Separator>·</Separator>
@@ -144,6 +136,10 @@ const Content = styled.div`
   position: relative;
   top: 100px;
   width: 768px;
+`
+
+const BoardContent = styled.div`
+  font-size: 1rem;
 `
 
 const Wrapper = styled.div`
