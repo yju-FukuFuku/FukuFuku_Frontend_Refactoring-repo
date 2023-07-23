@@ -5,7 +5,7 @@ import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { postBoard } from '../../api/Board';
+import { fetchBoard, fetchBoardTag, postBoard } from '../../api/Board';
 import { store } from '../../store';
 import { Tag } from "@mui/icons-material";
 import axios from "axios";
@@ -76,6 +76,7 @@ const WritePage = () => {
     setTitle(e.target.value)
   }
 
+  // 태그 추가, 삭제
   const handleTag = (value: string) => {
     const duplication = tag.find((item) => item.name === value);
     if (duplication) {
@@ -84,14 +85,17 @@ const WritePage = () => {
     setTag([...tag, { name: value }]);
   };
 
+  // 수정 부분 태그 가져오기
   const getTags = async (getTag: getTag[]) => {   
     const tags = getTag.map((item) => item.tag.name);
     setTag(tags.map((item) => ({ name: item })));
   }
 
+  // 저장 눌렀을 때
   const save = async () => {
     const { id } = store.getState().user;
 
+    // 만약 지금 수정하는 중이라면
     if (editId) {
 
       const data = {
@@ -99,9 +103,13 @@ const WritePage = () => {
         content: content
       }
 
-      await axios.patch(`boards/${editId}`, data)
+      const tags = tag.map((item) => item.name);
+
+      await fetchBoardTag(tags, Number(editId))
+
+      await fetchBoard(data, Number(editId))
       .then(() => {
-        navigate(`/${editId}`);
+        navigate(`/boards/${editId}`);
       })
       .catch((error) => {
         console.log(error);
@@ -115,6 +123,8 @@ const WritePage = () => {
       u_id: id,
       tags: tag.map((item) => item.name),
     }
+
+    console.log(data);
 
     await postBoard(data)
     .then(() => {
@@ -141,10 +151,15 @@ const WritePage = () => {
       // 3. 이미지를 서버에 업로드한다.
       const formData = new FormData();
       formData.append('image', file);
-
+      
+      const entriy = formData.entries();
+      for(const pair of entriy) {
+        console.log(pair);
+      }
+      
       // const url = await res.text();
 
-      // 4. quill에 이미지를 삽입한다.
+      // // 4. quill에 이미지를 삽입한다.
       // const quill = quillRef.current;
       // const range = quill?.getEditor().getSelection()?.index;
       // if (range !== undefined && quill) {
