@@ -15,6 +15,11 @@ interface PostProps {
     postWriterLink: string; // 게시물 작성자 프로필 주소
 }
 
+const LinkStyled = styled(Link)`
+    text-decoration: none;
+    color: inherit;
+`
+
 // Post > PostCase
 // 게시물
 const PostCase = styled.div`
@@ -205,31 +210,33 @@ const PostProfileLikeImg = styled.svg`
 const Post = ({postTitle, postContent, postDate, postComment, postWriter, postLike, postImg, postProfileImg, postLink, postWriterLink}:PostProps) => {
     return (
         <PostCase>
-            <Link to={postLink}>
+            <LinkStyled to={`/boards/${postLink}`}>
                 <PostImgLink>
                     <PostImg src={postImg} />
                 </PostImgLink>
-            </Link>
+            </LinkStyled>
             <PostMiddle>
-                <PostMiddleLink href={postLink}>
-                    <PostTitle>{postTitle}</PostTitle>
-                    <PostContentCase>
-                        <PostContent>{postContent}</PostContent>
-                    </PostContentCase>
-                </PostMiddleLink>
-                <PostSubInfo>
-                    <PostDateAndComment>
-                        {postDate} · {postComment}개의 댓글
-                    </PostDateAndComment>
-                </PostSubInfo>
+                <LinkStyled to={`/boards/${postLink}`}>
+                    <PostMiddleLink>
+                        <PostTitle>{postTitle}</PostTitle>
+                        <PostContentCase>
+                            <PostContent>{postContent}</PostContent>
+                        </PostContentCase>
+                    </PostMiddleLink>
+                    <PostSubInfo>
+                        <PostDateAndComment>
+                            {postDate} · {postComment}개의 댓글
+                        </PostDateAndComment>
+                    </PostSubInfo>
+                </LinkStyled>
             </PostMiddle>
             <PostFooter>
-                <Link to={postWriterLink}>
+                <LinkStyled to={postWriterLink}>
                     <PostProfileLink>
                         <PostProfileImg src={postProfileImg} />
                         <PostProfileText>by <PostProfileWriter>{ postWriter }</PostProfileWriter></PostProfileText>
                     </PostProfileLink>
-                </Link>
+                </LinkStyled>
                 <PostProfileLike >
                     <PostProfileLikeImg viewBox="0 0 24 24">
                         <path fill="currentColor" d="M18 1l-6 4-6-4-6 5v7l12 10 12-10v-7z"></path>
