@@ -1,31 +1,45 @@
 import React, { useEffect, useState } from 'react'
-import { styled } from 'styled-components'
+import { styled, ThemeProvider } from 'styled-components'
 import
 {
   TrendingUp,
   AccessTime,
-  MoreVert
+  MoreVert,
+  ArrowDropDown
 } from '@mui/icons-material';
 
-import { Menu, MenuItem, Select, Tab, Tabs, Typography } from '@mui/material';
+import { Menu, MenuItem, Select, Tab, Tabs, Typography, colors } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { themeSelector, themeSelectorString, themeState } from '../atom';
+import { lightTheme, darkTheme } from '../theme';
 
-const StyledTabs = styled(Tabs)(
-  {
+
+const RedArrowDropDownIcon = (props: any | undefined) => {
+
+  const theme = useRecoilValue(themeSelector);
+
+  return <ArrowDropDown {...props} style={{ color: theme === lightTheme ? "#000" : "#ccc" }} />;
+};
+
+const StyledTabs = styled(Tabs)(({theme}) => 
+  ({
     "& .MuiTabs-indicator": {
-      backgroundColor: "#000"
+      backgroundColor: theme === lightTheme ? "#000" : "#ccc"
     },
     "& .MuiTab-textColorPrimary": {
       color: "lightgray",
       fontWeight: 300
     },
     "& .MuiTab-textColorPrimary.Mui-selected": {
-      color: "#000"
+      color: theme === lightTheme ? "#000" : "#ccc"
     }
-  }
+  })
 )
 
 const Category = () => {
+
+  const theme = useRecoilValue(themeSelector);
 
   const [page, setPage] = useState<number>(0);
 
@@ -97,10 +111,11 @@ const Category = () => {
     {
       pathname === '/' && (
         <>
-          <Select
+            <Select
+              IconComponent={RedArrowDropDownIcon}
             value={date}
             onChange={(e) => setDate(e.target.value as string)}
-            sx={{width: '110px', height: '40px', marginLeft: '10px', boxShadow: 'none', border: '1px solid lightgray', borderRadius: '5px', boxSizing: 'border-box'}}
+            sx={{width: '110px', height: '40px', marginLeft: '10px', boxShadow: 'none', border: '1px solid lightgray', borderRadius: '5px', boxSizing: 'border-box', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
           >
             <MenuItem value={"오늘"}>오늘</MenuItem>
             <MenuItem value={"이번 주"}>이번 주</MenuItem>
@@ -113,7 +128,7 @@ const Category = () => {
     
 
     <MoreVert 
-      sx={{position: 'absolute', right: 0, cursor: 'pointer'}}
+      sx={{position: 'absolute', right: 0, cursor: 'pointer', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
       id="mav-menu-button"
       onClick={menuHandleClick}
     />
@@ -138,7 +153,7 @@ const Category = () => {
       </Menu>
     </MenuWrapper>
     
-  </CategoryWrapper>
+      </CategoryWrapper>
   )
 }
 

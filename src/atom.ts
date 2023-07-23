@@ -14,6 +14,14 @@ export const themeSelector = selector({
     }
 })
 
+export const themeSelectorString = selector({
+    key: "recoilSelectorString",
+    get: ({ get }) => {
+        const theme = get(themeState);
+        return theme === true ? "lightTheme" : "darkTheme";
+    }
+})
+
 export const prevThemeState = atom({
     key: "prevThemeState",
     default: true,

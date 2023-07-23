@@ -32,13 +32,13 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
     <Container>
       <Wrapper>
         <Modal ref={ref}>
-          <div className={styles.modal__left}>
+          <Modal__left>
             <img 
               src='https://yju-fukufuku.s3.amazonaws.com/logo.svg'
               alt='Logo'
             />
             <Typography variant='h3' sx={{mt: 3}}>Fukufuku</Typography>
-          </div>
+          </Modal__left>
 
           <div className={styles.modal__right}>
             <Close 
@@ -110,7 +110,7 @@ const Wrapper = styled.div`
 `
 
 const Modal = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.bgColor2};
   position: relative;
   display: flex;
   width: 800px;
@@ -136,5 +136,29 @@ const Modal = styled.div`
       bottom: 0;
       scale: 1;
     }
+  }
+`
+
+
+
+
+const Modal__left = styled.div`
+  width: 30%;
+  float: left;
+  background-color: ${props => props.theme.bgColor1};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 40px;
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  @media all and (max-width:767px) {
+    display: none;
   }
 `

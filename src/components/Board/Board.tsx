@@ -6,13 +6,19 @@ import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
 
+const BoardTop = styled.div`
+    height: 120px;
+    width: 100vw;
+    background-color: ${props => props.theme.bgColor1};
+`
+
 // 게시판 중앙 정렬 및 마진
 const BoardCenter = styled.div`
     background-color: ${props => props.theme.bgColor1};
     width: 100vw;
     display: flex;
     justify-content: center;
-    margin-top: 120px;
+    /* margin-top: 120px; */
 `
 
 // 게시물 정렬
@@ -154,7 +160,7 @@ const Board = () => {
 
     return (
         <>
-            
+            <BoardTop/>
             <BoardCenter>
                 <BoardCase ref={boardCaseRef}>
                     {

@@ -1,4 +1,6 @@
 import { DefaultTheme } from "styled-components";
+import { createTheme } from "@mui/material/styles";
+
 
 export type themeType = {
     theme: {
@@ -11,6 +13,7 @@ export type themeType = {
     }
 }
 
+// styled-components
 export const lightTheme: DefaultTheme = {
     bgColor1: "#F8F9FA",
     bgColor2: "#FFFFFF",
@@ -20,6 +23,7 @@ export const lightTheme: DefaultTheme = {
     borderColor: "#F1F3F5",
 }
 
+// styled-components
 export const darkTheme: DefaultTheme = {
     bgColor1: "#121212",
     bgColor2: "#1E1E1E",
