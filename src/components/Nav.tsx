@@ -89,10 +89,10 @@ const Nav = ({user} : NavProps) => {
 
           <Item>
             <Icon>
-              <LightMode onClick={handleTheme} />
+              <LightMode onClick={handleTheme} sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}` }}/>
             </Icon>
             <Icon onClick={handleClick}>
-              <SearchRounded />
+              <SearchRounded sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}` }}/>
             </Icon>
             {
               isLogin ? (

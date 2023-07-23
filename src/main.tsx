@@ -19,13 +19,17 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { themeState } from "./atom.ts";
+import { themeSelector, themeState } from "./atom.ts";
 
 const Root = () => {
-  const [themeValue, setThemeValue] = useRecoilState(themeState);
+  // const [themeValue, setThemeValue] = useRecoilState(themeState);
 
-  const theme = themeValue === true ? lightTheme : darkTheme;
+  // const theme = themeValue === true ? lightTheme : darkTheme;
 
+  const theme = useRecoilValue(themeSelector);
+
+  // const theme = themeType === "lightTheme" ? lightTheme : darkTheme;
+  
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
