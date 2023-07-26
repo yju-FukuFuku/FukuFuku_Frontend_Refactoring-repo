@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 import {
   Close,
@@ -10,12 +10,17 @@ import useOutsideClick from '../../hooks/useOutsideClick';
 import Login from './Login';
 import { useNavigate } from 'react-router-dom'; 
 import { login, onLoginSuccess } from '../../api/Login';
+import { themeSelectorString } from '../../atom';
+import { useRecoilValue } from 'recoil';
 
 interface LoginModalProps {
   setModalopen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LoginModal = ({setModalopen}: LoginModalProps) => {
+const LoginModal = ({ setModalopen }: LoginModalProps) => {
+  
+  const theme = useRecoilValue(themeSelectorString);
+
   const [register, setRegister] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -37,7 +42,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
               src='https://yju-fukufuku.s3.amazonaws.com/logo.svg'
               alt='Logo'
             />
-            <Typography variant='h3' sx={{mt: 3}}>Fukufuku</Typography>
+            <Typography variant='h3' sx={{mt: 3, color: theme === "lightTheme" ? "#212529" : "#d8d8d8"}}>Fukufuku</Typography>
           </Modal__left>
 
           <div className={styles.modal__right}>
@@ -46,7 +51,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
               sx={{cursor: 'pointer', position: 'absolute', top: '20px', right: '20px'}}
             />
             <div className={styles.modal__right__top}>
-              <Typography variant='h4' sx={{fontWeight: 600, mb: 1}}>
+              <Typography variant='h4' sx={{fontWeight: 600, mb: 1, color: theme === "lightTheme" ? "#212529" : "#d8d8d8"}}>
                 {register ? '회원가입' : '로그인'}
               </Typography>
 
@@ -66,7 +71,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
               </Typography>
 
               <Google
-                sx={{cursor: 'pointer', fontSize: '40px', alignSelf: 'center', border: '1px solid gray', borderRadius: '50%', p: 1}}
+                sx={{cursor: 'pointer', fontSize: '40px', alignSelf: 'center', border: '1px solid gray', borderRadius: '50%', p: 1, color: theme === "lightTheme" ? "#212529" : "#d8d8d8"}}
                 onClick={googleHandler}
               />
             </div>
