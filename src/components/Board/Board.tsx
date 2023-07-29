@@ -129,21 +129,12 @@ const Board = () => {
     // boardPage가 변경되면 data 호출
     useEffect(() => {
         if ((window.scrollY > targetY && targetY != 0) || boardPage === 1) {
-            console.log("boardPage", boardPage);
-            console.log("window.scrollY", window.scrollY);
-            console.log("targetY", targetY);
-            
             getData()
-        } else {
-            console.log("data 로딩 실패");
-            
         }
     }, [boardPage])
     
     // GetData
     const getData = async () => {
-        console.log("데이터 렌더링")        
-        
     await fetch(`https://jsonplaceholder.typicode.com/photos?albumId=${boardPage}`, {
       headers: {
         "Content-type" : "application/json"

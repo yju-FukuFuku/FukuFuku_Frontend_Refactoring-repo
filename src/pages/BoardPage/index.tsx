@@ -18,6 +18,7 @@ interface Board {
   like: number;
   u_id: number;
   createdAt: string;
+  img?: string;
 }
 
 interface Author {
@@ -182,7 +183,13 @@ const PostPage = () => {
             {
               tag ? (
                 tag.map((item, index) => (
-                  <span key={index} className={styles.board__tag}>{item}</span>
+                  <span 
+                    key={index} 
+                    className={styles.board__tag}
+                    onClick={() => {
+                      navigate(`/tags/${item}`)
+                    }}
+                  >{item}</span>
                 ))
               ) : null
             }

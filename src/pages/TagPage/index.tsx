@@ -9,6 +9,7 @@ interface Board {
   content: string;
   view: number;
   createdAt: string;
+  img?: string;
   user: {
     nickname: string;
     email: string;
@@ -18,46 +19,45 @@ interface Board {
   }
 }[]
 
-interface Tag {
+interface BoardTag {
   id: number;
+  boardId: number;
+  tagId: number;
   board: Board;
-}[]
+}
 
 const TagPage = () => {
 
-  const { tagId } = useParams()
+  const { tagName } = useParams()
   const [postData, setPostData] = useState<Board[]>()
-  const [tagName, setTagName] = useState<string>('')
 
-  // 태그 id 로 태그 이름 가져오기
+  // 태그 아이디 가져오기
   const getTag = async () => {
-    await axios.get(`tags/${tagId}`)
-    .then((res) => {
-      setTagName(res.data.name)
-    })
+    if (tagName) {
+      const encodedTagName = encodeURIComponent(tagName)
+      await axios.get(`http://localhost:3000/tags/tagName/${encodedTagName}`)
+      .then((res) => {
+        getBoardTag(res.data.board_tag)
+      })
+      .catch((error) => {
+        console.log(error)
+      })  
+    }
   }
 
-  // 태그 아이디를 가지고있는 게시글 가져오기
-  const getBoardByTag = async () => {
-    await axios.get(`http://localhost:3000/tags/${tagId}/boards`)
-    .then((res) => {
-      getBoard(res.data.board_tag)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-
-  const getBoard = (board: Tag[]) => {
+  const getBoardTag = (boardTag: BoardTag[]) => {
     const boardArray: Board[] = []
-    board.map((item) => {
+    boardTag.map((item) => {
       boardArray.push(item.board)
     })
-    setPostData(boardArray)
+    getBoard(boardArray)
+  }
+
+  const getBoard = (board: Board[]) => {
+    setPostData(board)
   };
   
   useEffect(() => {
-    getBoardByTag()
     getTag()
   }, [])
   
@@ -75,9 +75,13 @@ const TagPage = () => {
                 <ProfileName>{item.user.nickname ? item.user.nickname : item.user.firstName + item.user.lastName}</ProfileName>
               </Profile>
               <PostLink to={`/boards/${item.id}`}>
-                <PostImgBox>
-                  <PostImg src='/public/images/배경.webp' />
-                </PostImgBox>
+                {
+                  item.img && (
+                    <PostImgBox>
+                      <PostImg src={item.img} />
+                    </PostImgBox>
+                  ) 
+                }
               </PostLink>
               <PostLink to={`/boards/${item.id}`}>
                 <H3>{ item.title }</H3>
