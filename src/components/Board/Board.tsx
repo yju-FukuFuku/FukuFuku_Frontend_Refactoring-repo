@@ -85,6 +85,19 @@ const Board = () => {
     }, [handleScroll]);
     
     type postType = {
+        // id: number;
+        // u_id: number;
+        // title: string;
+        // content: string;
+        // views: number;
+        // postImage: [string];
+        // user: {
+        //     id: number;
+        //     nickName: string;
+        // };
+        // like: [string];
+        // board_tag: [string];
+
         // title: string; // 게시물 제목
         // content: string; // 게시물 내용
         // writeDate: string; // 게시물 작성 일자
