@@ -111,7 +111,7 @@ const Category = () => {
     {
       pathname === '/' && (
         <>
-            <Select
+          <Select
               IconComponent={RedArrowDropDownIcon}
             value={date}
             onChange={(e) => setDate(e.target.value as string)}

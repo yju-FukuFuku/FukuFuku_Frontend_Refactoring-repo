@@ -5,6 +5,7 @@ import Spinner from "./Spinner";
 import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
+// import { logToken } from "../../api/Board";
 
 const BoardTop = styled.div`
     height: 120px;
@@ -52,6 +53,8 @@ const BoardCase = styled.div`
 
 // 게시물의 개수 만큼 post 컴포넌트를 가져오는 컴포넌트
 const Board = () => {
+
+    // logToken();
 
     const [prevScrollY, setPrevScrollY] = useState<number>(0);
     // 가져올 페이지 번호

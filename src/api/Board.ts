@@ -1,5 +1,16 @@
 import axios from 'axios';
 
+
+axios.interceptors.request.use(
+  (config) => {
+    const token = /* 토큰 설정 필요 */"";
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  }
+)
+
 type Board = {
   title: string;
   content: string;
@@ -104,3 +115,14 @@ export async function fetchBoardTag(tags: string[], id: number) {
 export async function deleteBoard(id: number) {
   await axios.delete(`/boards/${id}`)
 }
+
+
+// 게시판 전체 불러오기
+export const getBoards = async (option?: string) => {
+    if (!option) {
+        const { data } = await axios.get(`/boards`);
+        return data;
+    }
+    const { data } = await axios.get(`/boards?option=${option}`);
+    return data;
+} 
