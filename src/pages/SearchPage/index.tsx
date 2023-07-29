@@ -12,6 +12,7 @@ interface Board {
   content: string;
   view: number;
   createdAt: string;
+  img?: string;
   user: {
     nickname: string;
     email: string;
@@ -29,8 +30,6 @@ const SearchPage = () => {
     await axios.get(`http://localhost:3000/boards/search/${debounce}`)
     .then((res) => {
       setPostData(res.data)
-      console.log(res.data);
-      
     })
   }
 
@@ -67,9 +66,13 @@ const SearchPage = () => {
                 <ProfileName>{item.user.nickname ? item.user.nickname : item.user.firstName + item.user.lastName}</ProfileName>
               </Profile>
               <PostLink to={`/boards/${item.id}`}>
-                <PostImgBox>
-                  <PostImg src='/public/images/배경.webp' />
-                </PostImgBox>
+                {
+                  item.img && (
+                    <PostImgBox>
+                      <PostImg src={item.img} />
+                    </PostImgBox>
+                  )
+                }
               </PostLink>
               <PostLink to={`/boards/${item.id}`}>
                 <H3>{ item.title }</H3>
