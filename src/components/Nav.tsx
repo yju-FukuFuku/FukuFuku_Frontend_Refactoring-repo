@@ -69,8 +69,6 @@ const Nav = ({user} : NavProps) => {
 
   const handleTheme = () => {
     theme === true ? setTheme(false) : setTheme(true)
-    console.log("밝은 테마", theme);
-    
   }
   
   return (
