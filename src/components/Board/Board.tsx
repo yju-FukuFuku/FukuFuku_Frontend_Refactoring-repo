@@ -2,9 +2,10 @@ import React, {useState, useEffect, useCallback, useRef, useMemo } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import Spinner from "./Spinner";
-import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
+import { boardNumber, postState, themeState, prevThemeState, recoilDate } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
+import { getBoards } from "../../api/Board";
 // import { logToken } from "../../api/Board";
 
 const BoardTop = styled.div`
@@ -53,6 +54,10 @@ const BoardCase = styled.div`
 
 // 게시물의 개수 만큼 post 컴포넌트를 가져오는 컴포넌트
 const Board = () => {
+
+    const date = useRecoilValue(recoilDate);
+
+    getBoards(undefined, date);
 
     // logToken();
 

@@ -117,12 +117,51 @@ export async function deleteBoard(id: number) {
 }
 
 
+type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
+
 // 게시판 전체 불러오기
-export const getBoards = async (option?: string) => {
-    if (!option) {
-        const { data } = await axios.get(`/boards`);
+export const getBoards = async (option?: string, date?: dateType) => {
+  // 기본 요청 경로(date는 필수)
+  if (date) {
+    const responseDate = getCurrentDate(date);
+    const startDate = responseDate?.startDate;
+    const endDate = responseDate?.endDate;
+
+    console.log(startDate, endDate);
+    
+    
+    const { data } = await axios.get(`/boards`);
         return data;
     }
     const { data } = await axios.get(`/boards?option=${option}`);
     return data;
 } 
+
+
+// date를 받아서 startDate와 endDate를 구해주는 함수
+function getCurrentDate(date?: dateType) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const dayOfWeek = now.getDay();
+  const endDate = `${year}-${month}-${day}`
+  if (date === "오늘") {
+    const startDate = endDate;
+    return { startDate, endDate };
+  } else if (date === "이번 주") {
+    const timestamp = Date.parse(`${year}-${month}-${day}`) - (86400000 * dayOfWeek);
+    const startTimestamp = new Date(timestamp);
+    const startYear = startTimestamp.getFullYear();
+    const startMonth = String(startTimestamp.getMonth() + 1).padStart(2, "0");
+    const startDay = String(startTimestamp.getDate()).padStart(2, "0");
+    const startDate = `${startYear}-${startMonth}-${startDay}`
+    return {startDate, endDate};
+  } else if (date === "이번 달") {
+    const startDate = `${year}-${month}-01`;
+    return { startDate, endDate };
+  } else if (date === "올해") {
+    const startDate = `${year}-01-01`;
+    return { startDate, endDate };
+  }
+}

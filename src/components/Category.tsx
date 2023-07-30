@@ -10,8 +10,8 @@ import
 
 import { Menu, MenuItem, Select, Tab, Tabs, Typography, colors } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { themeSelector, themeSelectorString, themeState } from '../atom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { themeSelector, themeSelectorString, themeState, recoilDate } from '../atom';
 import { lightTheme, darkTheme } from '../theme';
 
 
@@ -39,13 +39,15 @@ const StyledTabs = styled(Tabs)(({theme}) =>
 
 const Category = () => {
 
+  type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
+
   const theme = useRecoilValue(themeSelector);
 
   const [page, setPage] = useState<number>(0);
 
   const [anchorEl, setAnchorEl] = useState<null | SVGSVGElement>(null);
   const open = Boolean(anchorEl);
-  const [date, setDate] = useState<string>('이번 주');
+  const [date, setDate] = useRecoilState(recoilDate);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -114,7 +116,7 @@ const Category = () => {
           <Select
               IconComponent={RedArrowDropDownIcon}
             value={date}
-            onChange={(e) => setDate(e.target.value as string)}
+            onChange={(e) => setDate(e.target.value as dateType)}
             sx={{width: '110px', height: '40px', marginLeft: '10px', boxShadow: 'none', border: '1px solid lightgray', borderRadius: '5px', boxSizing: 'border-box', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
           >
             <MenuItem value={"오늘"}>오늘</MenuItem>
