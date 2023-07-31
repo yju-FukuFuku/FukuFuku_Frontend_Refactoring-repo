@@ -3,6 +3,20 @@ import { Button } from '@mui/material'
 import styles from './loginModal.module.scss'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import styled from 'styled-components';
+
+
+const TextFiledTheme = styled(TextField)`
+  background-color: white;
+  color: white;
+  border-color: yellow;
+  
+  placeholder {
+    color: white;
+  }
+`
+
+
 
 interface LoginProps {
   register: boolean;
@@ -75,7 +89,7 @@ const Login = ({register}: LoginProps) => {
 
   return (
     <div className={styles.modal__right__body}>
-      <TextField
+      <TextFiledTheme
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm({...form, username: e.target.value})}
         {...(idError && form.username ) && {error: true, helperText: '아이디는 4자 이상 입력해주세요.'}}
         {...(idCheckError && form.username && !idError && register ) && {error: true, helperText: '이미 존재하는 아이디입니다.'}}
