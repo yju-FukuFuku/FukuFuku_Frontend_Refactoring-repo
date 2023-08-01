@@ -1,25 +1,26 @@
 import { store } from '../store';
-import { refreshToken } from './TokenRefresh';
+import getNewAccessToken from './TokenRefresh';
 
-export const tokenAccess = async () => {
-
+const getAccessToken = () => {
   const { accessToken, expireTime } = store.getState().token;
-  console.log(accessToken);
-  console.log(expireTime);
-  console.log(new Date().getTime());
-  
-  if (!accessToken) {
-    console.log("토큰이 없습니다.");
-    
-    refreshToken(accessToken);
-  }
-  else if (expireTime && expireTime > new Date().getTime()) {
-    console.log("토큰이 만료되었습니다.");
+  const now = new Date().getTime();
 
-    refreshToken(accessToken);
-  } else {
-    console.log("토큰이 유효합니다.");
+  console.log(now > expireTime ? '만료' : '유효');
+  
+  if (!accessToken || now > expireTime) {
+    console.log('getNewAccessToken');
+    
+    const newAcccessToken = getNewAccessToken(accessToken);
+
+    if (!newAcccessToken) {
+      return null;
+    }
+
+    return newAcccessToken;
   }
 
   return accessToken;
+
 }
+
+export default getAccessToken;

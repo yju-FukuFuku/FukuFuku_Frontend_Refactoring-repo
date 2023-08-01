@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { store } from '../store';
-import { TokenAccess, tokenAccess } from './TokenAccess';
+import getAccessToken from './TokenAccess';
 
 type Board = {
   title: string;
@@ -12,23 +11,27 @@ type Board = {
 // 게시글 작성
 export const postBoard = async (board: Board) => {
 
-  // 액세스 토큰 검사
-  await tokenAccess().then((res) => {
-    console.log(res);
+  console.log("액세스 토큰 받기");
+  
+  const accessToken = await getAccessToken();
+
+  console.log(accessToken);
+  console.log("액세스 토큰 받기 완료");
+
+  const tagId: number[] = [];
+
+  const data = {
+    title: board.title,
+    content: board.content,
+    u_id: board.u_id
+  }
+
+  console.log(data);
+  
+  await postTag(board.tags)
+  .then((res) => {
+    tagId.push(...res);
   })
-
-  // const tagId: number[] = [];
-
-  // const data = {
-  //   title: board.title,
-  //   content: board.content,
-  //   u_id: board.u_id
-  // }
-
-  // await postTag(board.tags)
-  // .then((res) => {
-  //   tagId.push(...res);
-  // })
 
   // await axios.post('/boards', data)
   // .then((res) => {
@@ -38,15 +41,15 @@ export const postBoard = async (board: Board) => {
   //   console.log(error);
   // })
   
-  // await tokenAccess().then((accessToken) => {
-  //   axios.post('/boards', board, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     }
-  //   })
-  // }).catch((error) => {
-  //   console.log(error);
-  // })
+  await axios.post('/boards', data, {
+    headers: {
+      Authorization: `${accessToken}`
+    }
+  })
+  .then((res) => {
+    console.log(res);
+  })
+    
 }
 
 // 태그 작성

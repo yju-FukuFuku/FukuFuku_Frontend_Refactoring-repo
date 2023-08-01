@@ -20,22 +20,19 @@ export function onLoginSuccess() {
     "firstName":"김",
     "lastName":"지훈",
     "isAdmin":null,
-    "refreshToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlhdCI6MTY5MDg0OTg4NiwiZXhwIjoxNjkwOTM2Mjg2fQ.eufm-YCu-KHg3c7Oq2f5EUmeJYPFGZUn-p3l9GUk6Pg",
+    "refreshToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlhdCI6MTY5MDg4OTgxMCwiZXhwIjoxNjkwOTc2MjEwfQ.ODaD4MN5AdDOpnhCmJFSO4cOh1AhG5PV_fxx9fgEiJQ",
     "nickName":null,
-    "accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlhdCI6MTY5MDg0OTg4NiwiZXhwIjoxNjkwOTM2Mjg2fQ._GSzle3LlcpbHiG844PMnOboqt_km9wAcZc9dX1esGQ"
+    "accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlhdCI6MTY5MDg4OTgxMCwiZXhwIjoxNjkwOTc2MjEwfQ.WI-Ta8buodk_5zqlgC2ieZ5vMPM8tNUFfmFMfcjhZVs"
   }
 
   const { accessToken, refreshToken } = data;
 
   setRefreshToken(refreshToken);
   const payload: SetAccessTokenPayload = { accessToken };
-  console.log(payload);
   
   store.dispatch(setAccessToken(payload));
 
   store.dispatch(setUser(data));
-
-  console.log(store.getState().user);
   
   console.log("onLoginSuccess");
   

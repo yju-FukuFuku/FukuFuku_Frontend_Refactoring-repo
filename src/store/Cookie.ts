@@ -3,10 +3,12 @@ import { Cookies } from "react-cookie";
 const cookies = new Cookies();
 
 export const setRefreshToken = (refreshToken: string) => {
-  const expires = new Date(Date.now() + 3600 * 1000);
+  const today = new Date();
+  const expires = today.setDate(today.getDate() + 30);
 
-  cookies.set("refreshToken", refreshToken, {
-    expires,
+  return cookies.set("refreshToken", refreshToken, {
+    path: "/",
+    expires: new Date(expires),
   });
 }
 

@@ -20,6 +20,7 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { themeSelector, themeState } from "./atom.ts";
+import { CookiesProvider } from 'react-cookie'
 
 const Root = () => {
   // const [themeValue, setThemeValue] = useRecoilState(themeState);
@@ -32,11 +33,13 @@ const Root = () => {
   
   return (
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
+      <CookiesProvider>
+        <Provider store={store}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </Provider>
+      </CookiesProvider>
     </ThemeProvider>
   );
 };
