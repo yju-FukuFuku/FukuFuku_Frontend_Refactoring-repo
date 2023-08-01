@@ -22,9 +22,10 @@ interface NavProps {
     email: string | null;
     picture: string | null;
   }
+  accessToken: string | null;
 }
 
-const Nav = ({user} : NavProps) => {
+const Nav = ({user, accessToken} : NavProps) => {
   const [headMargin, setHeadMargin] = useState<boolean>(true);
   const [modalopen, setModalopen] = useState<boolean>(false);
 

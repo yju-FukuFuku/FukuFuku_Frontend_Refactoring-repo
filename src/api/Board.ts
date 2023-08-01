@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { store } from '../store';
+import { TokenAccess, tokenAccess } from './TokenAccess';
 
 type Board = {
   title: string;
@@ -10,28 +12,31 @@ type Board = {
 // 게시글 작성
 export const postBoard = async (board: Board) => {
 
-  const tagId: number[] = [];
-
-  const data = {
-    title: board.title,
-    content: board.content,
-    u_id: board.u_id
-  }
-
-  await postTag(board.tags)
-  .then((res) => {
-    tagId.push(...res);
-  })
-
-
-  await axios.post('/boards', data)
-  .then((res) => {
+  // 액세스 토큰 검사
+  await tokenAccess().then((res) => {
     console.log(res);
-    
-    postBoardTag(res.data.id, tagId);
-  }).catch((error) => {
-    console.log(error);
   })
+
+  // const tagId: number[] = [];
+
+  // const data = {
+  //   title: board.title,
+  //   content: board.content,
+  //   u_id: board.u_id
+  // }
+
+  // await postTag(board.tags)
+  // .then((res) => {
+  //   tagId.push(...res);
+  // })
+
+  // await axios.post('/boards', data)
+  // .then((res) => {
+  //   console.log(res);
+  //   postBoardTag(res.data.id, tagId);
+  // }).catch((error) => {
+  //   console.log(error);
+  // })
   
   // await tokenAccess().then((accessToken) => {
   //   axios.post('/boards', board, {
@@ -60,10 +65,10 @@ export async function postTag(tagList: string[]) {
 
 // 게시물 하나 가져오기
 export async function getBoardById(id: number | null) {
-  const { data } = await axios.get(`/boards/${id}`);
-  console.log(await axios.get(`/boards/${id}`));
-  
-  return data;
+  await axios.get(`/boards/${id}`)
+  .then((res) => {
+    console.log(res);
+  })
 }
 
 // 게시물 태그 연결

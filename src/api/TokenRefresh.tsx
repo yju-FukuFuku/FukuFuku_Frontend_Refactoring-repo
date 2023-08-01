@@ -1,7 +1,7 @@
 import axios from "axios";
+import { getRefreshToken } from "../store/Cookie";
 import { store } from "../store";
 import { setAccessToken } from "../store/Auth";
-import { getRefreshToken } from "../store/Cookie";
 
 export const refreshToken = async (accessToken: string | null) => {
 
@@ -13,16 +13,19 @@ export const refreshToken = async (accessToken: string | null) => {
   
   try {
     const response = await axios.post("/auth/refresh", {
-      refreshToken,
+      accessToken,
     }, {
       headers: {
-        Authorization: `${accessToken}`,
+        Authorization: `${refreshToken}`,
       }
     });
+
     console.log(response);
+    
+    const newAccessToken = response.data
   
-    // store.dispatch(setAccessToken(accessToken));
-    // return accessToken; 
+    store.dispatch(setAccessToken(newAccessToken));
+    return accessToken; 
   } catch (error) {
     console.log(error);
     return await Promise.reject();

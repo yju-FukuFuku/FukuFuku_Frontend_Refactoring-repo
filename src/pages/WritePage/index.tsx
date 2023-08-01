@@ -127,9 +127,9 @@ const WritePage = () => {
     console.log(data);
 
     await postBoard(data)
-    .then(() => {
-      navigate(`/`);
-    })
+    // .then(() => {
+    //   navigate(`/`);
+    // })
   }
 
   const imageHandler = () => {

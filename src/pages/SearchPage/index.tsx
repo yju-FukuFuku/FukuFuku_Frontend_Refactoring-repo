@@ -5,6 +5,7 @@ import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import useDebounce from '../../hooks/useDebounce';
+import { TokenAccess } from '../../api/TokenAccess';
 
 interface Board {
   id: number;
@@ -49,8 +50,6 @@ const SearchPage = () => {
       getData(debounce)
     }
   }, [debounce])
-
-
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
@@ -239,3 +238,7 @@ const PostLink = styled(Link)`
 color: inherit;
 text-decoration: none;
 `
+
+function then(arg0: (res: any) => void) {
+  throw new Error('Function not implemented.');
+}

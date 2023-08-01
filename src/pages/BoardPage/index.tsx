@@ -22,10 +22,8 @@ interface Board {
 }
 
 interface Author {
-  email: string;
+  nickName: string;
   picture: string;
-  firstName: string;
-  lastName: string;
 }
 
 interface Tag {
@@ -49,11 +47,11 @@ const PostPage = () => {
     const getBoard = async () => {
       const board = await getBoardById(Number(boardId))
       .then((res) => {
+        console.log(res);
         return res
       }).catch(() => {
         navigate('/error');
       })
-      console.log(board);
       
       getAuthor(board.user);      
       getTags(board.board_tag);
@@ -156,7 +154,7 @@ const PostPage = () => {
 
             <InfoWrapper>
               <Info>
-                <span className={styles.author__Name}>{author.firstName + author.lastName}</span>
+                <span className={styles.author__Name}>{author.nickName}</span>
                 <span className={styles.separator}>·</span>
                 {
                   board.createdAt &&
@@ -246,7 +244,7 @@ const PostPage = () => {
               </a>
   
               <div className={styles.profile__info}>
-                <a href='#'>{author.email}</a>
+                <a href='#'>{author.nickName}</a>
                 <span>한줄소개 적는 부분</span>
               </div>
             </div>
