@@ -17,12 +17,11 @@ import { useSelector } from 'react-redux'
 
 function App() {
   const user = useSelector((state: RootState) => state.user)
-  const accessToken = useSelector((state: RootState) => state.token.accessToken)
-  
+
   const Layout = () => {
     return (
       <>
-        <Nav user={user} accessToken={accessToken} />
+        <Nav user={user}/>
         
         <Outlet />
       </>

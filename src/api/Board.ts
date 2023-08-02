@@ -1,5 +1,4 @@
 import axios from 'axios';
-import getAccessToken from './TokenAccess';
 
 type Board = {
   title: string;
@@ -10,13 +9,6 @@ type Board = {
 
 // 게시글 작성
 export const postBoard = async (board: Board) => {
-
-  console.log("액세스 토큰 받기");
-  
-  const accessToken = await getAccessToken();
-
-  console.log(accessToken);
-  console.log("액세스 토큰 받기 완료");
 
   const tagId: number[] = [];
 
@@ -41,11 +33,7 @@ export const postBoard = async (board: Board) => {
   //   console.log(error);
   // })
   
-  await axios.post('/boards', data, {
-    headers: {
-      Authorization: `${accessToken}`
-    }
-  })
+  await api.post('/boards', data)
   .then((res) => {
     console.log(res);
   })

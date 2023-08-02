@@ -9,17 +9,13 @@ import axios from 'axios';
 import { Provider } from 'react-redux'
 import { store } from './store'
 
-axios.defaults.baseURL = 'http://localhost:3000'
 axios.defaults.withCredentials = true
 
 import {
   RecoilRoot,
-  atom,
-  selector,
-  useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { themeSelector, themeState } from "./atom.ts";
+import { themeSelector } from "./atom.ts";
 import { CookiesProvider } from 'react-cookie'
 
 const Root = () => {

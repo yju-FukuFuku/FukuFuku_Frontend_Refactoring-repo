@@ -9,7 +9,7 @@ interface SetAccessTokenPayload {
 }
 
 export async function login() {
-  return await axios.get('auth')
+  return await axios.get('/auth')
 }
 
 export function onLoginSuccess() {

@@ -16,12 +16,14 @@ const getNewAccessToken = async (nowAccessToken: string | null) => {
 
   try {
     const response = await axios.post('/auth/refresh', {
-      accessToken: nowAccessToken,
+      refreshToken
     }, {
       headers: {
-        'Authorization': `${refreshToken}`
+        'Authorization': `${nowAccessToken}`
       }
     });
+
+    console.log(response);
 
     const accessToken = response.data.data.accessToken;
     const payload: SetAccessTokenPayload = { accessToken };
