@@ -1,4 +1,5 @@
 import axios from 'axios';
+import api from '.';
 
 type Board = {
   title: string;
@@ -36,6 +37,7 @@ export const postBoard = async (board: Board) => {
   await api.post('/boards', data)
   .then((res) => {
     console.log(res);
+    
   })
     
 }
@@ -56,10 +58,9 @@ export async function postTag(tagList: string[]) {
 
 // 게시물 하나 가져오기
 export async function getBoardById(id: number | null) {
-  await axios.get(`/boards/${id}`)
-  .then((res) => {
-    console.log(res);
-  })
+  const { data } = await api.get(`/boards/${id}`)
+
+  return data;
 }
 
 // 게시물 태그 연결
