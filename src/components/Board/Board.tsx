@@ -2,9 +2,11 @@ import React, {useState, useEffect, useCallback, useRef, useMemo } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import Spinner from "./Spinner";
-import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
+import { boardNumber, postState, themeState, prevThemeState, recoilDate } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
+import { getBoards } from "../../api/Board";
+// import { logToken } from "../../api/Board";
 
 const BoardTop = styled.div`
     height: 120px;
@@ -53,6 +55,12 @@ const BoardCase = styled.div`
 // 게시물의 개수 만큼 post 컴포넌트를 가져오는 컴포넌트
 const Board = () => {
 
+    const date = useRecoilValue(recoilDate);
+
+    getBoards(undefined, date);
+
+    // logToken();
+
     const [prevScrollY, setPrevScrollY] = useState<number>(0);
     // 가져올 페이지 번호
     const [boardPage, setBoardPage] = useRecoilState<number>(boardNumber); 
@@ -83,6 +91,19 @@ const Board = () => {
     }, [handleScroll]);
     
     type postType = {
+        // id: number;
+        // u_id: number;
+        // title: string;
+        // content: string;
+        // views: number;
+        // postImage: [string];
+        // user: {
+        //     id: number;
+        //     nickName: string;
+        // };
+        // like: [string];
+        // board_tag: [string];
+
         // title: string; // 게시물 제목
         // content: string; // 게시물 내용
         // writeDate: string; // 게시물 작성 일자

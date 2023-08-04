@@ -56,3 +56,10 @@ export const boardNumber = atom({
     key: "boardNumber",
     default: 1,
 })
+
+type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
+
+export const recoilDate = atom({
+    key: "recoilDate",
+    default: <dateType>"이번 주",
+})
