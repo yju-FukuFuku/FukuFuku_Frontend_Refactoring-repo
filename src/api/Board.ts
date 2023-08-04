@@ -1,5 +1,5 @@
 import axios from 'axios';
-import getAccessToken from './TokenAccess';
+import api from '.';
 
 
 axios.interceptors.request.use(
@@ -21,13 +21,6 @@ type Board = {
 
 // 게시글 작성
 export const postBoard = async (board: Board) => {
-
-  console.log("액세스 토큰 받기");
-  
-  const accessToken = await getAccessToken();
-
-  console.log(accessToken);
-  console.log("액세스 토큰 받기 완료");
 
   const tagId: number[] = [];
 
@@ -52,13 +45,10 @@ export const postBoard = async (board: Board) => {
   //   console.log(error);
   // })
   
-  await axios.post('/boards', data, {
-    headers: {
-      Authorization: `${accessToken}`
-    }
-  })
+  await api.post('/boards', data)
   .then((res) => {
     console.log(res);
+    
   })
     
 }
@@ -79,10 +69,9 @@ export async function postTag(tagList: string[]) {
 
 // 게시물 하나 가져오기
 export async function getBoardById(id: number | null) {
-  await axios.get(`/boards/${id}`)
-  .then((res) => {
-    console.log(res);
-  })
+  const { data } = await api.get(`/boards/${id}`)
+
+  return data;
 }
 
 // 게시물 태그 연결

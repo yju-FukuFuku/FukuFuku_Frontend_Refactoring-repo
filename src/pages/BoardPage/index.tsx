@@ -47,7 +47,6 @@ const PostPage = () => {
     const getBoard = async () => {
       const board = await getBoardById(Number(boardId))
       .then((res) => {
-        console.log(res);
         return res
       }).catch(() => {
         navigate('/error');
