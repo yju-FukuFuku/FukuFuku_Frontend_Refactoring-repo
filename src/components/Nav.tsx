@@ -13,6 +13,8 @@ import Category from './Category';
 import { useRecoilState } from "recoil";
 import { themeState } from '../atom';
 import { store } from '../store';
+import { getRefreshToken } from '../store/Cookie';
+import { onLogin } from '../api/Login';
 
 interface NavProps {
   user: {
@@ -32,6 +34,17 @@ const Nav = ({user} : NavProps) => {
   const navigate = useNavigate();
 
   const { isLogin } = store.getState().token;
+  const refreshToken = getRefreshToken();
+  
+  const loginState = () => {
+    if (refreshToken) {
+      onLogin()
+    }
+  }
+
+  useEffect(() => {
+    loginState();
+  }, [])
 
   useEffect(() => {
     if (isLogin) {
@@ -70,6 +83,10 @@ const Nav = ({user} : NavProps) => {
   const handleTheme = () => {
     theme === true ? setTheme(false) : setTheme(true)
   }
+
+  if (pathname === '/write') {
+    return null;
+  }
   
   return (
     <>
@@ -77,7 +94,7 @@ const Nav = ({user} : NavProps) => {
         <Wrapper>
           
           <Typography 
-            sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
+            sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif', fontSize: '2rem'}} 
             variant='h4'
             onClick={() => navigate('/')}
             color={theme === true ? "#212529" : "#ECECEC"}
@@ -87,15 +104,15 @@ const Nav = ({user} : NavProps) => {
 
           <Item>
             <Icon>
-              <LightMode onClick={handleTheme} sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}` }}/>
+              <LightMode onClick={handleTheme} sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}`, fontSize: '1.5rem' }}/>
             </Icon>
             <Icon onClick={handleClick}>
-              <SearchRounded sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}` }}/>
+              <SearchRounded sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}`, fontSize: '1.5rem' }}/>
             </Icon>
             {
               isLogin ? (
                 <Write onClick={() => {navigate('/write')}}>
-                  <Typography sx={{ color: '#000', fontWeight: 600 }}>새글작성</Typography>
+                  <Typography sx={{ color: '#000', fontWeight: 600 }}>로그아웃</Typography>
                 </Write>
               ) : null
             }
@@ -115,7 +132,7 @@ const Nav = ({user} : NavProps) => {
                 </Icon>
               ) : (
                 <Login onClick={() => {setModalopen(true)}}>
-                  <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}` }}>로그인</Typography>
+                  <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}`, fontSize: '1.5rem' }}>로그인</Typography>
                 </Login>
               )
             }
@@ -158,10 +175,9 @@ const Container = styled.div<{headmargin?: string}>`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
   height: 100%;
   align-items: center;
-  margin: 20px auto;
+  margin: 1.5rem auto;
   width: 1700px;
 
   @media screen and (max-width: 1023px) {
@@ -169,7 +185,7 @@ const Wrapper = styled.div`
   }
 
   @media screen and (max-width: 767px) {
-    width: 400px;
+    width: 300px;
   }
 `
 
@@ -183,8 +199,8 @@ const Login = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 40px;
+  width: 8rem;
+  height: 3rem;
   border-radius: 20px;
   background-color: ${props => props.theme.textColor1};
   cursor: pointer;

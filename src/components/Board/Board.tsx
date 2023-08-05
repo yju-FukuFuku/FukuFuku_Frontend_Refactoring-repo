@@ -5,7 +5,7 @@ import Spinner from "./Spinner";
 import { boardNumber, postState, themeState, prevThemeState, recoilDate } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
-import { getBoards } from "../../api/Board";
+import { getBoards } from "../../api/BoardAPI";
 // import { logToken } from "../../api/Board";
 
 const BoardTop = styled.div`
@@ -57,7 +57,6 @@ const Board = () => {
 
     const date = useRecoilValue(recoilDate);
 
-    getBoards(undefined, date);
 
     // logToken();
 
@@ -75,7 +74,6 @@ const Board = () => {
         if (currentScrollY > targetY) {
             setScrollCheck(false);
             setBoardPage(boardPage + 1);
-        } else {
         }
         setPrevScrollY(currentScrollY);
     }, [prevScrollY, targetY]);

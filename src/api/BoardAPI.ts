@@ -25,32 +25,23 @@ export const postBoard = async (board: Board) => {
   const tagId: number[] = [];
 
   const data = {
-    title: board.title,
-    content: board.content,
-    u_id: board.u_id
+    data: {
+      title: board.title,
+      content: board.content,
+      u_id: board.u_id
+    }
   }
 
-  console.log(data);
+  await api.post('/boards/create', data)
+  .then((res) => {
+    console.log(res);
+  })
   
   await postTag(board.tags)
   .then((res) => {
     tagId.push(...res);
   })
 
-  // await axios.post('/boards', data)
-  // .then((res) => {
-  //   console.log(res);
-  //   postBoardTag(res.data.id, tagId);
-  // }).catch((error) => {
-  //   console.log(error);
-  // })
-  
-  await api.post('/boards', data)
-  .then((res) => {
-    console.log(res);
-    
-  })
-    
 }
 
 // 태그 작성
@@ -125,7 +116,6 @@ export const getBoards = async (option?: string, date?: dateType) => {
     const endDate = responseDate?.endDate;
 
     console.log(startDate, endDate);
-    
     
     const { data } = await axios.get(`/boards`);
         return data;

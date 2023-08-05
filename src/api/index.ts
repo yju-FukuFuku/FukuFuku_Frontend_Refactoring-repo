@@ -6,17 +6,17 @@ import { getRefreshToken } from '../store/Cookie';
 const api = axios.create({
   baseURL: 'http://localhost:3000',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
 });
 
 api.interceptors.request.use(async (config) => {
   const token = store.getState().token.accessToken;
-  console.log('token', token);
 
   if (token) {
     config.headers.Authorization = `${token}`;
   }
+
   return config;
 });
 
@@ -24,19 +24,28 @@ api.interceptors.response.use(async (response) => {
   return response;
 }, async (error) => {
   const originalRequest = error.config;
-  if (error.response.status === 401 && !originalRequest._retry) {
+  if (error.response.status === 410 && !originalRequest._retry) {
+
+    console.log("토큰 재발급");
+    const refreshToken = getRefreshToken();
+    const currentAccessToken = store.getState().token.accessToken;
+
+    console.log(refreshToken, currentAccessToken);
     
     originalRequest._retry = true;
     try {
       const response = await api.post('/auth/refresh', {
-        refreshToken: getRefreshToken()
+        refreshToken
       }, {
         headers: {
-          'Authorization': `${store.getState().token.accessToken}`
+          'Authorization': `${currentAccessToken}`
         }
       });
+      
       const { accessToken } = response.data.data;
-      store.dispatch(setAccessToken(accessToken));
+      const payload = { accessToken };
+      store.dispatch(setAccessToken(payload));
+      
       originalRequest.headers.Authorization = `${accessToken}`;
       return api(originalRequest);
     } catch (e) {

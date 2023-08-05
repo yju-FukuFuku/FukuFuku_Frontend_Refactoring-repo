@@ -114,7 +114,7 @@ const Category = () => {
       pathname === '/' && (
         <>
           <Select
-              IconComponent={RedArrowDropDownIcon}
+            IconComponent={RedArrowDropDownIcon}
             value={date}
             onChange={(e) => setDate(e.target.value as dateType)}
             sx={{width: '110px', height: '40px', marginLeft: '10px', boxShadow: 'none', border: '1px solid lightgray', borderRadius: '5px', boxSizing: 'border-box', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
@@ -128,7 +128,10 @@ const Category = () => {
       )
     }
     
-
+    <Write>
+      <Typography sx={{ color: '#000', fontWeight: 600 }}>새 글 작성</Typography>
+    </Write>
+    
     <MoreVert 
       sx={{position: 'absolute', right: 0, cursor: 'pointer', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
       id="mav-menu-button"
@@ -155,7 +158,7 @@ const Category = () => {
       </Menu>
     </MenuWrapper>
     
-      </CategoryWrapper>
+    </CategoryWrapper>
   )
 }
 
@@ -174,8 +177,23 @@ const CategoryWrapper = styled.div`
   }
 
   @media screen and (max-width: 767px) {
-    width: 400px;
+    width: 500px;
+    size: 0.5rem;
   }
+`
+
+const Write = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #fff;
+  cursor: pointer;
+  border: 1px solid #000;
+  position: absolute;
+  right: 50px;
 `
 
 const CategoryItem = styled.div`

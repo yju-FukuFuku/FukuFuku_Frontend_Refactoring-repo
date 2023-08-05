@@ -1,10 +1,11 @@
 import axios from "axios";
+import api from ".";
 
 type Comment = {
   content: string;
   boardId: number;
   commenter: string;
-  img: string;
+  img: string | null;
   u_id: number;
 }
 
@@ -16,9 +17,8 @@ export const getComment = async (boardId: number) => {
 
 // 댓글 생성
 export const postComment = async (comment: Comment) => {
-  await axios.post('/comments', comment)
+  await api.post('/comments', comment)
     .then((res) => {
-      console.log(res.status)
       const { data } = res;
       return data;
     }

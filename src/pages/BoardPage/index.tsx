@@ -9,7 +9,7 @@ import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
-import { deleteBoard, getBoardById } from '../../api/Board';
+import { deleteBoard, getBoardById } from '../../api/BoardAPI';
 
 interface Board {
   id: number;
@@ -378,19 +378,19 @@ const SideTool = styled.div <{fixed: string}>`
 `
 
 const Title = styled.div`
-  font-size: 60px;
+  font-size: 4rem;
   font-weight: 600;
   margin-bottom: 20px;
 `
 
 const BodyWrapper = styled.div`
   width: 100%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 `
 
 const Content = styled.div`
-  font-size: 20px;
+  font-size: 1.5rem;
 `
 
 export default PostPage
