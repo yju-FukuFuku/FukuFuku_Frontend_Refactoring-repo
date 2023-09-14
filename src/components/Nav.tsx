@@ -12,21 +12,13 @@ import LoginModal from './Modal/LoginModal';
 import Category from './Category';
 import { useRecoilState } from "recoil";
 import { themeState } from '../atom';
-import { store } from '../store';
+import { RootState, store } from '../store';
 import { getRefreshToken } from '../store/Cookie';
 import { onLogin } from '../api/Login';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser } from '../store/User';
 
-interface NavProps {
-  user: {
-    id: number | null;
-    firstName: string | null;
-    lastName: string | null;
-    email: string | null;
-    picture: string | null;
-  }
-}
-
-const Nav = ({user} : NavProps) => {
+const Nav = () => {
   const [headMargin, setHeadMargin] = useState<boolean>(true);
   const [modalopen, setModalopen] = useState<boolean>(false);
 
@@ -35,6 +27,10 @@ const Nav = ({user} : NavProps) => {
 
   const { isLogin } = store.getState().token;
   const refreshToken = getRefreshToken();
+
+  const dispatch = useDispatch();
+
+  const user = useSelector((state: RootState) => state.user);
   
   const loginState = () => {
     if (refreshToken) {
@@ -84,6 +80,11 @@ const Nav = ({user} : NavProps) => {
     theme === true ? setTheme(false) : setTheme(true)
   }
 
+  const handleLogOut = () => {
+    dispatch(clearUser());
+    navigate('/');
+  }
+
   if (pathname === '/write') {
     return null;
   }
@@ -110,15 +111,15 @@ const Nav = ({user} : NavProps) => {
               <SearchRounded sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}`, fontSize: '1.5rem' }}/>
             </Icon>
             {
-              isLogin ? (
-                <Write onClick={() => {navigate('/write')}}>
+              user.id ? (
+                <Write onClick={handleLogOut}>
                   <Typography sx={{ color: '#000', fontWeight: 600 }}>로그아웃</Typography>
                 </Write>
               ) : null
             }
 
             {
-              isLogin ? (
+              user.id ? (
                 <Icon onClick={() => navigate('/mypage')}>
                   { user.picture ? (
                     <img 

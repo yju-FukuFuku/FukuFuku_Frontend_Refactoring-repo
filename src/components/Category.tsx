@@ -128,7 +128,7 @@ const Category = () => {
       )
     }
     
-    <Write>
+    <Write onClick={() => navigate('/write')}>
       <Typography sx={{ color: '#000', fontWeight: 600 }}>새 글 작성</Typography>
     </Write>
     

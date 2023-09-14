@@ -7,7 +7,7 @@ import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./theme";
 import axios from 'axios';
 import { Provider } from 'react-redux'
-import { store } from './store'
+import { persistor, store } from './store'
 
 axios.defaults.baseURL = 'http://localhost:3000'
 axios.defaults.withCredentials = true
@@ -18,6 +18,7 @@ import {
 } from 'recoil';
 import { themeSelector } from "./atom.ts";
 import { CookiesProvider } from 'react-cookie'
+import { PersistGate } from 'redux-persist/integration/react'
 
 const Root = () => {
   // const [themeValue, setThemeValue] = useRecoilState(themeState);
@@ -32,9 +33,11 @@ const Root = () => {
     <ThemeProvider theme={theme}>
       <CookiesProvider>
         <Provider store={store}>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <PersistGate loading={null} persistor={persistor}>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </PersistGate>
         </Provider>
       </CookiesProvider>
     </ThemeProvider>

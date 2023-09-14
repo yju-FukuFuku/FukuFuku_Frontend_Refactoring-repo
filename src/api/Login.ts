@@ -36,11 +36,7 @@ export function onLoginSuccess() {
   store.dispatch(setAccessToken(payload));
 
   store.dispatch(setUser(data));
-  
-  console.log("onLoginSuccess");
-  
-  // 로컬 스토리지에 오브젝트로 저장
-  localStorage.setItem('user', JSON.stringify(data));
+
 }
 
 export function onLogin() {

@@ -146,17 +146,15 @@ const WritePage = () => {
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
-
-      await postImage(file, id);
       
-      // const url = await res.text();
+      const url = await postImage(file, id);
 
-      // // 4. quill에 이미지를 삽입한다.
-      // const quill = quillRef.current;
-      // const range = quill?.getEditor().getSelection()?.index;
-      // if (range !== undefined && quill) {
-      //   quill.getEditor().insertEmbed(range, 'image', url);
-      // }
+      // 4. quill에 이미지를 삽입한다.
+      const quill = quillRef.current;
+      const range = quill?.getEditor().getSelection()?.index;
+      if (range !== undefined && quill) {
+        quill.getEditor().insertEmbed(range, 'image', url);
+      }
     }
   }
  
