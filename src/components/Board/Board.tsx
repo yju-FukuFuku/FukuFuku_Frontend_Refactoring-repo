@@ -5,7 +5,7 @@ import Spinner from "./Spinner";
 import { boardNumber, postState, themeState, prevThemeState, recoilDate } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
-import { getBoards } from "../../api/Board";
+import { getBoards } from "../../api/BoardAPI";
 // import { logToken } from "../../api/Board";
 
 const BoardTop = styled.div`
@@ -57,7 +57,6 @@ const Board = () => {
 
     const date = useRecoilValue(recoilDate);
 
-    getBoards(undefined, date);
 
     // logToken();
 
@@ -74,10 +73,7 @@ const Board = () => {
         const currentScrollY = window.scrollY;
         if (currentScrollY > targetY) {
             setScrollCheck(false);
-            console.log("도달", currentScrollY, targetY);
             setBoardPage(boardPage + 1);
-        } else {
-            console.log("실패", currentScrollY, targetY);
         }
         setPrevScrollY(currentScrollY);
     }, [prevScrollY, targetY]);
@@ -137,13 +133,10 @@ const Board = () => {
             if (boardCaseRef.current) {
             // boardCase의 높이
             const height = boardCaseRef.current.offsetHeight;
-            console.log("BoardCase height:", height);
             // 사용자 화면 높이
             const userHeight = window.innerHeight;
-            console.log(userHeight);
             // 목표 높이 설정
             setTargetY(height - userHeight);
-            console.log("목표높이", targetY);
         }
     }, [post, window.innerWidth]);
 
@@ -163,11 +156,10 @@ const Board = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
           setPost((prevPost) => prevPost ? [...prevPost, ...data] : data);
           setScrollCheck(true);
       })
-    }
+    }   
 
 
     return (

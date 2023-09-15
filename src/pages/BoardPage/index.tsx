@@ -9,7 +9,7 @@ import { Skeleton } from '@mui/material';
 import Comment from '../../components/Comment/Comment';
 import styles from './board.module.scss';
 import { store } from '../../store';
-import { deleteBoard, getBoardById } from '../../api/Board';
+import { deleteBoard, getBoardById } from '../../api/BoardAPI';
 
 interface Board {
   id: number;
@@ -22,10 +22,8 @@ interface Board {
 }
 
 interface Author {
-  email: string;
+  nickName: string;
   picture: string;
-  firstName: string;
-  lastName: string;
 }
 
 interface Tag {
@@ -53,7 +51,6 @@ const PostPage = () => {
       }).catch(() => {
         navigate('/error');
       })
-      console.log(board);
       
       getAuthor(board.user);      
       getTags(board.board_tag);
@@ -156,7 +153,7 @@ const PostPage = () => {
 
             <InfoWrapper>
               <Info>
-                <span className={styles.author__Name}>{author.firstName + author.lastName}</span>
+                <span className={styles.author__Name}>{author.nickName}</span>
                 <span className={styles.separator}>·</span>
                 {
                   board.createdAt &&
@@ -246,7 +243,7 @@ const PostPage = () => {
               </a>
   
               <div className={styles.profile__info}>
-                <a href='#'>{author.email}</a>
+                <a href='#'>{author.nickName}</a>
                 <span>한줄소개 적는 부분</span>
               </div>
             </div>
@@ -381,19 +378,19 @@ const SideTool = styled.div <{fixed: string}>`
 `
 
 const Title = styled.div`
-  font-size: 60px;
+  font-size: 4rem;
   font-weight: 600;
   margin-bottom: 20px;
 `
 
 const BodyWrapper = styled.div`
   width: 100%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 `
 
 const Content = styled.div`
-  font-size: 20px;
+  font-size: 1.5rem;
 `
 
 export default PostPage

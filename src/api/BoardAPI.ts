@@ -1,4 +1,5 @@
 import axios from 'axios';
+import api from '.';
 
 
 axios.interceptors.request.use(
@@ -24,35 +25,23 @@ export const postBoard = async (board: Board) => {
   const tagId: number[] = [];
 
   const data = {
-    title: board.title,
-    content: board.content,
-    u_id: board.u_id
+    data: {
+      title: board.title,
+      content: board.content,
+      u_id: board.u_id
+    }
   }
 
+  await api.post('/boards/create', data)
+  .then((res) => {
+    console.log(res);
+  })
+  
   await postTag(board.tags)
   .then((res) => {
     tagId.push(...res);
   })
 
-
-  await axios.post('/boards', data)
-  .then((res) => {
-    console.log(res);
-    
-    postBoardTag(res.data.id, tagId);
-  }).catch((error) => {
-    console.log(error);
-  })
-  
-  // await tokenAccess().then((accessToken) => {
-  //   axios.post('/boards', board, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     }
-  //   })
-  // }).catch((error) => {
-  //   console.log(error);
-  // })
 }
 
 // 태그 작성
@@ -71,9 +60,8 @@ export async function postTag(tagList: string[]) {
 
 // 게시물 하나 가져오기
 export async function getBoardById(id: number | null) {
-  const { data } = await axios.get(`/boards/${id}`);
-  console.log(await axios.get(`/boards/${id}`));
-  
+  const { data } = await api.get(`/boards/${id}`)
+
   return data;
 }
 
@@ -128,7 +116,6 @@ export const getBoards = async (option?: string, date?: dateType) => {
     const endDate = responseDate?.endDate;
 
     console.log(startDate, endDate);
-    
     
     const { data } = await axios.get(`/boards`);
         return data;

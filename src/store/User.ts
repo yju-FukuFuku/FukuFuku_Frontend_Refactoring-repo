@@ -32,11 +32,20 @@ export const userSlice = createSlice({
       state.lastName = lastName;
       state.isAdmin = isAdmin;
       state.nickName = nickName;
+    },
+    clearUser: (state) => {
+      state.id = null;
+      state.email = null;
+      state.picture = null;
+      state.firstName = null;
+      state.lastName = null;
+      state.isAdmin = null;
+      state.nickName = null;
     }
   }
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;
 
