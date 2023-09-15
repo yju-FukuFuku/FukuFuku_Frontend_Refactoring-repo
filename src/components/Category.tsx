@@ -14,7 +14,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { themeSelector, themeSelectorString, themeState, recoilDate } from '../atom';
 import { lightTheme, darkTheme } from '../theme';
 
-
 const RedArrowDropDownIcon = (props: any | undefined) => {
 
   const theme = useRecoilValue(themeSelector);
@@ -80,8 +79,8 @@ const Category = () => {
   return (
     <CategoryWrapper>
     <StyledTabs 
-    value={page} 
-    onChange={handleChange}>
+      value={page} 
+      onChange={handleChange}>
       <Tab
         label={
           <CategoryItem>
