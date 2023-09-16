@@ -1,73 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import { styled, ThemeProvider } from 'styled-components'
-import
-{
-  TrendingUp,
-  AccessTime,
+import React, { useState } from 'react'
+import { styled } from 'styled-components'
+import {
   MoreVert,
-  ArrowDropDown
 } from '@mui/icons-material';
 
-import { Menu, MenuItem, Select, Tab, Tabs, Typography, colors } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { themeSelector, themeSelectorString, themeState, recoilDate } from '../atom';
-import { lightTheme, darkTheme } from '../theme';
-
-const RedArrowDropDownIcon = (props: any | undefined) => {
-
-  const theme = useRecoilValue(themeSelector);
-
-  return <ArrowDropDown {...props} style={{ color: theme === lightTheme ? "#000" : "#ccc" }} />;
-};
-
-const StyledTabs = styled(Tabs)(({theme}) => 
-  ({
-    "& .MuiTabs-indicator": {
-      backgroundColor: theme === lightTheme ? "#000" : "#ccc"
-    },
-    "& .MuiTab-textColorPrimary": {
-      color: "lightgray",
-      fontWeight: 300
-    },
-    "& .MuiTab-textColorPrimary.Mui-selected": {
-      color: theme === lightTheme ? "#000" : "#ccc"
-    }
-  })
-)
+import { Menu, MenuItem, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Category = () => {
 
-  type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
-
-  const theme = useRecoilValue(themeSelector);
-
-  const [page, setPage] = useState<number>(0);
-
   const [anchorEl, setAnchorEl] = useState<null | SVGSVGElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
   const open = Boolean(anchorEl);
-  const [date, setDate] = useRecoilState(recoilDate);
 
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const options = [
+    { name: '트렌딩' },
+    { name: '최신' },
+  ];
 
-  useEffect(() => {
-    if (pathname === '/') {
-      setPage(0);
-      setDate('이번 주');
-    } else if (pathname === '/recent') {
-      setPage(1);
-    }
-  }, [pathname])  
-
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setPage(newValue);
-    if (newValue === 0) {
-      navigate('/');
-    } else if(newValue === 1) {
-      navigate('/recent');
-    }
+  const selectCategory = (index: number) => {
+    setSelectedIndex(index);
   }
+
+  const navigate = useNavigate();
 
   const menuHandleClick = (event: React.MouseEvent<SVGSVGElement>) => {
     setAnchorEl(event.currentTarget);
@@ -78,85 +34,51 @@ const Category = () => {
 
   return (
     <CategoryWrapper>
-    <StyledTabs 
-      value={page} 
-      onChange={handleChange}>
-      <Tab
-        label={
-          <CategoryItem>
-            <TrendingUp fontSize="medium" sx={{ mr: '5px' }} />
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                cursor: 'pointer', 
-                ...page === 0 && { fontWeight: 700 }, ...page !== 0 && { fontWeight: 300 }
-              }}
-            >
-              트렌딩
-            </Typography>
-          </CategoryItem>
-        }
-      />
-      <Tab
-        label={
-          <CategoryItem>
-            <AccessTime fontSize="medium" sx={{ mr: '5px' }} />
-            <Typography variant="h6" sx={{ cursor: 'pointer', ...page === 1 && { fontWeight: 700 }, ...page !== 1 && { fontWeight: 300 }}}>
-              최신
-            </Typography>
-          </CategoryItem>
-        }
-      />
-    </StyledTabs>
-  
-    {
-      pathname === '/' && (
-        <>
-          <Select
-            IconComponent={RedArrowDropDownIcon}
-            value={date}
-            onChange={(e) => setDate(e.target.value as dateType)}
-            sx={{width: '110px', height: '40px', marginLeft: '10px', boxShadow: 'none', border: '1px solid lightgray', borderRadius: '5px', boxSizing: 'border-box', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
+
+      <CategoryLeft>
+        {options.map((option, index) => (
+          <ItemText
+            className={index === selectedIndex ? 'active' : ''}
+            key={option.name}
+            onClick={() => selectCategory(index)}
           >
-            <MenuItem value={"오늘"}>오늘</MenuItem>
-            <MenuItem value={"이번 주"}>이번 주</MenuItem>
-            <MenuItem value={"이번 달"}>이번 달</MenuItem>
-            <MenuItem value={"올해"}>올해</MenuItem>
-          </Select>
-        </>
-      )
-    }
-    
-    <Write onClick={() => navigate('/write')}>
-      <Typography sx={{ color: '#000', fontWeight: 600 }}>새 글 작성</Typography>
-    </Write>
-    
-    <MoreVert 
-      sx={{position: 'absolute', right: 0, cursor: 'pointer', color: `${theme === lightTheme ? "#212529" : "#ECECEC"}`}}
-      id="mav-menu-button"
-      onClick={menuHandleClick}
-    />
+            {option.name}
+          </ItemText>
+        ))}
+        <Line $selectedIndex={selectedIndex} />
+      </CategoryLeft>
 
-    <MenuWrapper>
-      <Menu 
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        sx={{left: 0}}
-      >
-        <MenuItem 
-          onClick={handleClose}
-          sx={{fontWeight: 700, width: '150px', height: '40px', borderBottom: '1px solid lightgray', display: 'flex', alignItems: 'center'}}
-        >공지사항</MenuItem>
+      <CategoryRight>
+        <Write onClick={() => navigate('/write')}>
+          <Typography sx={{ color: '#000', fontWeight: 600 }}>새 글 작성</Typography>
+        </Write>
 
-        <MenuItem 
-          onClick={handleClose}
-          sx={{fontWeight: 700, width: '150px', height: '40px', display: 'flex', alignItems: 'center'}}
-        >태그 목록</MenuItem>
+        <MoreVert
+          sx={{ cursor: 'pointer', color: "#ECECEC" }}
+          id="mav-menu-button"
+          onClick={menuHandleClick}
+        />
+      </CategoryRight>
 
-      </Menu>
-    </MenuWrapper>
-    
+      <MenuWrapper>
+        <Menu
+          open={open}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          sx={{ left: 0 }}
+        >
+          <MenuItem
+            onClick={handleClose}
+            sx={{ fontWeight: 700, width: '150px', height: '40px', borderBottom: '1px solid lightgray', display: 'flex', alignItems: 'center' }}
+          >공지사항</MenuItem>
+
+          <MenuItem
+            onClick={handleClose}
+            sx={{ fontWeight: 700, width: '150px', height: '40px', display: 'flex', alignItems: 'center' }}
+          >태그 목록</MenuItem>
+        </Menu>
+      </MenuWrapper>
+
     </CategoryWrapper>
   )
 }
@@ -164,44 +86,67 @@ const Category = () => {
 export default Category
 
 const CategoryWrapper = styled.div`
+  width: 1240px;
+  margin: 0 auto;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+`
+
+const CategoryLeft = styled.div`
+  display: flex;
+  position: relative;
+  width: 14rem;
+`
+
+const CategoryRight = styled.div`
   display: flex;
   align-items: center;
-  height: 100%;
-  margin: 0 auto;
-  width: 1700px;
-  position: relative;
+  justify-content: center;
+`
 
-  @media screen and (max-width: 1023px) {
-    width: 900px;
-  }
+const ItemText = styled.div`
+  width: 7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  font-size: 1.125rem;
+  color: #868E96;
+  cursor: pointer;
 
-  @media screen and (max-width: 767px) {
-    width: 500px;
-    size: 0.5rem;
+  &.active {
+    font-weight: 700;
+    color: #000;
   }
+`
+
+const Line = styled.div<{ $selectedIndex: number }>`
+  left: ${({ $selectedIndex }) => $selectedIndex === 0 ? '0' : '50%'};
+  width: 50%;
+  height: 2px;
+  position: absolute;
+  bottom: 0;
+  background-color: #000;
+  transition: all 0.3s ease-in-out;
 `
 
 const Write = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #fff;
+  margin-right: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
   width: 100px;
   height: 40px;
-  border-radius: 20px;
-  background-color: #fff;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
   cursor: pointer;
-  border: 1px solid #000;
-  position: absolute;
-  right: 50px;
-`
 
-const CategoryItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  width: 90px;
-  height: 20px;
+  &:hover {
+    background-color: #ECECEC;
+  }
 `
 
 const MenuWrapper = styled.div`
