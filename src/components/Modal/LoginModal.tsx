@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 import {
   Close,
@@ -8,15 +8,19 @@ import styles from './loginModal.module.scss'
 import { Typography } from '@mui/material';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import Login from './Login';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; 
 import { login, onLoginSuccess } from '../../api/Login';
+import { themeSelectorString } from '../../atom';
+import { useRecoilValue } from 'recoil';
 
 interface LoginModalProps {
   setModalopen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LoginModal = ({setModalopen}: LoginModalProps) => {
+const LoginModal = ({ setModalopen }: LoginModalProps) => {
+  
+  const theme = useRecoilValue(themeSelectorString);
+
   const [register, setRegister] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -24,6 +28,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
   useOutsideClick({ divRef: ref, handler: () => setModalopen(false) });
 
   const googleHandler = async () => {
+    // login();
     onLoginSuccess()
     setModalopen(false);
   }
@@ -32,13 +37,13 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
     <Container>
       <Wrapper>
         <Modal ref={ref}>
-          <div className={styles.modal__left}>
+          <Modal__left>
             <img 
               src='https://yju-fukufuku.s3.amazonaws.com/logo.svg'
               alt='Logo'
             />
-            <Typography variant='h3' sx={{mt: 3}}>Fukufuku</Typography>
-          </div>
+            <Typography variant='h3' sx={{mt: 3, color: theme === "lightTheme" ? "#212529" : "#d8d8d8"}}>Fukufuku</Typography>
+          </Modal__left>
 
           <div className={styles.modal__right}>
             <Close 
@@ -46,7 +51,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
               sx={{cursor: 'pointer', position: 'absolute', top: '20px', right: '20px'}}
             />
             <div className={styles.modal__right__top}>
-              <Typography variant='h4' sx={{fontWeight: 600, mb: 1}}>
+              <Typography variant='h4' sx={{fontWeight: 600, mb: 1, color: theme === "lightTheme" ? "#212529" : "#d8d8d8"}}>
                 {register ? '회원가입' : '로그인'}
               </Typography>
 
@@ -66,7 +71,7 @@ const LoginModal = ({setModalopen}: LoginModalProps) => {
               </Typography>
 
               <Google
-                sx={{cursor: 'pointer', fontSize: '40px', alignSelf: 'center', border: '1px solid gray', borderRadius: '50%', p: 1}}
+                sx={{cursor: 'pointer', fontSize: '40px', alignSelf: 'center', border: '1px solid gray', borderRadius: '50%', p: 1, color: theme === "lightTheme" ? "#212529" : "#d8d8d8"}}
                 onClick={googleHandler}
               />
             </div>
@@ -110,7 +115,7 @@ const Wrapper = styled.div`
 `
 
 const Modal = styled.div`
-  background-color: white;
+  background-color: ${props => props.theme.bgColor2};
   position: relative;
   display: flex;
   width: 800px;
@@ -136,5 +141,29 @@ const Modal = styled.div`
       bottom: 0;
       scale: 1;
     }
+  }
+`
+
+
+
+
+const Modal__left = styled.div`
+  width: 30%;
+  float: left;
+  background-color: ${props => props.theme.bgColor1};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 40px;
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  @media all and (max-width:767px) {
+    display: none;
   }
 `

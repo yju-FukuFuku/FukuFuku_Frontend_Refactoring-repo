@@ -5,6 +5,7 @@ import { styled } from 'styled-components';
 import axios from 'axios';
 import { Button } from '@mui/material';
 import { store } from '../../store';
+import { getReply } from '../../api/Comments';
 
 interface ReCommentProps {
   comment: {
@@ -49,17 +50,17 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
     validUser();
   }, [])
 
-  const getReply = async () => {
-    await axios.get(`/replys/${comment.id}`)
-      .then((res) => {
-        setReplys(res.data);
-      }).catch((err) => {
-        console.log(err);
-      })
+  const getReplys = async () => {
+    await getReply(comment.id)
+    .then((res) => {
+      console.log(res);
+      
+      setReplys(res);
+    })
   }
 
   useEffect(() => {
-    getReply();
+    getReplys();
   }, [])
 
   const handleShow = () => {
@@ -117,7 +118,7 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
 
     await axios.post('/replys', data)
     .then(() => {
-      getReply();
+      getReplys();
       setCommentValue('');
     }
     ).catch((err) => {
@@ -127,8 +128,8 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
 
   const replyDelete = async (id: number) => {
     await axios.delete(`/replys/${id}`)
-    .then(() => {
-      getReply();
+    .then(() => { 
+      getReplys();
     }).catch((err) => {
       console.log(err);
     })

@@ -4,50 +4,36 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
+import axios from 'axios';
+import useDebounce from '../../hooks/useDebounce';
+import { TokenAccess } from '../../api/TokenAccess';
 
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2',
-    },
-  },
-});
+interface Board {
+  id: number;
+  title: string;
+  content: string;
+  view: number;
+  createdAt: string;
+  img?: string;
+  user: {
+    nickname: string;
+    email: string;
+    lastName: string;
+    firstName: string;
+    picture: string;
+  }
+}[]
 
 const SearchPage = () => {
-  // const MyStyledButton = styled('input')(({ theme }) => ({
-  //   backgroundColor: theme.palette.primary.main,
-  //   color: 'red',
-  //   padding: '8px 16px',
-  //   borderRadius: '4px',
-  // }));
-
-  type postType = {
-    id: string;
-    name: string;
-    body: string;
-  }
-
   // data 불러오기
-  const [postData, setPostData] = useState<postType[]>()
+  const [postData, setPostData] = useState<Board[]>()
 
-  const getData = () => {
-    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
-      headers: {
-        "Content-type" : "application/json"
-      }
+  const getData = async (debounce: string) => {
+    await axios.get(`http://localhost:3000/boards/search/${debounce}`)
+    .then((res) => {
+      setPostData(res.data)
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        setPostData(data)
-      })
   }
-
-  useEffect(() => {
-    getData()
-  }, [])
-
 
   const [searchValue, setSearchValue] = useState<string>('');
   const navigate = useNavigate();
@@ -55,18 +41,16 @@ const SearchPage = () => {
   // 검색 값 가져오기
   const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
+    navigate(`/search?query=${e.target.value}`)
   }
 
-  // router 반영
-  const changeNavigate = (url: string) => {
-      navigate(`/search?q=${url}`)
-  }
+  const debounce = useDebounce(searchValue, 500)
 
-  // 함수 호출
   useEffect(() => {
-    changeNavigate(searchValue)
-  }, [searchValue])
-
+    if(debounce) {
+      getData(debounce)
+    }
+  }, [debounce])
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
@@ -74,24 +58,32 @@ const SearchPage = () => {
       return (
         <Wrapper>
             <SearchLength>총 <Length>{ postData?.length }</Length> 개의 포스터를 찾았습니다.</SearchLength>
-          {postData?.map((item, index) => (
+          {postData?.map((item) => (
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
               <Profile>
-                <ProfileImg src="/public/images/짱구.jpeg" alt="profile" />
-                <ProfileName>nickname</ProfileName>
+                <ProfileImg src={item.user.picture} />
+                <ProfileName>{item.user.nickname ? item.user.nickname : item.user.firstName + item.user.lastName}</ProfileName>
               </Profile>
-              <PostLink to='/'>
-                <PostImgBox>
-                  <PostImg src='/public/images/배경.webp' />
-                </PostImgBox>
+              <PostLink to={`/boards/${item.id}`}>
+                {
+                  item.img && (
+                    <PostImgBox>
+                      <PostImg src={item.img} />
+                    </PostImgBox>
+                  )
+                }
               </PostLink>
-              <PostLink to='/'>
-                <H3>{ item.name }</H3>
+              <PostLink to={`/boards/${item.id}`}>
+                <H3>{ item.title }</H3>
               </PostLink>
-              <PostContent>{ item.body }</PostContent>
+              <PostContent>
+                <BoardContent dangerouslySetInnerHTML={{__html: item.content}} />
+              </PostContent>
               <SubInFo>
-                <span>time</span>
+                <span>
+                  {item.createdAt.split('T')[0]}
+                </span>
                 <Separator>·</Separator>
                 <span>comment</span>
                 <Separator>·</Separator>
@@ -145,6 +137,10 @@ const Content = styled.div`
   position: relative;
   top: 100px;
   width: 768px;
+`
+
+const BoardContent = styled.div`
+  font-size: 1rem;
 `
 
 const Wrapper = styled.div`
@@ -241,3 +237,7 @@ const PostLink = styled(Link)`
 color: inherit;
 text-decoration: none;
 `
+
+function then(arg0: (res: any) => void) {
+  throw new Error('Function not implemented.');
+}

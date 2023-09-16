@@ -9,32 +9,48 @@ interface SetAccessTokenPayload {
 }
 
 export async function login() {
-  return await axios.get('auth')
+  return await axios.get('/auth')
+  .then((res) => {
+    console.log(res);
+  })
 }
 
 export function onLoginSuccess() {
   const data = {
-    "id":1,
+    "id": 2,
     "email":"user1@example.com",
     "picture":"https://lh3.googleusercontent.com/a/AAcHTtfpGQDOXCwRj2W5vM44gbITs8mLO23tR3mtFEdBFupc=s96-c",
     "firstName":"김",
     "lastName":"지훈",
     "isAdmin":null,
-    "refreshToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlhdCI6MTY4OTU3NjkyMCwiZXhwIjoxNjg5NjYzMzIwfQ.1jtoXBWwQS1zBUw843qI5e337MFsRymR7iUbIJqNGJ0",
+    "refreshToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrTmFtZSI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlkIjoyLCJpYXQiOjE2OTExNTAyMDYsImV4cCI6MTY5MTIzNjYwNn0.MgSMWMivXj8Y-0_lb25dAwMFmbSJw6AV6i16H1MvGDc",
     "nickName":null,
-    "accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlhdCI6MTY4OTU3NjkyMCwiZXhwIjoxNjg5NTc3MjIwfQ.fJ6sCcOE8FmRGbe8AgofExU7JTfFSvgz62e1cMpIaPk"
+    "accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrTmFtZSI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlkIjoyLCJpYXQiOjE2OTExNTAyMDYsImV4cCI6MTY5MTIzNjYwNn0.lhDiK2MmRLeP6WbvR0RR-n3zvIB5yOcXg2a-eFflR4s"
   }
 
   const { accessToken, refreshToken } = data;
 
   setRefreshToken(refreshToken);
   const payload: SetAccessTokenPayload = { accessToken };
+  
   store.dispatch(setAccessToken(payload));
 
   store.dispatch(setUser(data));
 
-  console.log(store.getState().user);
-  
-  console.log("onLoginSuccess");
-  
+}
+
+export function onLogin() {
+  // 로컬 스토리지에서 user 정보 가져오기
+  const user = localStorage.getItem('user');
+
+  if (user) {
+    const data = JSON.parse(user);
+    const { accessToken, refreshToken } = data;
+
+    setRefreshToken(refreshToken);
+    const payload: SetAccessTokenPayload = { accessToken };
+    
+    store.dispatch(setAccessToken(payload));
+    store.dispatch(setUser(data));
+  }
 }

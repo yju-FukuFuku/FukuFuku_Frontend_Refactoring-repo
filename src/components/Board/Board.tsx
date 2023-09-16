@@ -2,9 +2,17 @@ import React, {useState, useEffect, useCallback, useRef, useMemo } from "react";
 import styled from "styled-components";
 import Post from "./Post";
 import Spinner from "./Spinner";
-import { boardNumber, postState, themeState, prevThemeState } from "../../atom";
+import { boardNumber, postState, themeState, prevThemeState, recoilDate } from "../../atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { themeType } from "../../theme";
+import { getBoards } from "../../api/BoardAPI";
+// import { logToken } from "../../api/Board";
+
+const BoardTop = styled.div`
+    height: 120px;
+    width: 100vw;
+    background-color: ${props => props.theme.bgColor1};
+`
 
 // 게시판 중앙 정렬 및 마진
 const BoardCenter = styled.div`
@@ -12,7 +20,7 @@ const BoardCenter = styled.div`
     width: 100vw;
     display: flex;
     justify-content: center;
-    margin-top: 120px;
+    /* margin-top: 120px; */
 `
 
 // 게시물 정렬
@@ -47,6 +55,11 @@ const BoardCase = styled.div`
 // 게시물의 개수 만큼 post 컴포넌트를 가져오는 컴포넌트
 const Board = () => {
 
+    const date = useRecoilValue(recoilDate);
+
+
+    // logToken();
+
     const [prevScrollY, setPrevScrollY] = useState<number>(0);
     // 가져올 페이지 번호
     const [boardPage, setBoardPage] = useRecoilState<number>(boardNumber); 
@@ -60,10 +73,7 @@ const Board = () => {
         const currentScrollY = window.scrollY;
         if (currentScrollY > targetY) {
             setScrollCheck(false);
-            console.log("도달", currentScrollY, targetY);
             setBoardPage(boardPage + 1);
-        } else {
-            console.log("실패", currentScrollY, targetY);
         }
         setPrevScrollY(currentScrollY);
     }, [prevScrollY, targetY]);
@@ -79,6 +89,19 @@ const Board = () => {
     }, [handleScroll]);
     
     type postType = {
+        // id: number;
+        // u_id: number;
+        // title: string;
+        // content: string;
+        // views: number;
+        // postImage: [string];
+        // user: {
+        //     id: number;
+        //     nickName: string;
+        // };
+        // like: [string];
+        // board_tag: [string];
+
         // title: string; // 게시물 제목
         // content: string; // 게시물 내용
         // writeDate: string; // 게시물 작성 일자
@@ -110,34 +133,22 @@ const Board = () => {
             if (boardCaseRef.current) {
             // boardCase의 높이
             const height = boardCaseRef.current.offsetHeight;
-            console.log("BoardCase height:", height);
             // 사용자 화면 높이
             const userHeight = window.innerHeight;
-            console.log(userHeight);
             // 목표 높이 설정
             setTargetY(height - userHeight);
-            console.log("목표높이", targetY);
         }
     }, [post, window.innerWidth]);
 
     // boardPage가 변경되면 data 호출
     useEffect(() => {
         if ((window.scrollY > targetY && targetY != 0) || boardPage === 1) {
-            console.log("boardPage", boardPage);
-            console.log("window.scrollY", window.scrollY);
-            console.log("targetY", targetY);
-            
             getData()
-        } else {
-            console.log("data 로딩 실패");
-            
         }
     }, [boardPage])
     
     // GetData
     const getData = async () => {
-        console.log("데이터 렌더링")        
-        
     await fetch(`https://jsonplaceholder.typicode.com/photos?albumId=${boardPage}`, {
       headers: {
         "Content-type" : "application/json"
@@ -145,16 +156,15 @@ const Board = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
           setPost((prevPost) => prevPost ? [...prevPost, ...data] : data);
           setScrollCheck(true);
       })
-    }
+    }   
 
 
     return (
         <>
-            
+            <BoardTop/>
             <BoardCenter>
                 <BoardCase ref={boardCaseRef}>
                     {

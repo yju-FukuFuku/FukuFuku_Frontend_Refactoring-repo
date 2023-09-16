@@ -5,10 +5,11 @@ import { styled } from 'styled-components';
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { postBoard } from '../../api/Board';
+import { fetchBoard, fetchBoardTag, postBoard } from '../../api/BoardAPI';
 import { store } from '../../store';
 import { Tag } from "@mui/icons-material";
 import axios from "axios";
+import { postImage } from "../../api/Image";
 
 const StyledTextField = styled(TextField) (
   {
@@ -51,6 +52,8 @@ const WritePage = () => {
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
   }
+
+  const { id } = store.getState().user;
   
   const query = useQuery();
   const editId = query.get('id');
@@ -76,6 +79,7 @@ const WritePage = () => {
     setTitle(e.target.value)
   }
 
+  // 태그 추가, 삭제
   const handleTag = (value: string) => {
     const duplication = tag.find((item) => item.name === value);
     if (duplication) {
@@ -84,14 +88,16 @@ const WritePage = () => {
     setTag([...tag, { name: value }]);
   };
 
+  // 수정 부분 태그 가져오기
   const getTags = async (getTag: getTag[]) => {   
     const tags = getTag.map((item) => item.tag.name);
     setTag(tags.map((item) => ({ name: item })));
   }
 
+  // 저장 눌렀을 때
   const save = async () => {
-    const { id } = store.getState().user;
 
+    // 만약 지금 수정하는 중이라면
     if (editId) {
 
       const data = {
@@ -99,9 +105,13 @@ const WritePage = () => {
         content: content
       }
 
-      await axios.patch(`boards/${editId}`, data)
+      const tags = tag.map((item) => item.name);
+
+      await fetchBoardTag(tags, Number(editId))
+
+      await fetchBoard(data, Number(editId))
       .then(() => {
-        navigate(`/${editId}`);
+        navigate(`/boards/${editId}`);
       })
       .catch((error) => {
         console.log(error);
@@ -116,10 +126,12 @@ const WritePage = () => {
       tags: tag.map((item) => item.name),
     }
 
+    console.log(data);
+
     await postBoard(data)
-    .then(() => {
-      navigate(`/`);
-    })
+    // .then(() => {
+    //   navigate(`/`);
+    // })
   }
 
   const imageHandler = () => {
@@ -134,22 +146,15 @@ const WritePage = () => {
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
-
-      console.log(file);
       
-
-      // 3. 이미지를 서버에 업로드한다.
-      const formData = new FormData();
-      formData.append('image', file);
-
-      // const url = await res.text();
+      const url = await postImage(file, id);
 
       // 4. quill에 이미지를 삽입한다.
-      // const quill = quillRef.current;
-      // const range = quill?.getEditor().getSelection()?.index;
-      // if (range !== undefined && quill) {
-      //   quill.getEditor().insertEmbed(range, 'image', url);
-      // }
+      const quill = quillRef.current;
+      const range = quill?.getEditor().getSelection()?.index;
+      if (range !== undefined && quill) {
+        quill.getEditor().insertEmbed(range, 'image', url);
+      }
     }
   }
  

@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { store } from '../../store';
 import { Button } from '@mui/material';
+import { getComment, postComment } from '../../api/Comments';
 
 interface Comment {
   id: number;
@@ -25,17 +26,19 @@ const Comment = () => {
   const user = store.getState().user;
 
   useEffect(() => {
-    getComment();
+    getComments();
   }, [])
-  
-  async function getComment() {
-    await axios.get(`comments/${boardId}`).then((res) => {
-      setComments(res.data);
-    }).catch((error) => {
-      console.log(error);
-    }); 
-  }
 
+  const getComments = async () => {
+    if (boardId) {
+      await getComment(Number(boardId))
+      .then((res) => {
+        console.log(res);
+        
+        setComments(res);
+      })
+    }
+  }
   
   // 댓글 작성
   const handleComment = async () => {
@@ -55,9 +58,9 @@ const Comment = () => {
     };
 
     try {
-      await axios.post('/comments', data);
+      await postComment(data);
       setCommentValue('');
-      getComment();
+      getComments();
     } catch (error) {
       console.log(error);
     }
@@ -66,7 +69,7 @@ const Comment = () => {
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`/comments/${id}`);
-      getComment();
+      getComments();
     } catch (error) {
       console.log(error);
     }
