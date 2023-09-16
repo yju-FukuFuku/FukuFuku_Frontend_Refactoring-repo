@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ const SavesPage = () => {
   const getData = () => {
     fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
       headers: {
-        "Content-type" : "application/json"
+        "Content-type": "application/json"
       }
     })
       .then((response) => response.json())
@@ -31,7 +31,7 @@ const SavesPage = () => {
         setSaves(data)
       })
       .catch((error) => console.log(error))
-    
+
   }
 
 
@@ -52,18 +52,18 @@ const SavesPage = () => {
     return (
       <div>
         {savesData?.map((item, index) => (
-        <List key={index}>
-          <WriteLink to='/'>
-            <H3>{ item.name }</H3>
-          </WriteLink>
-          <WriteLink to='/'>
-            <Body>{ item.body }</Body>
-          </WriteLink>
-          <Section>
-            <SubInfo>약 17시간 전</SubInfo>
-            <Button onClick={() => handleRemoveSaves(item.id)}>삭제</Button>
-          </Section>
-        </List>
+          <List key={index}>
+            <WriteLink to='/'>
+              <H3>{item.name}</H3>
+            </WriteLink>
+            <WriteLink to='/'>
+              <Body>{item.body}</Body>
+            </WriteLink>
+            <Section>
+              <SubInfo>약 17시간 전</SubInfo>
+              <Button onClick={() => handleRemoveSaves(item.id)}>삭제</Button>
+            </Section>
+          </List>
         ))}
       </div>
     )
@@ -73,9 +73,9 @@ const SavesPage = () => {
     <Container>
       <Content>
         <H1>임시 글 목록</H1>
-          {
-            savesList()
-          }
+        {
+          savesList()
+        }
       </Content>
     </Container>
   )
