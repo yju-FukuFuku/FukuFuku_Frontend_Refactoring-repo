@@ -1,30 +1,51 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
+import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const MyWritePage = () => {
   const { userId } = useParams();
 
-  type my = {
-    name: string;
+  interface Tag {
+    tag: {
+      name: string;
+    }
+  }[]
+
+  const [tag, setTag] = useState<string[]>(['dori'])
+
+  // 태그 가져오기
+  const getTags = (tags: Tag[]) => {
+    const tagArray = tags.map((item) => item.tag.name);
+    setTag(tagArray);
+  }
+
+  type My = {
+    title: string;
     body: string;
     id: string;
+    userId: string;
   }
 
   // const [lock, setLock] = useState<boolean>(false) 부가기능 추후 추가
-  const [myData, setData] = useState<my[]>()
+  const [myData, setData] = useState<My[]>()
 
+  // useEffect(() => {
+  //   getData()
+  // }, []);
 
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts/1/comments")
-      .then((response) => response.json())
-      .then((data) => {
-        setData(data)
-        console.log(myData)
-      })
-      .catch((error) => console.log(error));
-  }, [myData]);
+    // GetFetch
+  // const getData = () => {
+  //   fetch("https://jsonplaceholder.typicode.com/posts")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(data)
+  //       setData(data)
+  //       console.log(userId)
+  //     })
+  //     .catch((error) => console.log(error));
+  // }
 
   // Search
   const [search, setSearch] = useState<string>('')
@@ -33,6 +54,7 @@ const MyWritePage = () => {
   // search 값 불러오기
   const inputSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
+    
   }
 
   // router 반영
@@ -51,7 +73,7 @@ const MyWritePage = () => {
   // SearchFilter 함수 
   const filterTitle = myData?.filter((p) => {
     // 대소문자 통일 후 배열에 요소가 존재하는지 확인
-    return p.name.replace(" ", "").toLocaleLowerCase().includes(search.replace(" ", "").toLocaleLowerCase())
+    return p.title?.replace(" ", "").toLocaleLowerCase().includes(search.replace(" ", "").toLocaleLowerCase())
   })
 
   // 배열에서 검색한 값만 불러오기
@@ -65,7 +87,7 @@ const MyWritePage = () => {
                 <div className={style.contentImg}>
                   <img src='/public/images/배경.webp' alt="img" />
                 </div>
-                <h2>{ item.name }</h2>
+                <h2>{ item.title }</h2>
                 <p>{ item.body }</p>
                 <div className={style.subInfo}>
                   <span>약 17시간 전</span>
@@ -105,8 +127,18 @@ const MyWritePage = () => {
               <div className={style.contentImg}>
                 <img src='/public/images/배경.webp' alt="img" />
               </div>
-              <h2>{ item.name }</h2>
+              <Link to={`/${ item.id }`}></Link>
+              <h2>{ item.title }</h2>
               <p>{ item.body }</p>
+              <div className={style.tagWrapper}>
+              {
+                tag ? (
+                  tag.map((item, index) => (
+                    <span key={index} className={style.boardTag}>{item}</span>
+                  ))
+                ) : null
+              }
+              </div>
               <div className={style.subInfo}>
                 <span>약 17시간 전</span>
                 <span>댓글 수</span>
@@ -128,6 +160,57 @@ const MyWritePage = () => {
       </div>
     )
   }
+
+  // 무한 스크롤
+  const target = useRef<HTMLDivElement | null>(null); // null로 초기화
+  const [boardPage, setBoardPage] = useState<number>(1);
+
+  // GetData
+  // 무한 스크롤 - 타겟이 화면에 완전히 나타날 때 더 많은 데이터 가져오기
+  const fetchMoreData = () => {
+    // API가 페이지네이션을 지원한다고 가정하고, 적절한 페이지 번호를 전달해야 합니다.
+    // 이 예제에서는 각 호출마다 페이지 번호를 증가시킵니다.
+    fetch(`https://jsonplaceholder.typicode.com/albums?_page=${boardPage}&_limit=10`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length > 0) {
+          // 새로운 데이터가 있는 경우에만 boardPage를 증가시킵니다.
+          setBoardPage((prevPage) => prevPage + 1);
+          setData((prevPost) => (prevPost ? [...prevPost, ...data] : data));
+          console.log(myData)
+          console.log(boardPage)
+        }
+      })
+      .catch((error) => console.log(error));
+
+  };
+
+  
+  useEffect(() => {
+    console.log("값 변화 체크")
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        console.log("도달")
+        console.log(target)
+        if (target.isIntersecting) {
+          // 타겟이 화면에 보일 때 더 많은 데이터 가져오기
+          fetchMoreData();
+        }
+      },
+      { threshold: 1.0 }
+    );
+    // 타겟 엘리먼트를 관측하기 시작합니다.
+    if (target.current) observer.observe(target.current);
+
+    // 컴포넌트가 언마운트될 때 옵저버를 연결 해제합니다.
+    return () => {
+      if (target.current) observer.unobserve(target.current);
+    };
+  }, [boardPage]); // boardPage는 의존성에 포함되어 변경될 때마다 재관측하도록 해야 합니다.
+
+  
+  
 
   return (
     <div className={style.container}>
@@ -162,6 +245,7 @@ const MyWritePage = () => {
             { search ? getSearchList()
               :getList()
             }
+            <div ref={target}>관측</div>
           </div>
         </div>
       </div>

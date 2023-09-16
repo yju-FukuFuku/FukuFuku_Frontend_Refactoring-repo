@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
 import useDebounce from '../../hooks/useDebounce';
+import Swal from 'sweetalert2'
 
 const MyPage = () => {
   const [userEmail, setId] = useState<string>('');
@@ -48,6 +49,12 @@ const MyPage = () => {
         // handlePostImg(fileCheck)
       } else{
         console.log("확장자가 틀립니다.")
+        alert("jpg, jpeg, png 파일만 넣어주세요")
+        Swal.fire({
+          icon: 'error',
+          title: 'error',
+          text: '올바르지 않은 확장자입니다. (jpg, jpeg, png)',
+        })
       }
     } else {
       console.log("파일이 선택되지 않았습니다.");
@@ -100,14 +107,25 @@ const MyPage = () => {
 
   // 닉네임 중복 체크 - debounce
   const debounceVal = useDebounce(userName) // hook 불러오기
-  let inputName = ''
-
+  const [inputName,setInputName] = useState<string>('')
+  
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 띄어쓰기 막기.
     if(e.target.value.includes(" ")) {
       console.log("띄어쓰기가 포함되어 있습니다.")
+      alert("띄어쓰기가 포함되어 있습니다.")
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: '띄어쓰기는 포함할 수 없습니다.',
+        customClass: {
+          container: style['swal-wide'], // 커스텀 클래스 추가
+        },
+        showConfirmButton: false,
+        timer: 1500
+      })
     } else {
-      inputName = e.target.value
+      setInputName(e.target.value)
     }
   }
 
@@ -273,13 +291,13 @@ const MyPage = () => {
               <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
-            <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button>
+            {/* <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button> */}
             <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange} accept='image/*'/>
           </div>
           {/* intro 수정 */}
           {introCheck ? (
             <div className={style.introBox}>
-              <input type="text" defaultValue={content} onChange={changeContent}/>
+              <input type="text" defaultValue={content} onChange={changeContent} maxLength={100}/>
               <div className={style.inputBlock}>
                 <button className={style.modifyBtn} onClick={handleUpdateContent}>완료</button>
               </div>
@@ -310,7 +328,7 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} value={userName} onChange={handleInputName}/>
+                <input type="text" className={style.username} defaultValue={userName} value={inputName} onChange={handleInputName} maxLength={20}/>
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>

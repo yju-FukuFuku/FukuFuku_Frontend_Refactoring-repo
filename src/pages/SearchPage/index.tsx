@@ -1,11 +1,27 @@
 import { TextField } from '@mui/material'
+import { createTheme, ThemeProvider, styled as muiStyled } from '@mui/material/styles'; // @mui/styles 패키지에서 styled 불러오기
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
 
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+  },
+});
+
 const SearchPage = () => {
+  // const MyStyledButton = styled('input')(({ theme }) => ({
+  //   backgroundColor: theme.palette.primary.main,
+  //   color: 'red',
+  //   padding: '8px 16px',
+  //   borderRadius: '4px',
+  // }));
+
   type postType = {
     id: string;
     name: string;
@@ -29,7 +45,7 @@ const SearchPage = () => {
   }
 
   useEffect(() => {
-
+    getData()
   }, [])
 
 
@@ -43,25 +59,12 @@ const SearchPage = () => {
 
   // router 반영
   const changeNavigate = (url: string) => {
-    navigate(`/search?q=${url}`)
-
-    fetch("", {
-      headers: {
-        "Content-type" : "application/json"
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        console.log(url)
-      })
+      navigate(`/search?q=${url}`)
   }
 
   // 함수 호출
   useEffect(() => {
-    setTimeout(() => {
-      changeNavigate(searchValue)
-    }, 500)
+    changeNavigate(searchValue)
   }, [searchValue])
 
 
@@ -107,7 +110,6 @@ const SearchPage = () => {
     }
   }
 
-
   return (
     <Container>
       <Content>
@@ -120,8 +122,7 @@ const SearchPage = () => {
           size="medium"
           sx={{minHeight: '80px'}}
         />
-
-          { getSearchList() }
+        { getSearchList() }
       </Content>
 
        
