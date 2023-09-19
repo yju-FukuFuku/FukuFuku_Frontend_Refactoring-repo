@@ -40,9 +40,13 @@ const MyPage = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileCheck = (e.target.files? e.target.files[0].name : null)
+    
     // 들어온 파일이 null인지 아닌지 체크
     if (fileCheck) {
       const checkLength = fileCheck.lastIndexOf(".");
+      setFile(fileCheck);
+      console.log(file)
+      
       // 올바른 확장자인지 check
       if (extension.includes(fileCheck.substring(checkLength, fileCheck.length))){
         console.log("올바른 확장자입니다.")
@@ -66,7 +70,6 @@ const MyPage = () => {
 
     formData.append('file', e);
     console.log(formData.get('file'));
-    console.log(file);
     // fetch("http://localhost:3000/user/editImage", {
     //   method: "POST",
     //   headers: {
