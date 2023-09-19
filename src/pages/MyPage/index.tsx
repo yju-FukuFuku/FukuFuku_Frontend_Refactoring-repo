@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
 import useDebounce from '../../hooks/useDebounce';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'  // 경고창 라이브러리
 
 const MyPage = () => {
   const [userEmail, setId] = useState<string>('');
@@ -46,10 +46,9 @@ const MyPage = () => {
       // 올바른 확장자인지 check
       if (extension.includes(fileCheck.substring(checkLength, fileCheck.length))){
         console.log("올바른 확장자입니다.")
-        // handlePostImg(fileCheck)
+        handlePostImg(fileCheck)
       } else{
         console.log("확장자가 틀립니다.")
-        alert("jpg, jpeg, png 파일만 넣어주세요")
         Swal.fire({
           icon: 'error',
           title: 'error',
@@ -63,29 +62,33 @@ const MyPage = () => {
 
   // 이미지 변경 Post
   const handlePostImg = (e:string) => {
-    fetch("http://localhost:3000/user/editImage", {
-      method: "POST",
-      headers: {
-        "Content-type" : "application/json",
-        data: userEmail
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if (data.statusCode == "200") {
-          console.log(data.message)
-          setFile(data.picture)
-        } else if (data.statusCode == "415") {
-          console.log(data.message)
-        } else if (data.statusCode == "422") {
-          console.log(data.message)
-        } else {
-          console.log("정의되지 않은 오류입니다.")
-        }
-    })
-  }
+    const formData = new FormData();
 
+    formData.append('file', e);
+    console.log(formData.get('file'));
+    console.log(file);
+    // fetch("http://localhost:3000/user/editImage", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-type" : "application/json",
+    //     data: userEmail
+    //   }
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log(data)
+    //     if (data.statusCode == "200") {
+    //       console.log(data.message)
+    //       setFile(data.picture)
+    //     } else if (data.statusCode == "415") {
+    //       console.log(data.message)
+    //     } else if (data.statusCode == "422") {
+    //       console.log(data.message)
+    //     } else {
+    //       console.log("정의되지 않은 오류입니다.")
+    //     }
+    // })
+  }
   // 이미지 삭제 - 보류
   const handleImageRemove = () => {
   //  fetch("", {
@@ -106,14 +109,13 @@ const MyPage = () => {
   }
 
   // 닉네임 중복 체크 - debounce
-  const debounceVal = useDebounce(userName) // hook 불러오기
+  const debounceVal = useDebounce(userName, 30) // hook 불러오기
   const [inputName,setInputName] = useState<string>('')
   
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 띄어쓰기 막기.
     if(e.target.value.includes(" ")) {
       console.log("띄어쓰기가 포함되어 있습니다.")
-      alert("띄어쓰기가 포함되어 있습니다.")
       Swal.fire({
         position: 'top-end',
         icon: 'error',
@@ -122,7 +124,6 @@ const MyPage = () => {
           container: style['swal-wide'], // 커스텀 클래스 추가
         },
         showConfirmButton: false,
-        timer: 1500
       })
     } else {
       setInputName(e.target.value)

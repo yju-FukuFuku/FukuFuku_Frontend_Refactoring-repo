@@ -6,7 +6,7 @@ import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import useDebounce from '../../hooks/useDebounce';
-import { TokenAccess } from '../../api/TokenAccess';
+// import { TokenAccess } from '../../api/TokenAccess';
 
 interface Board {
   id: number;
