@@ -5,7 +5,6 @@ import { styled } from 'styled-components'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
 import useDebounce from '../../hooks/useDebounce';
-import { TokenAccess } from '../../api/TokenAccess';
 
 interface Board {
   id: number;
@@ -29,16 +28,16 @@ const SearchPage = () => {
 
   const getData = async (debounce: string) => {
     await axios.get(`http://localhost:3000/boards/search/${debounce}`)
-    .then((res) => {
-      setPostData(res.data)
-    })
+      .then((res) => {
+        setPostData(res.data)
+      })
   }
 
   const [searchValue, setSearchValue] = useState<string>('');
   const navigate = useNavigate();
 
   // 검색 값 가져오기
-  const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
     navigate(`/search?query=${e.target.value}`)
   }
@@ -46,17 +45,17 @@ const SearchPage = () => {
   const debounce = useDebounce(searchValue, 500)
 
   useEffect(() => {
-    if(debounce) {
+    if (debounce) {
       getData(debounce)
     }
   }, [debounce])
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
-    if(postData?.length !== 0 && searchValue != ""){
+    if (postData?.length !== 0 && searchValue != "") {
       return (
         <Wrapper>
-            <SearchLength>총 <Length>{ postData?.length }</Length> 개의 포스터를 찾았습니다.</SearchLength>
+          <SearchLength>총 <Length>{postData?.length}</Length> 개의 포스터를 찾았습니다.</SearchLength>
           {postData?.map((item) => (
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
@@ -74,10 +73,10 @@ const SearchPage = () => {
                 }
               </PostLink>
               <PostLink to={`/boards/${item.id}`}>
-                <H3>{ item.title }</H3>
+                <H3>{item.title}</H3>
               </PostLink>
               <PostContent>
-                <BoardContent dangerouslySetInnerHTML={{__html: item.content}} />
+                <BoardContent dangerouslySetInnerHTML={{ __html: item.content }} />
               </PostContent>
               <SubInFo>
                 <span>
@@ -108,17 +107,17 @@ const SearchPage = () => {
         <TextField
           onChange={handleChange}
           value={searchValue}
-          id="outlined-search" 
-          label="검색어를 입력하세요" 
+          id="outlined-search"
+          label="검색어를 입력하세요"
           type="search"
           size="medium"
-          sx={{minHeight: '80px'}}
+          sx={{ minHeight: '80px' }}
         />
 
-          { getSearchList() }
+        {getSearchList()}
       </Content>
 
-       
+
     </Container>
   )
 }
@@ -128,16 +127,15 @@ export default SearchPage
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
 `
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 3.5rem auto;
   position: relative;
-  top: 100px;
+  margin: 0 auto;
   width: 768px;
+  top: 5rem;
 `
 
 const BoardContent = styled.div`
