@@ -11,7 +11,7 @@ import { Tag } from "@mui/icons-material";
 import axios from "axios";
 import { postImage } from "../../api/Image";
 
-const StyledTextField = styled(TextField) (
+const StyledTextField = styled(TextField)(
   {
     '& .MuiInputBase-root': {
       height: '100px',
@@ -21,7 +21,7 @@ const StyledTextField = styled(TextField) (
   }
 )
 
-const StyledTagTextField = styled(TextField) (
+const StyledTagTextField = styled(TextField)(
   {
     '& .MuiInputBase-root': {
       height: '50px',
@@ -54,28 +54,28 @@ const WritePage = () => {
   }
 
   const { id } = store.getState().user;
-  
+
   const query = useQuery();
   const editId = query.get('id');
 
   useEffect(() => {
     const getBoard = async () => {
-      if(editId) {
+      if (editId) {
         await axios.get(`boards/${editId}`)
-        .then((response) => {
-          getTags(response.data.board_tag)
-          setTitle(response.data.title);
-          setContent(response.data.content);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
+          .then((response) => {
+            getTags(response.data.board_tag)
+            setTitle(response.data.title);
+            setContent(response.data.content);
+          })
+          .catch((error) => {
+            console.log(error);
+          })
       }
     }
     getBoard();
   }, [editId])
 
-  const handleTitle = (e : React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
 
@@ -89,7 +89,7 @@ const WritePage = () => {
   };
 
   // 수정 부분 태그 가져오기
-  const getTags = async (getTag: getTag[]) => {   
+  const getTags = async (getTag: getTag[]) => {
     const tags = getTag.map((item) => item.tag.name);
     setTag(tags.map((item) => ({ name: item })));
   }
@@ -110,12 +110,12 @@ const WritePage = () => {
       await fetchBoardTag(tags, Number(editId))
 
       await fetchBoard(data, Number(editId))
-      .then(() => {
-        navigate(`/boards/${editId}`);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+        .then(() => {
+          navigate(`/boards/${editId}`);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
       return;
     }
 
@@ -146,7 +146,7 @@ const WritePage = () => {
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
-      
+
       const url = await postImage(file, id);
 
       // 4. quill에 이미지를 삽입한다.
@@ -157,7 +157,7 @@ const WritePage = () => {
       }
     }
   }
- 
+
   const moudles = useMemo(() => {
     return {
       toolbar: {
@@ -202,15 +202,15 @@ const WritePage = () => {
               handleTag(tagValue);
               setTagValue("");
             }
-            else if(e.key === "Backspace") {
-              if(tagValue === "") {
+            else if (e.key === "Backspace") {
+              if (tagValue === "") {
                 setTag([...tag.slice(0, tag.length - 1)])
               }
             }
           }}
         />
       </TagContainer>
-      
+
       <EditorContainer>
         <ReactQuill
           ref={quillRef}
@@ -222,22 +222,22 @@ const WritePage = () => {
       </EditorContainer>
 
       <EditorFooter>
-        <Button 
+        <Button
           variant="contained" color="error"
           sx={{ ml: 2 }}
-          onClick={() => {navigate('/')}}
+          onClick={() => { navigate('/') }}
         >취소</Button>
 
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           color="success"
           sx={{ mr: 2 }}
           onClick={save}
         >저장</Button>
-      </EditorFooter>    
-      
+      </EditorFooter>
+
     </Container>
-    
+
   )
 }
 
@@ -247,8 +247,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 80vw;
-  margin: 0 auto;
 `
 
 const TagContainer = styled.div`
@@ -285,6 +283,7 @@ const TagItem = styled.div`
       opacity: 1;
       transform: translateY(0);
     }
+  }
 `
 
 const EditorContainer = styled.div`

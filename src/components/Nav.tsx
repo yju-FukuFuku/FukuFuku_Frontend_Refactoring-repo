@@ -1,52 +1,22 @@
 import { styled } from 'styled-components'
-import 
-{
-  SearchRounded, 
-  LightMode
-} from '@mui/icons-material';
-
-import { Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import LoginModal from './Modal/LoginModal';
-import Category from './Category';
-import { useRecoilState } from "recoil";
-import { themeState } from '../atom';
-import { RootState, store } from '../store';
-import { getRefreshToken } from '../store/Cookie';
-import { onLogin } from '../api/Login';
+import { RootState } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/User';
+import { Google, SearchRounded } from '@mui/icons-material';
+import Category from './Category';
+import { onLoginSuccess } from '../api/Login';
 
 const Nav = () => {
   const [headMargin, setHeadMargin] = useState<boolean>(true);
-  const [modalopen, setModalopen] = useState<boolean>(false);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const { isLogin } = store.getState().token;
-  const refreshToken = getRefreshToken();
-
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.user);
-  
-  const loginState = () => {
-    if (refreshToken) {
-      onLogin()
-    }
-  }
-
-  useEffect(() => {
-    loginState();
-  }, [])
-
-  useEffect(() => {
-    if (isLogin) {
-      setModalopen(false);
-    }
-  }, [isLogin])
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -74,120 +44,106 @@ const Nav = () => {
     navigate('/search');
   }
 
-  const [theme, setTheme] = useRecoilState(themeState);
-
-  const handleTheme = () => {
-    theme === true ? setTheme(false) : setTheme(true)
-  }
-
   const handleLogOut = () => {
     dispatch(clearUser());
     navigate('/');
   }
 
+  const googleHandler = async () => {
+    // login();
+    onLoginSuccess()
+  }
+
   if (pathname === '/write') {
     return null;
   }
-  
+
   return (
     <>
-      <Container headmargin={headMargin ? 'true' : 'false'}>
-        <Wrapper>
-          
-          <Typography 
-            sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif', fontSize: '2rem'}} 
-            variant='h4'
-            onClick={() => navigate('/')}
-            color={theme === true ? "#212529" : "#ECECEC"}
-          >
-          Fukufuku
-          </Typography>
+      <Header $headmargin={headMargin ? 'true' : 'false'}>
+        <HeaderInner>
+          <HeaderWrapper>
+            <LogoText
+              onClick={() => navigate('/')}
+            >
+              Fukufuku
+            </LogoText>
 
-          <Item>
-            <Icon>
-              <LightMode onClick={handleTheme} sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}`, fontSize: '1.5rem' }}/>
-            </Icon>
-            <Icon onClick={handleClick}>
-              <SearchRounded sx={{ color: `${theme === true ? "#212529" : "#ECECEC"}`, fontSize: '1.5rem' }}/>
-            </Icon>
-            {
-              user.id ? (
-                <Write onClick={handleLogOut}>
-                  <Typography sx={{ color: '#000', fontWeight: 600 }}>로그아웃</Typography>
-                </Write>
-              ) : null
-            }
+            <Item>
+              <Icon onClick={handleClick}>
+                <SearchRounded sx={{ color: "#000", fontSize: '1.5rem' }} />
+              </Icon>
+              {
+                user.id ? (
+                  <Login onClick={handleLogOut}>
+                    <Sign>로그아웃</Sign>
+                  </Login>
+                ) : null
+              }
 
-            {
-              user.id ? (
-                <Icon onClick={() => navigate('/mypage')}>
-                  { user.picture ? (
-                    <img 
-                      src={user.picture}
-                      alt="profile"
-                      style={{width: '40px', height: '40px', borderRadius: '50%'}}
-                    />
+              {
+                user.id ? (
+                  <Icon onClick={() => navigate('/mypage')}>
+                    {user.picture ? (
+                      <img
+                        src={user.picture}
+                        alt="profile"
+                        style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+                      />
                     ) : null
-                  }
-                  
-                </Icon>
-              ) : (
-                <Login onClick={() => {setModalopen(true)}}>
-                  <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}`, fontSize: '1.5rem' }}>로그인</Typography>
-                </Login>
-              )
-            }
-            
-          </Item>
+                    }
 
-        </Wrapper>
+                  </Icon>
+                ) : (
+                  <Google
+                    sx={{ cursor: 'pointer', fontSize: '40px', p: 1, color: "#000" }}
+                    onClick={googleHandler}
+                  />
+                )
+              }
 
+            </Item>
+
+          </HeaderWrapper>
+        </HeaderInner>
         {
-          (pathname === '/' || pathname === '/recent') && (
-            <Category />
-          )
+          pathname === '/' || pathname === '/recent' ? <Category /> : null
         }
-
-      </Container>
-
-      {
-        modalopen && (
-          <LoginModal setModalopen={setModalopen} />
-        )
-      }
-
+      </Header>
     </>
   )
 }
 
 export default Nav
 
-const Container = styled.div<{headmargin?: string}>`
-  position: fixed;
-  width: 100vw;
-  justify-content: center;
-  background-color: #fff;
-  margin-top: ${props => props.headmargin === 'true' ? '0' : '-140px'};
-  background-color: ${props => props.theme.bgColor1};
-  transition: margin-top 0.3s ease-in-out;
-  z-index: 10;
+const Header = styled.header<{ $headmargin: string }>`
+  background-color: #D8CEF6;
+  border-bottom: 1px solid #eee;
+  margin-top: ${({ $headmargin }) => $headmargin === 'true' ? '0' : '-100px'};
+  width: 100%;
+  top: 0;
+  z-index: 999;
 `
 
-const Wrapper = styled.div`
+const HeaderInner = styled.div`
+  max-width: 1240px;
+  margin: 0 auto;
+  position: relative;
+
+  @media screen and(max-width: 1023px) {
+    max-width: 900px;
+  }
+
+  @media screen and(max-width: 767px) {
+    max-width: 300px;
+  }
+`
+
+const HeaderWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  height: 100%;
   align-items: center;
-  margin: 1.5rem auto;
-  width: 1700px;
-
-  @media screen and (max-width: 1023px) {
-    width: 900px;
-  }
-
-  @media screen and (max-width: 767px) {
-    width: 300px;
-  }
+  justify-content: space-between;
+  height: 60px;
 `
 
 const Item = styled.div`
@@ -200,38 +156,44 @@ const Login = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 8rem;
+  width: 7rem;
   height: 3rem;
   border-radius: 20px;
-  background-color: ${props => props.theme.textColor1};
+  background-color: #fff; 
   cursor: pointer;
   margin-left: 10px;
-`
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 
-const Write = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: #fff;
-  cursor: pointer;
-  border: 1px solid #000;
-  margin-right: 1rem;
+  color: #000;
+  font-weight: 700;
 `
 
 const Icon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 10px;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 3rem;
+  height: 3rem;
+  margin-left: 1rem;
 
   &:hover {
-    background-color: #c2c2c2;
-    border-radius: 50%;
-  }
+  background-color: #c2c2c2;
+  border-radius: 50%;
+}
+`
+
+const LogoText = styled.div`
+  font-family: 'Oswald', sans-serif;
+  font-size: 2rem;
+  cursor: pointer;
+  text-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+`
+
+const Sign = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.125rem;
 `

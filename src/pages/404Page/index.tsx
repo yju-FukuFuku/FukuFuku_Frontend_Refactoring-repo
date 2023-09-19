@@ -1,6 +1,4 @@
-import React from 'react'
 import { styled } from 'styled-components'
-import { themeType } from '../../theme'
 
 const ErrorPage = () => {
   return (
@@ -21,7 +19,7 @@ const PColor = styled.p`
   color: ${props => props.theme.textColor2};
 `
 
-const Container =  styled.div`
+const Container = styled.div`
   width: 100%;
   height: 100vh;
   display: flex;

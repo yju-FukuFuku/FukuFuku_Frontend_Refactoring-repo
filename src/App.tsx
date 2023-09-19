@@ -11,14 +11,21 @@ import ErrorPage from './pages/404Page'
 import SavesPage from './pages/SavesPage'
 import LikePage from './pages/LikeListPage'
 import TagPage from './pages/TagPage'
+import styled from 'styled-components'
+
+const Content = styled.div`
+  width: 1240px;
+  margin: 0 auto;
+`
 
 function App() {
   const Layout = () => {
     return (
       <>
         <Nav />
-        
-        <Outlet />
+        <Content>
+          <Outlet />
+        </Content>
       </>
     )
   }
@@ -29,15 +36,16 @@ function App() {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path='/recent' element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
-            <Route path='/setting' element={<MyPage/>} />
-            <Route path='/:userId' element={<MyListPage/>} />
-            <Route path='/write/:postId' element={<SavesPage/>} />
-            <Route path='/like' element={<LikePage/>} />
+            <Route path='/setting' element={<MyPage />} />
+            <Route path='/:userId' element={<MyListPage />} />
+            <Route path='/write/:postId' element={<SavesPage />} />
+            <Route path='/like' element={<LikePage />} />
             <Route path='/boards/:boardId' element={<BoardPage />} />
             <Route path='/tags/:tagName' element={<TagPage />} />
             <Route path='/write' element={<WritePage />} />
-            
+
             <Route path='/error' element={<ErrorPage />} />
             <Route path='/*' element={<ErrorPage />} />
           </Route>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { styled } from 'styled-components'
 
@@ -16,13 +16,13 @@ const LikePage = () => {
   }, [])
 
   const [posts, setPost] = useState<likePost[]>();
-  
+
   // GetData
   const getData = () => {
     console.log("데이터 렌더링")
     fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
       headers: {
-        "Content-type" : "application/json"
+        "Content-type": "application/json"
       }
     })
       .then((response) => response.json())
@@ -47,10 +47,10 @@ const LikePage = () => {
               <Body>
                 <PostLink to='/'>
                   <H4>
-                    { item.name }
+                    {item.name}
                   </H4>
                   <BodyContent>
-                    { item.body }
+                    {item.body}
                   </BodyContent>
                 </PostLink>
                 <SubInfo>
