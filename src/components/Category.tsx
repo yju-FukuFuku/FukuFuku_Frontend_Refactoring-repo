@@ -12,6 +12,8 @@ const Category = () => {
   const [anchorEl, setAnchorEl] = useState<null | SVGSVGElement>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
+  const navigate = useNavigate();
+
   const open = Boolean(anchorEl);
 
   const options = [
@@ -19,11 +21,11 @@ const Category = () => {
     { name: '최신' },
   ];
 
-  const selectCategory = (index: number) => {
+  const selectCategory = (index: number, name: string) => {
     setSelectedIndex(index);
+    if (name === '트렌딩') navigate('/');
+    else navigate('/recent');
   }
-
-  const navigate = useNavigate();
 
   const menuHandleClick = (event: React.MouseEvent<SVGSVGElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,7 +42,7 @@ const Category = () => {
           <ItemText
             className={index === selectedIndex ? 'active' : ''}
             key={option.name}
-            onClick={() => selectCategory(index)}
+            onClick={() => selectCategory(index, option.name)}
           >
             {option.name}
           </ItemText>

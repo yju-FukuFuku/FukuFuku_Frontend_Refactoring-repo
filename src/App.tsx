@@ -36,6 +36,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path='/recent' element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path='/setting' element={<MyPage />} />
             <Route path='/:userId' element={<MyListPage />} />

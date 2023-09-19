@@ -1,7 +1,7 @@
 import { styled } from 'styled-components'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RootState, store } from '../store';
+import { RootState } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/User';
 import { Google, SearchRounded } from '@mui/icons-material';
@@ -107,9 +107,7 @@ const Nav = () => {
           </HeaderWrapper>
         </HeaderInner>
         {
-          (pathname === '/') && (
-            <Category />
-          )
+          pathname === '/' || pathname === '/recent' ? <Category /> : null
         }
       </Header>
     </>
