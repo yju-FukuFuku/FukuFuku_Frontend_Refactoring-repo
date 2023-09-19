@@ -30,7 +30,8 @@
     "recoil": "^0.7.7",
     "redux-persist": "^6.0.0",
     "sass": "^1.63.6",
-    "styled-components": "^6.0.2"
+    "styled-components": "^6.0.2",
+    "sweetalert2": "^11.7.20"
   },
   "devDependencies": {
     "@swc/cli": "^0.1.62",

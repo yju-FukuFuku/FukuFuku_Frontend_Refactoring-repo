@@ -1,4 +1,5 @@
 import { TextField } from '@mui/material'
+import { createTheme, ThemeProvider, styled as muiStyled } from '@mui/material/styles'; // @mui/styles 패키지에서 styled 불러오기
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components'
@@ -99,7 +100,6 @@ const SearchPage = () => {
       )
     }
   }
-
 
   return (
     <Container>
