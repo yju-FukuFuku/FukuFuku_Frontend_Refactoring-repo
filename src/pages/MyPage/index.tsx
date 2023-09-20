@@ -39,16 +39,15 @@ const MyPage = () => {
   const extension = ['.png', '.jpg', '.jpeg']
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileCheck = (e.target.files? e.target.files[0].name : null)
+    const fileCheck = (e.target.files? e.target.files[0] : null)
     
     // 들어온 파일이 null인지 아닌지 체크
     if (fileCheck) {
-      const checkLength = fileCheck.lastIndexOf(".");
-      setFile(fileCheck);
-      console.log(file)
+      const checkLength = fileCheck.name.lastIndexOf(".");
+
       
       // 올바른 확장자인지 check
-      if (extension.includes(fileCheck.substring(checkLength, fileCheck.length))){
+      if (extension.includes(fileCheck.name.substring(checkLength, fileCheck.length))){
         console.log("올바른 확장자입니다.")
         handlePostImg(fileCheck)
       } else{
@@ -65,7 +64,7 @@ const MyPage = () => {
   };
 
   // 이미지 변경 Post
-  const handlePostImg = (e:string) => {
+  const handlePostImg = (e:File) => {
     const formData = new FormData();
 
     formData.append('file', e);
@@ -75,7 +74,10 @@ const MyPage = () => {
     //   headers: {
     //     "Content-type" : "application/json",
     //     data: userEmail
-    //   }
+    //   },
+    //  body: JSON.stringify({
+    //    data: formData,
+    //  })
     // })
     //   .then((response) => response.json())
     //   .then((data) => {

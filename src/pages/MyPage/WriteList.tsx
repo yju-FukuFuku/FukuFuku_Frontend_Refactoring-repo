@@ -68,6 +68,7 @@ const MyWritePage = () => {
   // 함수 호출
   useEffect(() => {
     changeNavigate(search)
+    
   }, [search])
 
   // SearchFilter 함수 
@@ -75,6 +76,7 @@ const MyWritePage = () => {
     // 대소문자 통일 후 배열에 요소가 존재하는지 확인
     return p.title?.replace(" ", "").toLocaleLowerCase().includes(search.replace(" ", "").toLocaleLowerCase())
   })
+  console.log(1);
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
@@ -168,8 +170,7 @@ const MyWritePage = () => {
   // GetData
   // 무한 스크롤 - 타겟이 화면에 완전히 나타날 때 더 많은 데이터 가져오기
   const fetchMoreData = () => {
-    // API가 페이지네이션을 지원한다고 가정하고, 적절한 페이지 번호를 전달해야 합니다.
-    // 이 예제에서는 각 호출마다 페이지 번호를 증가시킵니다.
+    // page number 전달
     fetch(`https://jsonplaceholder.typicode.com/albums?_page=${boardPage}&_limit=10`)
       .then((response) => response.json())
       .then((data) => {
