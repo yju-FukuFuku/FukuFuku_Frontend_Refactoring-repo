@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 
 // 타입 지정
-type PostType = {
-  postId: string;
-  id: string;
-  name: string;
-  body: string;
+export type PostType = {
+  id: number;
+  u_id: string;
+  content: string;
+  title: string;
+  like: Array<number>;
+  views: number;
+  createdAt: string;
+  comment: Array<number>;
 }
 
 interface BoardProps {
-  boardType: string;
   posts: PostType[];
 }
 
-const Board = ( { boardType, posts }: BoardProps ) => {
+const Board = ( { posts }: BoardProps ) => {
   // 배열에 있는 게시글 출력
   const PostList = () => {
     return (
@@ -29,12 +32,12 @@ const Board = ( { boardType, posts }: BoardProps ) => {
                 </PostImgBox>
               </PostLink>
               <Body>
-                <PostLink to='/'>
+                <PostLink to={`/boards/${item.id}`}>
                   <H4>
-                    { item.name }
+                    { item.title }
                   </H4>
                   <BodyContent>
-                    { item.body }
+                    { item.content } 
                   </BodyContent>
                 </PostLink>
                 <SubInfo>

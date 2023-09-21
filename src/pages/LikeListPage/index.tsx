@@ -2,26 +2,21 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { styled } from 'styled-components'
 import Board from '../../components/board'
+import { PostType } from '../../components/board'
 
 const LikePage = () => {
-  // 타입 지정
-  type likePost = {
-    postId: string;
-    id: string;
-    name: string;
-    body: string;
-  }
+
   // 데이터 렌더링
   useEffect(() => {
     getData()
   }, [])
 
-  const [posts, setPost] = useState<likePost[]>();
+  const [posts, setPost] = useState<PostType[]>();
   
   // GetData
   const getData = () => {
     console.log("데이터 렌더링")
-    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
+    fetch("http://localhost:3000/posts/1/comments", {
       headers: {
         "Content-type" : "application/json"
       }
@@ -38,7 +33,7 @@ const LikePage = () => {
         <H2>좋아요 목록</H2>
         {
           posts ? (
-            <Board boardType="좋아요" posts={posts} />
+            <Board posts={posts} />
           ) : (
             "none"
           )

@@ -58,10 +58,10 @@ export async function postTag(tagList: string[]) {
   return tagId;
 }
 
+
 // 게시물 하나 가져오기
 export async function getBoardById(id: number | null) {
   const { data } = await api.get(`/boards/${id}`)
-
   return data;
 }
 

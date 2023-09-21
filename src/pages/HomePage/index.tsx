@@ -2,15 +2,11 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { styled } from 'styled-components'
 import Board from '../../components/board'
+import { getBoards } from '../../api/BoardAPI'
+import { PostType } from '../../components/board'
 
 const MainPage = () => {
-  // 타입 지정
-  type Post = {
-    postId: string;
-    id: string;
-    name: string;
-    body: string;
-  }
+
   const [count, setCount] = useState<string>(''); // test용
 
   // 데이터 렌더링
@@ -18,21 +14,18 @@ const MainPage = () => {
     getData()
   }, [count])
 
-  const [posts, setPost] = useState<Post[]>();
+  const [posts, setPost] = useState<PostType[]>();
   
   // GetData
   const getData = () => {
     console.log("데이터 렌더링")
-    fetch("https://jsonplaceholder.typicode.com/posts/1/comments", {
-      headers: {
-        "Content-type" : "application/json"
-      }
+
+    //   
+    getBoards().then((data) => {
+      console.log(data)
+      setPost(data)
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        setPost(data)
-      })
+  
   }
 
   return (
@@ -43,7 +36,7 @@ const MainPage = () => {
       <Container>
         {
           posts ? (
-            <Board boardType="main" posts={posts} />
+            <Board posts={posts} />
           ) : (
             "none"
           )
