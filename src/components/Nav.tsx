@@ -1,5 +1,4 @@
 import { styled } from 'styled-components'
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RootState } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,37 +8,13 @@ import Category from './Category';
 import { onLoginSuccess } from '../api/Login';
 
 const Nav = () => {
-  const [headMargin, setHeadMargin] = useState<boolean>(true);
-
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.user);
-
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-    if (currentScrollY > scrollYRef.current) {
-      setHeadMargin(false);
-    } else {
-      setHeadMargin(true);
-    }
-    scrollYRef.current = currentScrollY;
-  }, []);
-
-  const scrollYRef = useRef(0);
-
-  useEffect(() => {
-    scrollYRef.current = window.scrollY;
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [handleScroll]);
-
-
+  
   const handleClick = () => {
     navigate('/search');
   }
@@ -52,7 +27,7 @@ const Nav = () => {
   const googleHandler = async () => {
     // login();
     onLoginSuccess()
-  }
+  }  
 
   if (pathname === '/write') {
     return null;
@@ -60,7 +35,7 @@ const Nav = () => {
 
   return (
     <>
-      <Header $headmargin={headMargin ? 'true' : 'false'}>
+      <Header>
         <HeaderInner>
           <HeaderWrapper>
             <LogoText
@@ -116,11 +91,11 @@ const Nav = () => {
 
 export default Nav
 
-const Header = styled.header<{ $headmargin: string }>`
+const Header = styled.header`
   background-color: #D8CEF6;
   border-bottom: 1px solid #eee;
-  margin-top: ${({ $headmargin }) => $headmargin === 'true' ? '0' : '-100px'};
   width: 100%;
+  position: fixed;
   top: 0;
   z-index: 999;
 `
