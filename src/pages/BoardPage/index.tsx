@@ -46,11 +46,14 @@ const PostPage = () => {
   useEffect(() => {
     const getBoard = async () => {
       const board = await getBoardById(Number(boardId))
-      .then((res) => {
-        return res
-      }).catch(() => {
-        navigate('/error');
-      })
+      // .then((res) => {
+      //   return res
+      // }).catch(() => {
+      //   navigate('/error');
+      // })
+      console.log(board)
+      console.log(board.user);
+      console.log(board.board_tag);
       
       getAuthor(board.user);      
       getTags(board.board_tag);

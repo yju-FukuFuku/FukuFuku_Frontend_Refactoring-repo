@@ -45,7 +45,7 @@ function App() {
             <Route path='/boards/:boardId' element={<BoardPage />} />
             <Route path='/tags/:tagName' element={<TagPage />} />
             <Route path='/write' element={<WritePage />} />
-
+            
             <Route path='/error' element={<ErrorPage />} />
             <Route path='/*' element={<ErrorPage />} />
           </Route>
