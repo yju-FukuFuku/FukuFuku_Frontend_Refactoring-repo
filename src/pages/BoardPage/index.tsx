@@ -55,8 +55,6 @@ const PostPage = () => {
       console.log(board.user);
       console.log(board.board_tag);
       
-      
-
       getAuthor(board.user);      
       getTags(board.board_tag);
       setBoard(board);
