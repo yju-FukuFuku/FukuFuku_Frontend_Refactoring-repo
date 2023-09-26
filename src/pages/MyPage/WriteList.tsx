@@ -31,22 +31,6 @@ const MyWritePage = () => {
   // const [lock, setLock] = useState<boolean>(false) 부가기능 추후 추가
   const [myData, setData] = useState<My[]>()
 
-  // useEffect(() => {
-  //   getData()
-  // }, []);
-
-    // GetFetch
-  // const getData = () => {
-  //   fetch("https://jsonplaceholder.typicode.com/posts")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log(data)
-  //       setData(data)
-  //       console.log(userId)
-  //     })
-  //     .catch((error) => console.log(error));
-  // }
-
   // Search
   const [search, setSearch] = useState<string>('')
   const navigate = useNavigate();
@@ -76,7 +60,6 @@ const MyWritePage = () => {
     // 대소문자 통일 후 배열에 요소가 존재하는지 확인
     return p.title?.replace(" ", "").toLocaleLowerCase().includes(search.replace(" ", "").toLocaleLowerCase())
   })
-  console.log(1);
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
@@ -94,15 +77,6 @@ const MyWritePage = () => {
                 <div className={style.subInfo}>
                   <span>약 17시간 전</span>
                   <span>{ item.id }</span>
-                  {/* 공개&비공개 여부 확인 / 추후 추가 확인
-                  { lock ? (
-                    <p>
-                      <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15"><path d="M220-80q-24.75 0-42.375-17.625T160-140v-434q0-24.75 17.625-42.375T220-634h70v-96q0-78.85 55.606-134.425Q401.212-920 480.106-920T614.5-864.425Q670-808.85 670-730v96h70q24.75 0 42.375 17.625T800-574v434q0 24.75-17.625 42.375T740-80H220Zm0-60h520v-434H220v434Zm260.168-140Q512-280 534.5-302.031T557-355q0-30-22.668-54.5t-54.5-24.5Q448-434 425.5-409.5t-22.5 55q0 30.5 22.668 52.5t54.5 22ZM350-634h260v-96q0-54.167-37.882-92.083-37.883-37.917-92-37.917Q426-860 388-822.083 350-784.167 350-730v96ZM220-140v-434 434Z"/></svg>
-                      <span>비공개</span>
-                    </p>
-                  ) : (
-                    <span>공개</span>
-                  )} */}
                 </div>
                 <hr />
               </div>
@@ -145,15 +119,6 @@ const MyWritePage = () => {
                 <span>약 17시간 전</span>
                 <span>댓글 수</span>
                 <span>좋아요 수</span>
-                {/* 공개&비공개 여부 확인 / 추후 추가 확인
-                { lock ? (
-                  <p>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="15" viewBox="0 -960 960 960" width="15"><path d="M220-80q-24.75 0-42.375-17.625T160-140v-434q0-24.75 17.625-42.375T220-634h70v-96q0-78.85 55.606-134.425Q401.212-920 480.106-920T614.5-864.425Q670-808.85 670-730v96h70q24.75 0 42.375 17.625T800-574v434q0 24.75-17.625 42.375T740-80H220Zm0-60h520v-434H220v434Zm260.168-140Q512-280 534.5-302.031T557-355q0-30-22.668-54.5t-54.5-24.5Q448-434 425.5-409.5t-22.5 55q0 30.5 22.668 52.5t54.5 22ZM350-634h260v-96q0-54.167-37.882-92.083-37.883-37.917-92-37.917Q426-860 388-822.083 350-784.167 350-730v96ZM220-140v-434 434Z"/></svg>
-                    <span>비공개</span>
-                  </p>
-                ) : (
-                  <span>공개</span>
-                )} */}
               </div>
               <hr />
             </div>
@@ -171,6 +136,7 @@ const MyWritePage = () => {
   // 무한 스크롤 - 타겟이 화면에 완전히 나타날 때 더 많은 데이터 가져오기
   const fetchMoreData = () => {
     // page number 전달
+    // `http://localhost:3000/boards/author/${nickName}?_page=${boardPage}&_limit=10`
     fetch(`https://jsonplaceholder.typicode.com/albums?_page=${boardPage}&_limit=10`)
       .then((response) => response.json())
       .then((data) => {
@@ -183,27 +149,22 @@ const MyWritePage = () => {
         }
       })
       .catch((error) => console.log(error));
-
   };
 
   
   useEffect(() => {
-    console.log("값 변화 체크")
     const observer = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
         console.log("도달")
-        console.log(target)
-        if (target.isIntersecting) {
-          // 타겟이 화면에 보일 때 더 많은 데이터 가져오기
-          fetchMoreData();
+        if (target.isIntersecting) { 
+          fetchMoreData(); 
         }
       },
       { threshold: 1.0 }
     );
     // 타겟 엘리먼트를 관측하기 시작합니다.
     if (target.current) observer.observe(target.current);
-
     // 컴포넌트가 언마운트될 때 옵저버를 연결 해제합니다.
     return () => {
       if (target.current) observer.unobserve(target.current);

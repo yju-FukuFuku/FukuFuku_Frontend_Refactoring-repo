@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { styled } from 'styled-components'
 import Board from '../../components/board'
 import { PostType } from '../../components/board'
+import { getBoard } from '../../api/BoardAPI'
 
 const LikePage = () => {
 
@@ -15,30 +15,26 @@ const LikePage = () => {
   
   // GetData
   const getData = () => {
-    console.log("데이터 렌더링")
-    fetch("http://localhost:3000/posts/1/comments", {
-      headers: {
-        "Content-type" : "application/json"
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        setPost(data)
-      })
+    // getBoard()
+    //   .then((data) => {
+    //     console.log(data)
+    //     setPost(data)
+    //   })
   }
 
   return (
-    <Container>
-        <H2>좋아요 목록</H2>
-        {
-          posts ? (
-            <Board posts={posts} />
-          ) : (
-            "none"
-          )
-        }
-    </Container>
+    <>
+      {/* <H2> 좋아요 목록 </H2> */}
+      <Container>
+          {
+            posts ? (
+              <Board posts={posts} />
+            ) : (
+              "none"
+            )
+          }
+      </Container>
+    </>
   )
 }
 
@@ -47,11 +43,13 @@ export default LikePage
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  text-align: center;
+  padding: 0 2vw;
+
+  @media (max-width: 767px){
+    padding: 0;
+  }
 `
 
 const H2 = styled.h2`
   font-size: 2rem;
-  margin: 1rem 0;
 `
