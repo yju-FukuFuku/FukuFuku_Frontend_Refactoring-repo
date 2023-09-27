@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { styled } from 'styled-components'
 import Board from '../../components/board'
 import { PostType } from '../../components/board'
-import { getBoard } from '../../api/BoardAPI'
+import { getLikeBoard } from '../../api/BoardAPI'
 
 const LikePage = () => {
 
@@ -14,12 +14,13 @@ const LikePage = () => {
   const [posts, setPost] = useState<PostType[]>();
   
   // GetData
+  
   const getData = () => {
-    // getBoard()
-    //   .then((data) => {
-    //     console.log(data)
-    //     setPost(data)
-    //   })
+    getLikeBoard('like')
+      .then((data) => {
+        console.log(data)
+        setPost(data)
+      })
   }
 
   return (

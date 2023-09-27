@@ -136,11 +136,16 @@ export const getBoard = async (page: number, pageSize: number) => {
   //   const { data } = await axios.get(`/boards`);
   //       return data;
   //   }
-    const { data } = await axios.get(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${pageSize}`);
+    const { data } = await axios.get(`/boards`);  //?_page=${page}&_limit=${pageSize}
     console.log(page);
     return data;
 } 
 
+export const getLikeBoard = async (page: string) => {
+    const { data } = await axios.get(`/boards/${page}`);  //?_page=${page}&_limit=${pageSize}
+    console.log(page);
+    return data;
+} 
 
 
 // date를 받아서 startDate와 endDate를 구해주는 함수

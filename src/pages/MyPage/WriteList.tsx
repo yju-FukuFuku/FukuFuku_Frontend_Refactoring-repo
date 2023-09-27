@@ -1,79 +1,104 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import style from './myPage.module.css'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
+interface Tag { 
+  tag: {
+    name: string;
+  }
+}[]
+
+type My = {
+  title: string;
+  content: string;
+  id: number;
+  userId: string;
+  views: 0,
+  createdAt: string,
+  u_id: 6,
+  boardImage: [],
+  like: [],
+  board_tag: []
+}
+
 const MyWritePage = () => {
-  const { userId } = useParams();
+  const { userId } = useParams(); // 받아오는 userId( 닉네임 )
+  console.log(userId)
+  const [tag, setTag] = useState<string[]>(['']) 
 
-  interface Tag {
-    tag: {
-      name: string;
-    }
-  }[]
-
-  const [tag, setTag] = useState<string[]>(['dori'])
-
-  // 태그 가져오기
+  // TAG - ??
   const getTags = (tags: Tag[]) => {
     const tagArray = tags.map((item) => item.tag.name);
     setTag(tagArray);
   }
 
-  type My = {
-    title: string;
-    body: string;
-    id: string;
-    userId: string;
-  }
-
-  // const [lock, setLock] = useState<boolean>(false) 부가기능 추후 추가
-  const [myData, setData] = useState<My[]>()
-
-  // Search
+  // SEARCH
   const [search, setSearch] = useState<string>('')
   const navigate = useNavigate();
-
   // search 값 불러오기
   const inputSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value)
-    
+    setSearch(e.target.value) 
   }
-
-  // router 반영
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const changeNavigate = (url: string) => {
     if(url != '')
       navigate(`/${userId}?q=${url}`)
     else 
       navigate(`/${userId}`)
   }
+  // ROUTER 변경
+  // useEffect(() => {
+  //   changeNavigate(search)
+  // }, [changeNavigate, search])
 
-  // 함수 호출
-  useEffect(() => {
-    changeNavigate(search)
-    
-  }, [search])
+  // ARRAY
+  const [myData, setData] = useState<My[]>()  // 게시판 저장
+  let boardCount = 0
 
-  // SearchFilter 함수 
+  // GetData
+  const fetchMoreData = useCallback(() => {
+    // page number 전달
+    // fetch(`https://jsonplaceholder.typicode.com/albums?_page=${boardPage}&_limit=10`)
+    fetch(`http://localhost:3000/boards/author/${userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length === 0) {
+          return;
+        }
+        if (data.length > boardCount) {
+          const board = data[0].board
+          console.log(data.length)
+          boardCount = data.length
+          // 새로운 데이터가 있는 경우에만 boardPage를 증가시킵니다.
+          setBoardPage((prevPage) => prevPage + 1);
+          setData((prevPost) => (prevPost ? [...prevPost, ...board] : board));
+          // console.log(boardPage)
+        }
+      })
+      .catch((error) => console.log(error));
+  }, [userId])
+
+  console.log(myData)
+
+  // SearchFilter 함수 - 검색 값을 통해 배열 색출
   const filterTitle = myData?.filter((p) => {
-    // 대소문자 통일 후 배열에 요소가 존재하는지 확인
     return p.title?.replace(" ", "").toLocaleLowerCase().includes(search.replace(" ", "").toLocaleLowerCase())
   })
-
-  // 배열에서 검색한 값만 불러오기
+  // 검색된 값 GET ARRAY
   const getSearchList = () => {
     if(filterTitle?.length !== 0){
       return (
         <div>
-          {filterTitle?.map((item, index) => (
+          {filterTitle?.map((item) => (
             <div key={item.id}>
               <div className={style.list} >
                 <div className={style.contentImg}>
                   <img src='/public/images/배경.webp' alt="img" />
                 </div>
                 <h2>{ item.title }</h2>
-                <p>{ item.body }</p>
+                <p>{ item.content }</p>
                 <div className={style.subInfo}>
                   <span>약 17시간 전</span>
                   <span>{ item.id }</span>
@@ -92,28 +117,25 @@ const MyWritePage = () => {
       )
     }
   }
-
-  // 배열에서 값불러오기
+  // ARRAY 값 출력
   const getList = () => {
     return (
       <div>
-        {myData?.map((item, index) => (
-          <div key={ index }>
+        {myData?.map((item) => (
+          <div key={`list-${item.id}`}>
             <div className={style.list} >
               <div className={style.contentImg}>
                 <img src='/public/images/배경.webp' alt="img" />
               </div>
               <Link to={`/${ item.id }`}></Link>
               <h2>{ item.title }</h2>
-              <p>{ item.body }</p>
+              <p>{ item.content }</p>
               <div className={style.tagWrapper}>
-              {
-                tag ? (
+              {/* { tag ? (
                   tag.map((item, index) => (
-                    <span key={index} className={style.boardTag}>{item}</span>
+                    <span key={item.name} className={style.boardTag}>{item}</span>
                   ))
-                ) : null
-              }
+                ) : null } */}
               </div>
               <div className={style.subInfo}>
                 <span>약 17시간 전</span>
@@ -128,29 +150,9 @@ const MyWritePage = () => {
     )
   }
 
-  // 무한 스크롤
+  // INFINITY SCROLL - 스크롤 값을 불러와 배열 나눠서 가져오기.
   const target = useRef<HTMLDivElement | null>(null); // null로 초기화
   const [boardPage, setBoardPage] = useState<number>(1);
-
-  // GetData
-  // 무한 스크롤 - 타겟이 화면에 완전히 나타날 때 더 많은 데이터 가져오기
-  const fetchMoreData = () => {
-    // page number 전달
-    // `http://localhost:3000/boards/author/${nickName}?_page=${boardPage}&_limit=10`
-    fetch(`https://jsonplaceholder.typicode.com/albums?_page=${boardPage}&_limit=10`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.length > 0) {
-          // 새로운 데이터가 있는 경우에만 boardPage를 증가시킵니다.
-          setBoardPage((prevPage) => prevPage + 1);
-          setData((prevPost) => (prevPost ? [...prevPost, ...data] : data));
-          console.log(myData)
-          console.log(boardPage)
-        }
-      })
-      .catch((error) => console.log(error));
-  };
-
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -167,16 +169,16 @@ const MyWritePage = () => {
     if (target.current) observer.observe(target.current);
     // 컴포넌트가 언마운트될 때 옵저버를 연결 해제합니다.
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       if (target.current) observer.unobserve(target.current);
     };
-  }, [boardPage]); // boardPage는 의존성에 포함되어 변경될 때마다 재관측하도록 해야 합니다.
+  }, [fetchMoreData, myData]); // boardPage는 의존성에 포함되어 변경될 때마다 재관측하도록 해야 합니다.
 
-  
-  
 
   return (
     <div className={style.container}>
       <div className={style.myPage}>
+        {/* PROFILE */}
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
@@ -192,9 +194,10 @@ const MyWritePage = () => {
           </div>
         </div>
         <hr />
+        {/* ARRAY 출력 */}
         <div className={style.myList}>
-          {/* 목록 */}
           <div className={style.body}>
+            {/* SEARCH */}
             <div className={style.serBox}>
               <section className={style.serSec}>
                 <div className={style.search}>

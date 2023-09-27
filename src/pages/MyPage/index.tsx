@@ -27,9 +27,11 @@ const MyPage = () => {
     getData()
   }, [content, file]);
 
+  console.log(userName)
+
   const getData = () => {
-    setName(user.nickName ? user.nickName : 'null');
-    setFile(user.picture ? user.picture : 'null');
+    setName(user.nickName ? user.nickName : ( userName ? userName : userEmail ));
+    setFile(user.picture ? user.picture : '');
     // setContent(user.introduction ? user.introduction : 'null')
   }
 
@@ -114,6 +116,7 @@ const MyPage = () => {
 
   // 닉네임 중복 체크 - Get
   const handleNameOverlap = () => {
+    console.log(debounceVal)
     fetch(`http://localhost:3000/check/${debounceVal}`, {
         headers: myHeader,
       })
@@ -166,7 +169,7 @@ const MyPage = () => {
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
     console.log("회원 탈퇴")
-    fetch("http://localhost:5173/withdraw", {
+    fetch("http://localhost:3000/withdraw", {
       method: "DELETE",
       headers : myHeader,
       body: JSON.stringify({
@@ -250,6 +253,7 @@ const MyPage = () => {
             {/* <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button> */}
             <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange} accept='image/*'/>
           </div>
+          
           {/* intro 수정 */}
           {introCheck ? (
             <div className={style.introBox}>

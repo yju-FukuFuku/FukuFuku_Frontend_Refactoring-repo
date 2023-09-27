@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/User';
 import { Google, SearchRounded } from '@mui/icons-material';
 import Category from './Category';
-import { onLoginSuccess } from '../api/Login';
+import { login, onLoginSuccess } from '../api/Login';
 
 const Nav = () => {
   const { pathname } = useLocation();
@@ -25,8 +25,8 @@ const Nav = () => {
   }
 
   const googleHandler = async () => {
-    // login();
-    onLoginSuccess()
+    login();
+    // onLoginSuccess()
   }  
 
   if (pathname === '/write') {
