@@ -14,6 +14,8 @@ import TagPage from './pages/TagPage'
 import styled from 'styled-components'
 
 const Content = styled.div`
+  position: relative;
+  top: 120px;
   width: 100%;
   margin: 0 auto;
 `

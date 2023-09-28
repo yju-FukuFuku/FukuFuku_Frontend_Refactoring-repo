@@ -108,19 +108,42 @@ export async function deleteBoard(id: number) {
 type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
 
 // 게시판 전체 불러오기
-export const getBoards = async (option?: string, date?: dateType) => {
-  // 기본 요청 경로(date는 필수)
-  if (date) {
-    const responseDate = getCurrentDate(date);
-    const startDate = responseDate?.startDate;
-    const endDate = responseDate?.endDate;
+// export const getBoards = async (option?: string, date?: dateType) => {
+//   // 기본 요청 경로(date는 필수)
+//   if (date) {
+//     // const responseDate = getCurrentDate(date);
+//     // const startDate = responseDate?.startDate;
+//     // const endDate = responseDate?.endDate;
 
-    console.log(startDate, endDate);
+//     // console.log(startDate, endDate);
     
-    const { data } = await axios.get(`/boards`);
-        return data;
-    }
-    const { data } = await axios.get(`/boards?option=${option}`);
+//     const { data } = await axios.get(`/boards`);
+//         return data;
+//     }
+//     const { data } = await axios.get(`/boards?option=${option}`);
+//     return data;
+// } 
+
+export const getBoard = async (page: number, pageSize: number) => {
+  // 기본 요청 경로(date는 필수)
+  // if (date) {
+  //   const responseDate = getCurrentDate(date);
+  //   const startDate = responseDate?.startDate;
+  //   const endDate = responseDate?.endDate;
+
+  //   console.log(startDate, endDate);
+    
+  //   const { data } = await axios.get(`/boards`);
+  //       return data;
+  //   }
+    const { data } = await axios.get(`/boards`);  //?_page=${page}&_limit=${pageSize}
+    console.log(page);
+    return data;
+} 
+
+export const getLikeBoard = async (page: string) => {
+    const { data } = await axios.get(`/boards/${page}`);  //?_page=${page}&_limit=${pageSize}
+    console.log(page);
     return data;
 } 
 
