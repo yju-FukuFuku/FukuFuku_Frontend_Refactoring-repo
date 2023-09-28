@@ -3,9 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { RootState } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/User';
-import { Google, SearchRounded } from '@mui/icons-material';
+import { SearchRounded } from '@mui/icons-material';
 import Category from './Category';
-import { login, onLoginSuccess } from '../api/Login';
+import { login } from '../api/Login';
+import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google';
 
 const Nav = () => {
   const { pathname } = useLocation();
@@ -20,14 +21,14 @@ const Nav = () => {
   }
 
   const handleLogOut = () => {
+    googleLogout();
     dispatch(clearUser());
     navigate('/');
   }
 
-  const googleHandler = async () => {
-    login();
-    // onLoginSuccess()
-  }  
+  const googleHandler = async (credential: string | undefined) => {
+    login(credential);
+  }
 
   if (pathname === '/write') {
     return null;
@@ -55,7 +56,6 @@ const Nav = () => {
                   </Login>
                 ) : null
               }
-
               {
                 user.id ? (
                   <Icon onClick={() => navigate('/mypage')}>
@@ -70,10 +70,15 @@ const Nav = () => {
 
                   </Icon>
                 ) : (
-                  <Google
-                    sx={{ cursor: 'pointer', fontSize: '40px', p: 1, color: "#000" }}
-                    onClick={googleHandler}
-                  />
+                  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID as string}>
+                    <GoogleLogin
+                      type={"icon"}
+                      shape={"pill"}
+                      onSuccess={({credential}) => {
+                        googleHandler(credential);
+                      }}
+                    />
+                  </GoogleOAuthProvider>
                 )
               }
 
