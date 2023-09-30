@@ -8,26 +8,31 @@ interface SetAccessTokenPayload {
   accessToken: string;
 }
 
-export async function login() {
-  return await axios.get('/auth')
-  .then((res) => {
-    console.log(res);
-  })
+interface User {
+  id: number,
+  email: string,
+  picture: string,
+  firstName: string,
+  lastName: string,
+  isAdmin: null,
+  refreshToken: string,
+  nickName: null,
+  accessToken: string
 }
 
-export function onLoginSuccess() {
-  const data = {
-    "id": 2,
-    "email":"user1@example.com",
-    "picture":"https://lh3.googleusercontent.com/a/AAcHTtfpGQDOXCwRj2W5vM44gbITs8mLO23tR3mtFEdBFupc=s96-c",
-    "firstName":"김",
-    "lastName":"지훈",
-    "isAdmin":null,
-    "refreshToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrTmFtZSI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlkIjoyLCJpYXQiOjE2OTExNTAyMDYsImV4cCI6MTY5MTIzNjYwNn0.MgSMWMivXj8Y-0_lb25dAwMFmbSJw6AV6i16H1MvGDc",
-    "nickName":null,
-    "accessToken":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrTmFtZSI6ImhldGFtZUBnLnlqdS5hYy5rciIsImlkIjoyLCJpYXQiOjE2OTExNTAyMDYsImV4cCI6MTY5MTIzNjYwNn0.lhDiK2MmRLeP6WbvR0RR-n3zvIB5yOcXg2a-eFflR4s"
-  }
+export async function login(credential: string | undefined) {
+  await axios.post('/auth', {
+    credential
+  })
+    .then(({data}) =>
+      onLoginSuccess(data)
+    )
+    .catch(({response}) => {
+      alert(response.data.message)
+    })
+}
 
+function onLoginSuccess(data: User) {
   const { accessToken, refreshToken } = data;
 
   setRefreshToken(refreshToken);
@@ -49,7 +54,7 @@ export function onLogin() {
 
     setRefreshToken(refreshToken);
     const payload: SetAccessTokenPayload = { accessToken };
-    
+
     store.dispatch(setAccessToken(payload));
     store.dispatch(setUser(data));
   }

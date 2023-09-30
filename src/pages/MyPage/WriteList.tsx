@@ -3,6 +3,8 @@ import style from './myPage.module.css'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState, store } from '../../store';
 
 interface Tag { 
   tag: {
@@ -27,6 +29,10 @@ const MyWritePage = () => {
   const { userId } = useParams(); // 받아오는 userId( 닉네임 )
   console.log(userId)
   const [tag, setTag] = useState<string[]>(['']) 
+
+  const user = useSelector((state: RootState) => state.user);
+  const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
+  setContent(user.introduction || `${user.nickName} 입니다.`)
 
   // TAG - ??
   const getTags = (tags: Tag[]) => {
@@ -189,7 +195,7 @@ const MyWritePage = () => {
           <div className={style.introBox}>
             <h2>한 줄 소개</h2>
             <div className={style.intro}>
-              hello my name is mini nice me too. <br></br>i can't speak english
+              { content }
             </div>
           </div>
         </div>

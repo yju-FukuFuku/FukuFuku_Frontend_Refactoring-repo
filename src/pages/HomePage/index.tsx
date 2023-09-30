@@ -57,7 +57,6 @@ const MainPage = () => {
         loadMoreData();
       }
     };
-    
     container.addEventListener('scroll', handleScroll);
 
     return () => {
