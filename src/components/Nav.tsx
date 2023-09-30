@@ -58,7 +58,7 @@ const Nav = () => {
               }
               {
                 user.id ? (
-                  <Icon onClick={() => navigate('/mypage')}>
+                  <Icon onClick={() => navigate('/setting')}>
                     {user.picture ? (
                       <img
                         src={user.picture}
