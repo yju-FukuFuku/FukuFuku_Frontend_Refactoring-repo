@@ -6,12 +6,11 @@ import { useSelector } from 'react-redux';
 import { RootState, store } from '../../store';
 import { clearUser, setUser } from '../../store/User';
 import { useNavigate } from 'react-router-dom';
-import { deleteUser, introChange, editName } from '../../api/User';
+import { getCheck, deleteUser,editName } from '../../api/User';
 import { editUserImage } from '../../api/Image';
-import { useDispatch } from 'react-redux';
 
 const MyPage = () => {
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const token = useSelector((state: RootState) => state.token);
@@ -21,12 +20,7 @@ const MyPage = () => {
   console.log(token);
   
   const [userId, setUserId] = useState<number>(0);
-  console.log(token);
-  
-  const [userId, setUserId] = useState<number>(0);
   const [userName, setName] = useState<string>('');
-  const [file, setFile] = useState<string>('');
-  const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
   const [file, setFile] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
   const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
@@ -42,12 +36,17 @@ const MyPage = () => {
     }
     getData();
   }, []);
+    if (!user.isLogin) {
+      window.alert("로그인 후에 사용하실 수 있습니다.")
+      navigate('/');
+    }
+    getData();
+  }, []);
 
   const getData = () => {
     setName(user.nickName ? user.nickName : (userName ? userName : userEmail));
+    setName(user.nickName ? user.nickName : (userName ? userName : userEmail));
     setFile(user.picture ? user.picture : '');
-    setContent(user.introduction || `${user.nickName} 입니다.`)
-    setUserId(user.id ? user.id : 0)
     setContent(user.introduction || `${user.nickName} 입니다.`)
     setUserId(user.id ? user.id : 0)
   }
@@ -64,7 +63,6 @@ const MyPage = () => {
     if (fileCheck) {  // 들어온 파일이 null인지 아닌지 체크
       const checkLength = fileCheck.name.lastIndexOf(".");
 
-      if (extension.includes(fileCheck.name.substring(checkLength, fileCheck.length))) {
       if (extension.includes(fileCheck.name.substring(checkLength, fileCheck.length))) {
         console.log("올바른 확장자입니다.")
         handlePostImg(fileCheck)
@@ -90,22 +88,7 @@ const MyPage = () => {
     editUserImage(formData, userId)
     editUserImage(formData, userId)
       .then((data) => {
-        const userInfo = { ...user };
-        userInfo.picture = data.data.picture;
-        store.dispatch(setUser(userInfo));
-        fire("이미지 변경 성공", "success", "success");
-      })
-      .catch(({ response }) => {
-        const errorMessage = response.data.statusCode;
-        let message = "문제가 생겼습니다. 나중에 다시 시도해주세요.";
-
-        if (errorMessage === 422) {
-          message = "이미지를 넣으세요.";
-        }
-        if (errorMessage === 415) {
-          message = "올바르지 않은 확장자입니다. (jpg, jpeg, png)";
-        }
-        fire(message);
+        setFile(data.picture)
       })
   }
 
@@ -116,17 +99,18 @@ const MyPage = () => {
 
   // 닉네임 중복 체크 - debounce
   const [inputName, setInputName] = useState<string>(userName)
+  const [inputName, setInputName] = useState<string>(userName)
   const debounceVal = useDebounce(inputName, 300) // hook 불러오기
-  const [overlapCheck, setOverlapCheck] = useState<boolean>(false);
   const [overlapCheck, setOverlapCheck] = useState<boolean>(false);
   
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 띄어쓰기 막기.
     if (!e.target.value.includes(" ")) {
+    if (!e.target.value.includes(" ")) {
       setInputName(e.target.value)
     }
   }
-  
+
   // debounceVal의 값이 변경되고 일정 시간이 지날때마다 함수 실행
   useEffect(() => {
     if (debounceVal != '' && debounceVal != userName) {
@@ -145,63 +129,37 @@ const MyPage = () => {
   }
 
 
-  // 닉네임 수정 - Put
+  // 닉네임 중복체크 후 닉네임 수정 - Put
   const handleNameUpdate = () => {
-    if (!inputName || user.nickName === inputName) {
-      fire("기존의 닉네임과 다른 한 글자 이상의 닉네임을 입력하세요");
-      setReName(false);
-      return;
+    console.log("이름 변경")
+    if(overlapCheck){
+      const nameObj = {
+        data: {
+          where: { id: 1 },
+          data: { nickName: "test" }
+        }
+      }
+      // api 요청
+      editName(nameObj)
+        .then((data) => {
+          setReName(false)
+        })
     }
-
-    editName(user.id as number, inputName)
-      .then(({ data }) => {
-        const userInfo = { ...user };
-        userInfo.nickName = data.data.nickName;
-        store.dispatch(setUser(userInfo));
-        fire("닉네임 변경 성공", "success", "success");
-      })
-      .catch(({ response }) => {
-        const isConflict = response.data.statusCode === 409;
-        const message = isConflict
-          ? "누군가 사용중인 닉네임입니다."
-          : "문제가 생겼습니다. 나중에 다시 시도해주세요."
-
-        window.alert(message);
-      })
-    setInputName('');
-    setReName(false);
   }
 
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
-
-    Swal.fire({
-      title: "정말 탈퇴하시겠습니까?",
-      icon: 'warning',
-      showCancelButton: true,
-    })
-      .then(async (result) => {
-        if (result.isConfirmed) {
-          // isDelete = true;
-          const deleteObj = {
-            data: {
-              where: {
-                id: userId
-              }
-            }
-          }
-          deleteUser(deleteObj)
-            .then(() => {
-              dispatch(clearUser());
-              window.localStorage.clear();
-              navigate('/');
-            })
-            .catch(() => {
-              fire();
-            })
+    console.log("회원 탈퇴")
+    const deleteObj = {
+      data: {
+        where: {
+          id: userId
         }
-      });
+      }
+    }
+    deleteUser(deleteObj)
   }
+
   // INTRO
   let userData = ''
   // intro 수정 요청
@@ -213,21 +171,25 @@ const MyPage = () => {
   const changeContent = (e: React.ChangeEvent<HTMLInputElement>) => {
     userData = e.target.value
     setContent(userData);
+    setContent(userData);
   }
 
   const handleUpdateContent = () => {
-    if (!content || user.introduction === content) {
-      fire("기존의 내용과 다른 한 글자 이상의 내용을 입력하세요");
-      setIntroCheck(false);
-      return;
-    }
-
-    introChange(user.id as number, content)
+    api.patch("/user/editIntroduction", {
+      data: {
+        where: {
+          id: user.id
+        },
+        data: {
+          introduction: content
+        },
+      }
+    })
       .then(({ data }) => {
         const userInfo = { ...user };
         userInfo.introduction = data.data.introduction;
         store.dispatch(setUser(userInfo));
-        fire("한 줄 소개 수정 성공", "success", "success");
+        console.log("수정 완료")
       })
       .catch(() => {
         fire();
@@ -241,23 +203,29 @@ const MyPage = () => {
       className={style.container}
       style={{ display: `${user.isLogin ? "block" : "none"}` }}
     >
+    <div
+      className={style.container}
+      style={{ display: `${user.isLogin ? "block" : "none"}` }}
+    >
       <div className={style.myPage}>
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
               <img src={file} alt="image" className={style.myImage} />
-              <img src={file} alt="image" className={style.myImage} />
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
             {/* <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button> */}
             <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange} accept='image/*' />
-            <input type="file" className={style.file} ref={fileInputRef} onChange={handleFileChange} accept='image/*' />
           </div>
+
 
           {/* intro 수정 */}
           {introCheck ? (
             <div className={style.introBox}>
-              <input type="text" defaultValue={user.introduction as string} onChange={changeContent} maxLength={100} />
+              {/* <input type="text" defaultValue={content} onChange={changeContent} maxLength={100} /> */}
+              <input type="text" defaultValue={content} onChange={changeContent} maxLength={100} />
+              {/* <input type="text" defaultValue={content} onChange={changeContent} maxLength={100} /> */}
+              <input type="text" defaultValue={content} onChange={changeContent} maxLength={100} />
               <div className={style.inputBlock}>
                 <button className={style.modifyBtn} onClick={handleUpdateContent}>완료</button>
               </div>
@@ -266,7 +234,8 @@ const MyPage = () => {
             <div className={style.introBox}>
               <h2>한 줄 소개</h2>
               <div className={style.intro}>
-                {user.introduction || `${user.nickName} 입니다.`}
+                {content}
+                {content}
               </div>
               <button className={style.modifyBtn} onClick={handleUpdateCheck}>수정</button>
             </div>
@@ -288,7 +257,8 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} defaultValue={user.nickName as string} onChange={handleInputName} maxLength={20} />
+                <input type="text" className={style.username} value={inputName} onChange={handleInputName} maxLength={20} />
+                <input type="text" className={style.username} value={inputName} onChange={handleInputName} maxLength={20} />
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>
@@ -297,7 +267,9 @@ const MyPage = () => {
               <div className={style.wrapperList}>
                 <label>닉네임</label>
                 <div>
-                  {user.nickName || user.email}
+                  {userName ? userName : userEmail}
+                </div>
+                  {userName ? userName : userEmail}
                 </div>
                 <span>
                   <button className={style.modifyBtn} onClick={checkTry}>수정</button>
@@ -312,10 +284,12 @@ const MyPage = () => {
               <button type='button' className={style.removeBtn} onClick={handleUserRemove}>회원탈퇴</button>
             </div>
             <p>탈퇴 시 작성한 게시글은 모두 삭제되며 복구되지 않습니다.</p>
+            <p>탈퇴 시 작성한 게시글은 모두 삭제되며 복구되지 않습니다.</p>
           </div>
         </div>
       </div>
     </div>
+
 
   )
 }
