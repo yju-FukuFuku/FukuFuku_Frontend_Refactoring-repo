@@ -25,8 +25,8 @@ const MyPage = () => {
   const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
   const fileInputRef = useRef<HTMLInputElement | null>(null); // 이미지 불러오기
   const [introCheck, setIntroCheck] = useState<boolean>(false)
-
-
+  
+  
   // 유저 정보 불러오기 (한 줄 소개, 닉네임, 이미지가 바뀔 떄마다)
   useEffect(() => {
     if (!user.isLogin) {
@@ -42,7 +42,7 @@ const MyPage = () => {
     setContent(user.introduction || `${user.nickName} 입니다.`)
     setUserId(user.id ? user.id : 0)
   }
-
+  
   const handleImageUpdate = () => { // 이미지 변경 요청
     console.log("이미지 변경")
     fileInputRef.current?.click();
@@ -92,14 +92,13 @@ const MyPage = () => {
   const [inputName, setInputName] = useState<string>(userName)
   const debounceVal = useDebounce(inputName, 300) // hook 불러오기
   const [overlapCheck, setOverlapCheck] = useState<boolean>(false);
-  
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 띄어쓰기 막기.
     if (!e.target.value.includes(" ")) {
       setInputName(e.target.value)
     }
   }
-  
+
   // debounceVal의 값이 변경되고 일정 시간이 지날때마다 함수 실행
   useEffect(() => {
     if (debounceVal != '' && debounceVal != userName) {
@@ -126,6 +125,7 @@ const MyPage = () => {
         data: {
           where: { id: 1 },
           data: { nickName: "test" }
+
         }
       }
       // api 요청
