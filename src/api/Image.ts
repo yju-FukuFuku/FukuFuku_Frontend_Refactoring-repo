@@ -19,3 +19,8 @@ export const postImage = async (image: File, id: number | null) => {
   
   return imageData;
 }
+
+export async function editUserImage(image : FormData) {
+  const { data } = await api.put(`/user/editNickname`, image) 
+  return data;
+}

@@ -24,7 +24,7 @@ const Nav = () => {
     googleLogout();
     dispatch(clearUser());
     navigate('/');
-  }
+  } 
 
   const googleHandler = async (credential: string | undefined) => {
     login(credential);

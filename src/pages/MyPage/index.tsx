@@ -4,6 +4,7 @@ import useDebounce from '../../hooks/useDebounce';
 import Swal from 'sweetalert2'  // 경고창 라이브러리
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { getCheck, deleteUser,editName } from '../../api/User';
 
 const MyPage = () => {
   const user = useSelector((state: RootState) => state.user);
@@ -14,6 +15,7 @@ const MyPage = () => {
   myHeader.append( 'Content-type', 'application/json' )
   myHeader.append( 'Authorization', `Bearer ${token}` )
 
+  const [userId, setUserId] = useState<string>('');
   const [userName, setName] = useState<string>('');
   const [file, setFile] = useState<string>('')
   const [content, setContent] = useState<string>('')    // 한 줄 소개
@@ -114,83 +116,52 @@ const MyPage = () => {
     }
   }, [debounceVal])
 
-  // 닉네임 중복 체크 - Get
+  // 닉네임 중복 체크 - Get  
   const handleNameOverlap = () => {
     console.log(debounceVal)
-    fetch(`http://localhost:3000/check/${debounceVal}`, {
-        headers: myHeader,
+    getCheck(debounceVal)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if(data.statusCode == "200"){
+          console.log(data.message)
+        } else if(data.statusCode == "409") {
+          console.log(data.message)
+        } else{
+          console.log("정의되지 않은 오류입니다.")
+        }
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data)
-          if(data.statusCode == "200"){
-            console.log(data.message)
-          } else if(data.statusCode == "409") {
-            console.log(data.message)
-          } else{
-            console.log("정의되지 않은 오류입니다.")
-          }
-        })
-        .catch((error) => console.log(error))
+      .catch((error) => console.log(error))
   }
 
 
   // 닉네임 중복체크 후 닉네임 수정 - Put
   const handleNameUpdate = () => {
     console.log("이름 변경")
-    fetch("http://localhost:3000/editNickname", {
-      method: "PUT",
-      headers:  myHeader,
-      body: JSON.stringify({
-        "data": {
-          "where": { "email": "9000248@g.yju.ac.kr" },  // 바꾸려는 유저의 이메일
-          "data": { "nickName": "test"  } // 바꾸려는 닉네임 값
-        }
-      })
-    })
-      .then((Response) => Response.json())
-      .then((data) => {
-        console.log(data)
-        if(data.statusCode == "200"){
-          console.log(data.message)
-          // setName(data.nickName)
-          // setReName(false)
-          console.log("변경완료")
-        } else if(data.statusCode == "400") {
-          console.log(data.message)
-        } else if(data.statusCode == "409") {
-          console.log(data.message)
-        }
-      })
-      .catch((error) => console.log(error))
+    const nameObj = {
+      data: {
+        where: { id: 1 },
+        data: { nickName: "test" }
+      }
+    }
+
+    // api 요청
+    editName(nameObj)
     setReName(false)
   }
 
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
     console.log("회원 탈퇴")
-    fetch("http://localhost:3000/withdraw", {
-      method: "DELETE",
-      headers : myHeader,
-      body: JSON.stringify({
-        "data": {
-          "where": { "id": userEmail }
+    const deleteObj = {
+      data: {
+        where: {
+          id: userId
         }
-      })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if(data.statusCode == "201"){
-          console.log(data.message)
-          console.log("탈퇴 성공")
-        } else if(data.statusCode == "400") {
-          console.log(data.message)
-        } else{
-          console.log("정의되지 않은 오류입니다.")
-        }
-      })
-      .catch((error) => console.log(error)) 
+      }
+    }
+
+    deleteUser(deleteObj)
   }
 
   // INTRO
@@ -210,32 +181,15 @@ const MyPage = () => {
   
   // 서버로 데이터 전송
   const handleUpdateContent = () => { 
-    // 한 줄 소개 수정
-    fetch("http://localhost:5173/editIntroduction", {
-      method: "PATCH",
-      headers: myHeader,
-      body: JSON.stringify({
-        "updateData" : { "email": userEmail },
-        "data": { "introduction": content },
-      })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if(data.statusCode == "422") {
-          console.log(data.message)
-        } else if(data.statusCode == "400"){
-          console.log(data.message)
-          // console.log(data.error)
-        } else if(data.statusCode == "200") {
-          console.log(data.message)
-          // 데이터를 다시 받아서 넣어야하나?
-          setContent(userData)
-        } else {
-          console.log("정의되지 않은 오류입니다.")
-        }
-      })
-      .catch((error) => console.log(error))
+    const introContent = {
+      updateData : { email: userEmail },
+      data : { introduction: content }
+    }
+
+    // fetch 요청
+    // introChange(introContent)
+    // setContent(userData)
+
     console.log("수정 완료")
     setIntroCheck(false)
   }
