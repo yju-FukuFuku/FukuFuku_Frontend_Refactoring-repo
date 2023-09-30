@@ -8,6 +8,7 @@ interface UserState {
   lastName: string | null;
   isAdmin: boolean | null;
   nickName: string | null;
+  introduction?: string;
 }
 
 export const userSlice = createSlice({
@@ -24,7 +25,7 @@ export const userSlice = createSlice({
   } as UserState,
   reducers: {
     setUser: (state, action) => {
-      const { id, email, picture, firstName, lastName, isAdmin, nickName } = action.payload;
+      const { id, email, picture, firstName, lastName, isAdmin, nickName, introduction } = action.payload;
       state.id = id;
       state.email = email;
       state.picture = picture;
@@ -32,6 +33,7 @@ export const userSlice = createSlice({
       state.lastName = lastName;
       state.isAdmin = isAdmin;
       state.nickName = nickName;
+      state.introduction = introduction;
     },
     clearUser: (state) => {
       state.id = null;
