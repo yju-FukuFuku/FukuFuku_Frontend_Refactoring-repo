@@ -1,29 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
-import useDebounce from '../../hooks/useDebounce';
 import Swal from 'sweetalert2'  // 경고창 라이브러리
 import { useSelector } from 'react-redux';
 import { RootState, store } from '../../store';
 import api from '../../api';
 import { setUser } from '../../store/User';
 import { useNavigate } from 'react-router-dom';
+import { deleteUser } from '../../api/User';
+import { editUserImage } from '../../api/Image';
 
 const MyPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
-  const token = useSelector((state: RootState) => state.token);
   const userEmail = user.email || '불러오지 못했습니다.';
-  const myHeader = new Headers();
-  myHeader.append('Content-type', 'application/json')
-  myHeader.append('Authorization', `Bearer ${token}`)
-
+  const [userId, setUserId] = useState<number>(0);
   const [userName, setName] = useState<string>('');
-  const [file, setFile] = useState<string>('')
   const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
   const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
   const fileInputRef = useRef<HTMLInputElement | null>(null); // 이미지 불러오기
   const [introCheck, setIntroCheck] = useState<boolean>(false)
-
 
   // 유저 정보 불러오기 (한 줄 소개, 닉네임, 이미지가 바뀔 떄마다)
   useEffect(() => {
@@ -36,8 +31,8 @@ const MyPage = () => {
 
   const getData = () => {
     setName(user.nickName ? user.nickName : (userName ? userName : userEmail));
-    setFile(user.picture ? user.picture : '');
     setContent(user.introduction || `${user.nickName} 입니다.`)
+    setUserId(user.id ? user.id : 0)
   }
 
   const fire = (
@@ -63,18 +58,12 @@ const MyPage = () => {
       fire("이미지 하나를 선택하세요.");
       return;
     }
-    console.log("@@@@")
 
     const fileType = e.target.files[0].type.split("/")[1];
-    console.log(fileType)
+
     if (!extension.includes(fileType)) {
       fire("올바르지 않은 확장자입니다. (jpg, jpeg, png)");
       return;
-      // Swal.fire({
-      //   icon: 'error',
-      //   title: 'error',
-      //   text: '올바르지 않은 확장자입니다. (jpg, jpeg, png)',
-      // })
     }
 
     handlePostImg(e.target.files[0])
@@ -83,24 +72,11 @@ const MyPage = () => {
 
   // 이미지 변경 Post
   const handlePostImg = (e: File) => {
-    const fileInputRef = document.getElementById('image');
     const formData = new FormData();
-    formData.append("file", e);
+    formData.append('file', e);
 
-    api.interceptors.request.use(async (config) => {
-      const id = user.id;
-
-      if (id) {
-        config.headers.data = `${id}`;
-      }
-
-      return config;
-    });
-
-    api.put("/user/editImage", {
-      formData
-    })
-      .then(({ data }) => {
+    editUserImage(formData, userId)
+      .then((data) => {
         const userInfo = { ...user };
         userInfo.picture = data.data.picture;
         store.dispatch(setUser(userInfo));
@@ -118,25 +94,6 @@ const MyPage = () => {
 
         window.alert(message);
       })
-    // fetch("http://localhost:3000/user/editImage", {
-    //   method: "PUT",
-    //   headers: myHeader,
-    //   body: JSON.stringify({ data: formData })
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data)
-    //     if (data.statusCode == "200") {
-    //       console.log(data.message)
-    //       setFile(data.picture)
-    //     } else if (data.statusCode == "415") {
-    //       console.log(data.message)
-    //     } else if (data.statusCode == "422") {
-    //       console.log(data.message)
-    //     } else {
-    //       console.log("정의되지 않은 오류입니다.")
-    //     }
-    //   })
   }
 
   // 버튼 클릭시 reName 입력
@@ -144,9 +101,7 @@ const MyPage = () => {
     setReName(true)
   }
 
-  // 닉네임 중복 체크 - debounce
   const [inputName, setInputName] = useState<string>(userName)
-  const debounceVal = useDebounce(inputName, 300) // hook 불러오기
 
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 띄어쓰기 막기.
@@ -154,34 +109,6 @@ const MyPage = () => {
       setInputName(e.target.value)
     }
   }
-
-  // debounceVal의 값이 변경되고 일정 시간이 지날때마다 함수 실행
-  // useEffect(() => {
-  //   if (debounceVal != '' && debounceVal != userName) {
-  //     handleNameOverlap()
-  //   }
-  // }, [debounceVal])
-
-  // 닉네임 중복 체크 - Get
-  // const handleNameOverlap = () => {
-  //   console.log(debounceVal)
-  //   fetch(`http://localhost:3000/user/check/${debounceVal}`, {
-  //     headers: myHeader,
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log(data)
-  //       if (data.statusCode == "200") {
-  //         console.log(data.message)
-  //       } else if (data.statusCode == "409") {
-  //         console.log(data.message)
-  //       } else {
-  //         console.log("정의되지 않은 오류입니다.")
-  //       }
-  //     })
-  //     .catch((error) => console.log(error))
-  // }
-
 
   // 닉네임 중복체크 후 닉네임 수정 - Put
   const handleNameUpdate = () => {
@@ -215,59 +142,19 @@ const MyPage = () => {
       })
     setInputName('');
     setReName(false);
-
-    // fetch("http://localhost:3000/user/editNickname", {
-    //   method: "PUT",
-    //   headers: myHeader,
-    //   body: JSON.stringify({
-    //     "data": {
-    //       "where": { "email": "9000248@g.yju.ac.kr" },  // 바꾸려는 유저의 이메일
-    //       "data": { "nickName": "test" } // 바꾸려는 닉네임 값
-    //     }
-    //   })
-    // })
-    //   .then((Response) => Response.json())
-    //   .then((data) => {
-    //     console.log(data)
-    //     if (data.statusCode == "200") {
-    //       console.log(data.message)
-    //       // setName(data.nickName)
-    //       // setReName(false)
-    //       console.log("변경완료")
-    //     } else if (data.statusCode == "400") {
-    //       console.log(data.message)
-    //     } else if (data.statusCode == "409") {
-    //       console.log(data.message)
-    //     }
-    //   })
-    //   .catch((error) => console.log(error))
   }
 
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
     console.log("회원 탈퇴")
-    fetch("http://localhost:3000/user/withdraw", {
-      method: "DELETE",
-      headers: myHeader,
-      body: JSON.stringify({
-        "data": {
-          "where": { "id": userEmail }
+    const deleteObj = {
+      data: {
+        where: {
+          id: userId
         }
-      })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if (data.statusCode == "201") {
-          console.log(data.message)
-          console.log("탈퇴 성공")
-        } else if (data.statusCode == "400") {
-          console.log(data.message)
-        } else {
-          console.log("정의되지 않은 오류입니다.")
-        }
-      })
-      .catch((error) => console.log(error))
+      }
+    }
+    deleteUser(deleteObj)
   }
 
   // INTRO
@@ -283,7 +170,6 @@ const MyPage = () => {
     setContent(userData);
   }
 
-  // 서버로 데이터 전송
   const handleUpdateContent = () => {
     if (user.introduction === content) {
       setIntroCheck(false);
