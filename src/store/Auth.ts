@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const TOKEN_TIME_OUT = 10 * 1000; // 10초 
+export const TOKEN_TIME_OUT = import.meta.env.VITE_TOKEN_TIME_OUT;
 
 interface AuthState {
   accessToken: string | null;
