@@ -59,7 +59,7 @@ type Content = {
 type User = {
   data: {
     where: {
-      id: string; // 삭제하려는 유저의 이메일
+      id: number;
     };
   };
 }
