@@ -8,7 +8,8 @@ interface UserState {
   lastName: string | null;
   isAdmin: boolean | null;
   nickName: string | null;
-  introduction?: string;
+  isLogin: boolean;
+  introduction?: string | null;
 }
 
 export const userSlice = createSlice({
@@ -34,6 +35,7 @@ export const userSlice = createSlice({
       state.isAdmin = isAdmin;
       state.nickName = nickName;
       state.introduction = introduction;
+      state.isLogin = true;
     },
     clearUser: (state) => {
       state.id = null;
@@ -43,6 +45,8 @@ export const userSlice = createSlice({
       state.lastName = null;
       state.isAdmin = null;
       state.nickName = null;
+      state.introduction = null;
+      state.isLogin = false;
     }
   }
 });
