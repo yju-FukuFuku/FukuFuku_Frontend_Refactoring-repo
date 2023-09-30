@@ -21,7 +21,7 @@ const MyPage = () => {
   
   const [userId, setUserId] = useState<number>(0);
   const [userName, setName] = useState<string>('');
-  const [file, setFile] = useState<string | null>('');
+  const [file, setFile] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
   const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
   const fileInputRef = useRef<HTMLInputElement | null>(null); // 이미지 불러오기
@@ -39,7 +39,7 @@ const MyPage = () => {
 
   const getData = () => {
     setName(user.nickName ? user.nickName : (userName ? userName : userEmail));
-    setFile(user.picture);
+    setFile(user.picture ? user.picture : '');
     setContent(user.introduction || `${user.nickName} 입니다.`)
     setUserId(user.id ? user.id : 0)
   }
@@ -196,7 +196,7 @@ const MyPage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage} />
+              <img src={file} alt="image" className={style.myImage} />
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
             {/* <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button> */}
