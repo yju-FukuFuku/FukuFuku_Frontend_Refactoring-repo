@@ -7,18 +7,20 @@ import { RootState, store } from '../../store';
 import api from '../../api';
 import { setUser } from '../../store/User';
 import { useNavigate } from 'react-router-dom';
+import { getCheck, deleteUser,editName } from '../../api/User';
+import { editUserImage } from '../../api/Image';
 
 const MyPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const token = useSelector((state: RootState) => state.token);
   const userEmail = user.email || '불러오지 못했습니다.';
-  const myHeader = new Headers();
-  myHeader.append('Content-type', 'application/json')
-  myHeader.append('Authorization', `Bearer ${token}`)
+
+  console.log(token);
   
+  const [userId, setUserId] = useState<number>(0);
   const [userName, setName] = useState<string>('');
-  const [file, setFile] = useState<string>('')
+  const [file, setFile] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
   const [reName, setReName] = useState<boolean>(false)  // 닉네임 수정 check
   const fileInputRef = useRef<HTMLInputElement | null>(null); // 이미지 불러오기
@@ -38,6 +40,7 @@ const MyPage = () => {
     setName(user.nickName ? user.nickName : (userName ? userName : userEmail));
     setFile(user.picture ? user.picture : '');
     setContent(user.introduction || `${user.nickName} 입니다.`)
+    setUserId(user.id ? user.id : 0)
   }
   
   const handleImageUpdate = () => { // 이미지 변경 요청
@@ -73,26 +76,10 @@ const MyPage = () => {
   const handlePostImg = (e: File) => {
     const formData = new FormData();
     formData.append('file', e);
-    myHeader.append('data', userEmail);
 
-    fetch("http://localhost:3000/user/editImage", {
-      method: "PUT",
-      headers: myHeader,
-      body: JSON.stringify({ data: formData })
-    })
-      .then((response) => response.json())
+    editUserImage(formData, userId)
       .then((data) => {
-        console.log(data)
-        if (data.statusCode == "200") {
-          console.log(data.message)
-          setFile(data.picture)
-        } else if (data.statusCode == "415") {
-          console.log(data.message)
-        } else if (data.statusCode == "422") {
-          console.log(data.message)
-        } else {
-          console.log("정의되지 않은 오류입니다.")
-        }
+        setFile(data.picture)
       })
   }
 
@@ -104,7 +91,7 @@ const MyPage = () => {
   // 닉네임 중복 체크 - debounce
   const [inputName, setInputName] = useState<string>(userName)
   const debounceVal = useDebounce(inputName, 300) // hook 불러오기
-
+  const [overlapCheck, setOverlapCheck] = useState<boolean>(false);
   const handleInputName = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 띄어쓰기 막기.
     if (!e.target.value.includes(" ")) {
@@ -119,22 +106,12 @@ const MyPage = () => {
     }
   }, [debounceVal])
 
-  // 닉네임 중복 체크 - Get
+  // 닉네임 중복 체크 - Get  
   const handleNameOverlap = () => {
     console.log(debounceVal)
-    fetch(`http://localhost:3000/user/check/${debounceVal}`, {
-      headers: myHeader,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if (data.statusCode == "200") {
-          console.log(data.message)
-        } else if (data.statusCode == "409") {
-          console.log(data.message)
-        } else {
-          console.log("정의되지 않은 오류입니다.")
-        }
+    getCheck(debounceVal)
+      .then(() => {
+        setOverlapCheck(true)
       })
       .catch((error) => console.log(error))
   }
@@ -143,59 +120,33 @@ const MyPage = () => {
   // 닉네임 중복체크 후 닉네임 수정 - Put
   const handleNameUpdate = () => {
     console.log("이름 변경")
-    fetch("http://localhost:3000/user/editNickname", {
-      method: "PUT",
-      headers: myHeader,
-      body: JSON.stringify({
-        "data": {
-          "where": { "email": "9000248@g.yju.ac.kr" },  // 바꾸려는 유저의 이메일
-          "data": { "nickName": "test" } // 바꾸려는 닉네임 값
+    if(overlapCheck){
+      const nameObj = {
+        data: {
+          where: { id: 1 },
+          data: { nickName: "test" }
+
         }
-      })
-    })
-      .then((Response) => Response.json())
-      .then((data) => {
-        console.log(data)
-        if (data.statusCode == "200") {
-          console.log(data.message)
-          // setName(data.nickName)
-          // setReName(false)
-          console.log("변경완료")
-        } else if (data.statusCode == "400") {
-          console.log(data.message)
-        } else if (data.statusCode == "409") {
-          console.log(data.message)
-        }
-      })
-      .catch((error) => console.log(error))
-    setReName(false)
+      }
+      // api 요청
+      editName(nameObj)
+        .then((data) => {
+          setReName(false)
+        })
+    }
   }
 
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
     console.log("회원 탈퇴")
-    fetch("http://localhost:3000/user/withdraw", {
-      method: "DELETE",
-      headers: myHeader,
-      body: JSON.stringify({
-        "data": {
-          "where": { "id": userEmail }
+    const deleteObj = {
+      data: {
+        where: {
+          id: userId
         }
-      })
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if (data.statusCode == "201") {
-          console.log(data.message)
-          console.log("탈퇴 성공")
-        } else if (data.statusCode == "400") {
-          console.log(data.message)
-        } else {
-          console.log("정의되지 않은 오류입니다.")
-        }
-      })
-      .catch((error) => console.log(error))
+      }
+    }
+    deleteUser(deleteObj)
   }
 
   // INTRO
@@ -211,7 +162,6 @@ const MyPage = () => {
     setContent(userData);
   }
 
-  // 서버로 데이터 전송
   const handleUpdateContent = () => {
     api.patch("/user/editIntroduction", {
       data: {
@@ -245,7 +195,7 @@ const MyPage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage} />
+              <img src={file} alt="image" className={style.myImage} />
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
             {/* <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button> */}
