@@ -4,13 +4,14 @@ import useDebounce from '../../hooks/useDebounce';
 import Swal from 'sweetalert2'  // 경고창 라이브러리
 import { useSelector } from 'react-redux';
 import { RootState, store } from '../../store';
-import api from '../../api';
-import { setUser } from '../../store/User';
+import { clearUser, setUser } from '../../store/User';
 import { useNavigate } from 'react-router-dom';
-import { getCheck, deleteUser,editName } from '../../api/User';
+import { deleteUser, introChange, editName } from '../../api/User';
 import { editUserImage } from '../../api/Image';
+import { useDispatch } from 'react-redux';
 
 const MyPage = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const token = useSelector((state: RootState) => state.token);
@@ -89,7 +90,22 @@ const MyPage = () => {
     editUserImage(formData, userId)
     editUserImage(formData, userId)
       .then((data) => {
-        setFile(data.picture)
+        const userInfo = { ...user };
+        userInfo.picture = data.data.picture;
+        store.dispatch(setUser(userInfo));
+        fire("이미지 변경 성공", "success", "success");
+      })
+      .catch(({ response }) => {
+        const errorMessage = response.data.statusCode;
+        let message = "문제가 생겼습니다. 나중에 다시 시도해주세요.";
+
+        if (errorMessage === 422) {
+          message = "이미지를 넣으세요.";
+        }
+        if (errorMessage === 415) {
+          message = "올바르지 않은 확장자입니다. (jpg, jpeg, png)";
+        }
+        fire(message);
       })
   }
 
@@ -129,37 +145,63 @@ const MyPage = () => {
   }
 
 
-  // 닉네임 중복체크 후 닉네임 수정 - Put
+  // 닉네임 수정 - Put
   const handleNameUpdate = () => {
-    console.log("이름 변경")
-    if(overlapCheck){
-      const nameObj = {
-        data: {
-          where: { id: 1 },
-          data: { nickName: "test" }
-        }
-      }
-      // api 요청
-      editName(nameObj)
-        .then((data) => {
-          setReName(false)
-        })
+    if (!inputName || user.nickName === inputName) {
+      fire("기존의 닉네임과 다른 한 글자 이상의 닉네임을 입력하세요");
+      setReName(false);
+      return;
     }
+
+    editName(user.id as number, inputName)
+      .then(({ data }) => {
+        const userInfo = { ...user };
+        userInfo.nickName = data.data.nickName;
+        store.dispatch(setUser(userInfo));
+        fire("닉네임 변경 성공", "success", "success");
+      })
+      .catch(({ response }) => {
+        const isConflict = response.data.statusCode === 409;
+        const message = isConflict
+          ? "누군가 사용중인 닉네임입니다."
+          : "문제가 생겼습니다. 나중에 다시 시도해주세요."
+
+        window.alert(message);
+      })
+    setInputName('');
+    setReName(false);
   }
 
   // 회원탈퇴 fetch요청
   const handleUserRemove = () => {
-    console.log("회원 탈퇴")
-    const deleteObj = {
-      data: {
-        where: {
-          id: userId
-        }
-      }
-    }
-    deleteUser(deleteObj)
-  }
 
+    Swal.fire({
+      title: "정말 탈퇴하시겠습니까?",
+      icon: 'warning',
+      showCancelButton: true,
+    })
+      .then(async (result) => {
+        if (result.isConfirmed) {
+          // isDelete = true;
+          const deleteObj = {
+            data: {
+              where: {
+                id: userId
+              }
+            }
+          }
+          deleteUser(deleteObj)
+            .then(() => {
+              dispatch(clearUser());
+              window.localStorage.clear();
+              navigate('/');
+            })
+            .catch(() => {
+              fire();
+            })
+        }
+      });
+  }
   // INTRO
   let userData = ''
   // intro 수정 요청
@@ -174,24 +216,21 @@ const MyPage = () => {
   }
 
   const handleUpdateContent = () => {
-    api.patch("/user/editIntroduction", {
-      data: {
-        where: {
-          id: user.id
-        },
-        data: {
-          introduction: content
-        },
-      }
-    })
+    if (!content || user.introduction === content) {
+      fire("기존의 내용과 다른 한 글자 이상의 내용을 입력하세요");
+      setIntroCheck(false);
+      return;
+    }
+
+    introChange(user.id as number, content)
       .then(({ data }) => {
         const userInfo = { ...user };
         userInfo.introduction = data.data.introduction;
         store.dispatch(setUser(userInfo));
-        console.log("수정 완료")
+        fire("한 줄 소개 수정 성공", "success", "success");
       })
       .catch(() => {
-        window.alert("문제가 생겼습니다. 나중에 다시 시도해주세요.");
+        fire();
         setContent(user.introduction || `${user.nickName} 입니다.`);
       })
     setIntroCheck(false)
@@ -218,8 +257,7 @@ const MyPage = () => {
           {/* intro 수정 */}
           {introCheck ? (
             <div className={style.introBox}>
-              {/* <input type="text" defaultValue={content} onChange={changeContent} maxLength={100} /> */}
-              <input type="text" defaultValue={content} onChange={changeContent} maxLength={100} />
+              <input type="text" defaultValue={user.introduction as string} onChange={changeContent} maxLength={100} />
               <div className={style.inputBlock}>
                 <button className={style.modifyBtn} onClick={handleUpdateContent}>완료</button>
               </div>
@@ -228,7 +266,7 @@ const MyPage = () => {
             <div className={style.introBox}>
               <h2>한 줄 소개</h2>
               <div className={style.intro}>
-                {content}
+                {user.introduction || `${user.nickName} 입니다.`}
               </div>
               <button className={style.modifyBtn} onClick={handleUpdateCheck}>수정</button>
             </div>
@@ -250,7 +288,7 @@ const MyPage = () => {
             {reName ? (
               <div className={style.wrapperList}>
                 <label>닉네임</label>
-                <input type="text" className={style.username} value={inputName} onChange={handleInputName} maxLength={20} />
+                <input type="text" className={style.username} defaultValue={user.nickName as string} onChange={handleInputName} maxLength={20} />
                 <span className={style.updateName}>
                   <button className={style.updateBtn} onClick={handleNameUpdate}>저장</button>
                 </span>
@@ -259,9 +297,7 @@ const MyPage = () => {
               <div className={style.wrapperList}>
                 <label>닉네임</label>
                 <div>
-                  {userName ? userName : userEmail}
-                </div>
-                  {userName ? userName : userEmail}
+                  {user.nickName || user.email}
                 </div>
                 <span>
                   <button className={style.modifyBtn} onClick={checkTry}>수정</button>
