@@ -1,17 +1,6 @@
 import axios from 'axios';
 import api from '.';
 
-
-axios.interceptors.request.use(
-  (config) => {
-    const token = /* 토큰 설정 필요 */"";
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  }
-)
-
 type Board = {
   title: string;
   content: string;
@@ -32,7 +21,7 @@ export const postBoard = async (board: Board) => {
     }
   }
 
-  await api.post('/boards/create', data)
+  await api.post('/boards', data)
   .then((res) => {
     console.log(res);
   })
