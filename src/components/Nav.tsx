@@ -23,6 +23,7 @@ const Nav = () => {
   const handleLogOut = () => {
     googleLogout();
     dispatch(clearUser());
+    window.localStorage.clear();
     navigate('/');
   } 
 
