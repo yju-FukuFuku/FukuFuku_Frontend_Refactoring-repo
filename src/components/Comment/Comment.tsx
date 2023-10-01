@@ -4,9 +4,10 @@ import styles from './comment.module.scss';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { store } from '../../store';
+import { RootState } from '../../store';
 import { Button } from '@mui/material';
 import { getComment, postComment } from '../../api/Comments';
+import { useSelector } from 'react-redux';
 
 interface Comment {
   id: number;
@@ -23,7 +24,7 @@ const Comment = () => {
 
   const { boardId } = useParams();
 
-  const user = store.getState().user;
+  const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     getComments();
@@ -33,8 +34,6 @@ const Comment = () => {
     if (boardId) {
       await getComment(Number(boardId))
       .then((res) => {
-        console.log(res);
-        
         setComments(res);
       })
     }

@@ -6,10 +6,11 @@ import { Button, TextField } from '@mui/material';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchBoard, fetchBoardTag, postBoard } from '../../api/BoardAPI';
-import { store } from '../../store';
+import { RootState, store } from '../../store';
 import { Tag } from "@mui/icons-material";
 import axios from "axios";
 import { postImage } from "../../api/Image";
+import { useSelector } from "react-redux";
 
 const StyledTextField = styled(TextField)(
   {
@@ -53,7 +54,7 @@ const WritePage = () => {
     return new URLSearchParams(useLocation().search);
   }
 
-  const { id } = store.getState().user;
+  const user = useSelector((state: RootState) => state.user);
 
   const query = useQuery();
   const editId = query.get('id');
@@ -122,7 +123,7 @@ const WritePage = () => {
     const data = {
       title: title,
       content: content,
-      u_id: id,
+      u_id: user.id,
       tags: tag.map((item) => item.name),
     }
 

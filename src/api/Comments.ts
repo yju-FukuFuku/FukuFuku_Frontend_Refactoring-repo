@@ -11,20 +11,14 @@ type Comment = {
 
 // 게시물의 댓글 가져오기
 export const getComment = async (boardId: number) => {
-  const { data } = await axios.get(`/comments/${boardId}`);
-  return data;
+  const res = await axios.get(`/comments/${boardId}`);
+  return res.data;
 }
 
 // 댓글 생성
 export const postComment = async (comment: Comment) => {
-  await api.post('/comments', comment)
-    .then((res) => {
-      const { data } = res;
-      return data;
-    }
-  )
-    .catch((error) => console.log(error)
-  );
+  const res = await api.post("/comments", comment);
+  return res.data;
 }
 
 // 댓글 삭제
@@ -36,8 +30,8 @@ export const deleteComment = async (commentId: number) => {
 
 // 댓글 수정
 export const editComment = async (commentId:number, content: string) => {
-  await axios.patch(`/comments/${commentId}`, content)
-    .then
+  const res = await axios.patch(`/comments/${commentId}`, content)
+  return res;
 }
 
 export async function getReply(c_id: number | null) {
