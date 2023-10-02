@@ -26,7 +26,7 @@ export async function editUserImage(image : FormData, id : number) {
   const { data } = await api.put(`/user/editImage`, image, 
     {headers: {
       "Content-Type": "multipart/form-data",
-      'data': `${id}`
+      "data": `${id}`
     }}) 
   return data;
 }
