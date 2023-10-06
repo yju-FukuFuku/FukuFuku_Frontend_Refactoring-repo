@@ -88,11 +88,23 @@ const Category = () => {
 export default Category
 
 const CategoryWrapper = styled.div`
-  width: 1240px;
+  width: 1728px;
   margin: 0 auto;
   height: 60px;
   display: flex;
   justify-content: space-between;
+
+  @media all and (max-width:1919px) {
+    width: 1376px;
+  }
+
+  @media all and (max-width:1440px) {
+    width: 1024px;
+  }
+
+  @media all and (max-width:1056px) {
+    width: calc(100% - 2rem);
+  } 
 `
 
 const CategoryLeft = styled.div`
