@@ -1,22 +1,17 @@
 import axios from 'axios';
 import api from '.';
 
-
-axios.interceptors.request.use(
-  (config) => {
-    const token = /* 토큰 설정 필요 */"";
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  }
-)
+interface Image {
+  url: string
+  key: string
+}
 
 type Board = {
   title: string;
   content: string;
-  u_id: number | null;
+  id: number | null;
   tags: string[];
+  images: Image[];
 }
 
 // 게시글 작성
@@ -28,19 +23,20 @@ export const postBoard = async (board: Board) => {
     data: {
       title: board.title,
       content: board.content,
-      u_id: board.u_id
+      id: board.id,
+      images: board.images
     }
   }
 
-  await api.post('/boards/create', data)
-  .then((res) => {
-    console.log(res);
-  })
-  
+  await api.post('/boards', data)
+    .then((res) => {
+      console.log(res);
+    })
+
   await postTag(board.tags)
-  .then((res) => {
-    tagId.push(...res);
-  })
+    .then((res) => {
+      tagId.push(...res);
+    })
 
 }
 
@@ -75,16 +71,16 @@ export async function postBoardTag(boardId: number, tag: number[]) {
     }
 
     await axios.post(`/board-tags`, data)
-    .then((res) => {
-      return res;
-    }).catch((error) => {
-      console.log(error);
-    })
+      .then((res) => {
+        return res;
+      }).catch((error) => {
+        console.log(error);
+      })
   })
 }
 
 // 게시글 수정
-export async function fetchBoard(data: {title: string, content: string}, id:number ) {
+export async function fetchBoard(data: { title: string, content: string }, id: number) {
   await axios.patch(`/boards/${id}`, data)
 }
 
@@ -94,9 +90,9 @@ export async function fetchBoardTag(tags: string[], id: number) {
   await axios.delete(`/board-tags/${id}`)
 
   await postTag(tags)
-  .then((res) => {
-    postBoardTag(id, res);
-  })
+    .then((res) => {
+      postBoardTag(id, res);
+    })
 }
 
 // 게시글 삭제
@@ -116,7 +112,7 @@ type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
 //     // const endDate = responseDate?.endDate;
 
 //     // console.log(startDate, endDate);
-    
+
 //     const { data } = await axios.get(`/boards`);
 //         return data;
 //     }
@@ -132,20 +128,20 @@ export const getBoard = async (page: number, pageSize: number) => {
   //   const endDate = responseDate?.endDate;
 
   //   console.log(startDate, endDate);
-    
+
   //   const { data } = await axios.get(`/boards`);
   //       return data;
   //   }
-    const { data } = await axios.get(`/boards`);  //?_page=${page}&_limit=${pageSize}
-    console.log(page);
-    return data;
-} 
+  const { data } = await axios.get(`/boards`);  //?_page=${page}&_limit=${pageSize}
+  console.log(page);
+  return data;
+}
 
 export const getLikeBoard = async (page: string) => {
-    const { data } = await axios.get(`/boards/${page}`);  //?_page=${page}&_limit=${pageSize}
-    console.log(page);
-    return data;
-} 
+  const { data } = await axios.get(`/boards/${page}`);  //?_page=${page}&_limit=${pageSize}
+  console.log(page);
+  return data;
+}
 
 export const getUserBoard = async (nickName : string | undefined) => {
   const { data } = await axios.get(`/user/${nickName}`)
@@ -170,7 +166,7 @@ function getCurrentDate(date?: dateType) {
     const startMonth = String(startTimestamp.getMonth() + 1).padStart(2, "0");
     const startDay = String(startTimestamp.getDate()).padStart(2, "0");
     const startDate = `${startYear}-${startMonth}-${startDay}`
-    return {startDate, endDate};
+    return { startDate, endDate };
   } else if (date === "이번 달") {
     const startDate = `${year}-${month}-01`;
     return { startDate, endDate };

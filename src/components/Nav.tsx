@@ -23,6 +23,7 @@ const Nav = () => {
   const handleLogOut = () => {
     googleLogout();
     dispatch(clearUser());
+    window.localStorage.clear();
     navigate('/');
   } 
 
@@ -97,7 +98,7 @@ const Nav = () => {
 export default Nav
 
 const Header = styled.header`
-  background-color: #D8CEF6;
+  background-color: #D7EAFF;
   border-bottom: 1px solid #eee;
   width: 100%;
   position: fixed;

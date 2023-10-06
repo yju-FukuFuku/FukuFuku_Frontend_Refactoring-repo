@@ -25,6 +25,7 @@
   border-radius: 5px;
   padding: 5px 15px;
   font-size: 18px;
+  cursor: pointer;
 }
 
 /* PROFILE */
@@ -54,6 +55,7 @@
 .profile .imgBtn {
   font-weight: 600;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .profile .modifyBtn {
@@ -97,6 +99,7 @@
   background: none;
   text-decoration: underline;
   color: rgb(5, 199, 199);
+  cursor: pointer;
 }
 .setting .username {
   flex: 1 1 0%;
@@ -111,10 +114,12 @@
 }
 .setting .updateBtn {
   margin-left: auto;
+  cursor: pointer;
 }
 .setting .removeBtn {
   color: aliceblue;
   background-color: rgb(255, 60, 60);
+  cursor: pointer;
 }
 
 /* LIST - 쓴 글 목록 */
