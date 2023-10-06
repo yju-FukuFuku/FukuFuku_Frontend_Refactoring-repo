@@ -2,6 +2,16 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 
+interface User {
+  id: number;
+  nickName: string;
+  picture: string;
+}
+
+interface boardImage {
+  url?: string
+}
+
 // 타입 지정
 export type PostType = {
   id: number;
@@ -12,46 +22,47 @@ export type PostType = {
   views: number;
   createdAt: string;
   comment: Array<number>;
+  user: User;
+  boardImage: boardImage[];
+  boardTag: string[];
 }
 
 interface BoardProps {
   posts: PostType[];
 }
 
-const Board = ( { posts }: BoardProps ) => {
+const Board = ({ posts }: BoardProps) => {
   // 배열에 있는 게시글 출력
   const PostList = () => {
     return (
       <PostArray>
         {
-          posts?.map((item, index) => (
+          posts?.map((item) => (
             <Post key={item.id}>
-              <PostLink to='/'>
+              <PostLink to={`/boards/${item.id}`}>
                 <PostImgBox>
-                  <PostImg src="/public/images/배경.webp" alt="image" />
+                  <PostImg src={item.boardImage[0]?.url || "https://yju-fukufuku.s3.amazonaws.com/logo.svg"} alt="image" />
                 </PostImgBox>
               </PostLink>
               <Body>
                 <PostLink to={`/boards/${item.id}`}>
                   <H4>
-                    { item.title }
+                    {item.title}
                   </H4>
-                  <BodyContent>
-                    { item.content } 
-                  </BodyContent>
+                  {/* <BodyContent>
+                  </BodyContent> */}
                 </PostLink>
                 <SubInfo>
-                  <span>2023-time</span>
-                  <Separator>·</Separator>
-                  <span>comment</span>
+                  <span>{item.createdAt.split("T")[0]}</span>
+                  {/* <Separator></Separator> */}
+                  <span>{item.boardTag}</span>
                 </SubInfo>
               </Body>
               <WriterBox>
                 <Writer>
-                  <Profile src="/public/images/짱구.jpeg" alt="profile" />
-                  <span>nickname</span>
+                  <Profile src={`${item.user.picture}`} alt="profile" />
+                  <span>{item.user.nickName}</span>
                 </Writer>
-                <div>like</div>
               </WriterBox>
             </Post>
           ))
@@ -113,13 +124,20 @@ const PostArray = styled.div`
 const Post = styled.div`
   display: flex;
   flex-direction: column;
-  width: 20rem;
+  width: 16rem;
+  height: 21rem;
   background: white;
   border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 16px 0px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 16px 1px;
   margin: 1rem;
   overflow: hidden;
   box-sizing: inherit;
+  cursor: pointer;
+  transition: transform 0.5s, box-shadow 0.3s;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 16px 4px;
+    transform: translateY(-10px);
+  }
 
   @media all and (max-width:1056px) {
     width: calc(50% - 2rem);
@@ -139,11 +157,11 @@ const PostImgBox = styled.div`
 const PostImg = styled.img`
   position: absolute;
   top: 0px;
-  left: 0px;
+  onject-fit: contain
   width: 100%;
   height: 100%;
-  display: block;
-  object-fit: cover;
+  left: 50%;
+  transform: translateX(-50%);
 `
 
 const Body = styled.div`
@@ -181,6 +199,7 @@ const BodyContent = styled.div`
 const PostLink = styled(Link)`
   color: inherit;
   text-decoration: none;
+  margin-bottom: 2rem;
 `
 
 const SubInfo = styled.div`
