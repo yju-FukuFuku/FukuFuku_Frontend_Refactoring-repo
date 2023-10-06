@@ -51,9 +51,9 @@ const MyWritePage = () => {
       navigate(`/${userName}`)
   }
   // ROUTER 변경
-  useEffect(() => {
-    changeNavigate(search)
-  }, [changeNavigate, search])
+  // useEffect(() => {
+  //   changeNavigate(search)
+  // }, [changeNavigate, search])
 
   useEffect(() => {
     fetchMoreData()
@@ -187,7 +187,7 @@ const MyWritePage = () => {
             <div className={style.myImage}>
               <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
             </div>
-            <h2>profile</h2>
+            <h2>{ userName }</h2>
           </div>
           <div className={style.introBox}>
             <h2>한 줄 소개</h2>
