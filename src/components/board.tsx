@@ -26,7 +26,7 @@ const Board = ( { posts }: BoardProps ) => {
         {
           posts?.map((item, index) => (
             <Post key={item.id}>
-              <PostLink to='/'>
+              <PostLink to={`/boards/${item.id}`}>
                 <PostImgBox>
                   <PostImg src="/public/images/배경.webp" alt="image" />
                 </PostImgBox>

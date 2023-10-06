@@ -147,6 +147,10 @@ export const getLikeBoard = async (page: string) => {
     return data;
 } 
 
+export const getUserBoard = async (nickName : string | undefined) => {
+  const { data } = await axios.get(`/user/${nickName}`)
+  return data;
+}
 
 // date를 받아서 startDate와 endDate를 구해주는 함수
 function getCurrentDate(date?: dateType) {
