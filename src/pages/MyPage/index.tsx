@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
 import Swal from 'sweetalert2'  // 경고창 라이브러리
+import { fire } from '../../util/fire';
 import { useSelector } from 'react-redux';
 import { RootState, store } from '../../store';
 import { clearUser, setUser } from '../../store/User';
@@ -36,16 +37,6 @@ const MyPage = () => {
     setUserId(user.id ? user.id : 0)
   }
 
-  const fire = (
-    text: string = "문제가 생겼습니다. 나중에 다시 시도해주세요.",
-    icon: "error" | "success" = "error",
-    title: "error" | "success" = "error") => {
-    Swal.fire({
-      icon,
-      title,
-      text
-    });
-  };
 
   const handleImageUpdate = () => { // 이미지 변경 요청
     fileInputRef.current?.click();
@@ -210,7 +201,7 @@ const MyPage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src={user.picture as string} alt="image" className={style.myImage} />
+              <img src={user.picture as string || "https://yju-fukufuku.s3.amazonaws.com/logo.svg"} alt="image" className={style.myImage} />
             </div>
             <button className={style.imgBtn} onClick={handleImageUpdate}>이미지 수정</button>
             {/* <button className={style.modifyBtn} onClick={handleImageRemove}>이미지 제거</button> */}

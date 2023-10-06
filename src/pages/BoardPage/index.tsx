@@ -24,6 +24,7 @@ interface Board {
 interface Author {
   nickName: string;
   picture: string;
+  introduction: string;
 }
 
 interface Tag {
@@ -241,13 +242,13 @@ const PostPage = () => {
   
           <ProfileWrapper>
             <div className={styles.main__profile}>
-              <a href='#'>
+              <a href={`/${author.nickName}`}>
                 <img src={author.picture} alt='profile' />
               </a>
   
               <div className={styles.profile__info}>
-                <a href='#'>{author.nickName}</a>
-                <span>한줄소개 적는 부분</span>
+                <a href={`/${author.nickName}`}>{author.nickName}</a>
+                <span>{author.introduction}</span>
               </div>
             </div>
           </ProfileWrapper>

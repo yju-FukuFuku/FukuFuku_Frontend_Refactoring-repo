@@ -39,11 +39,17 @@ interface getTag {
   }
 }
 
+interface Image {
+  url: string
+  key: string
+}
+
 const WritePage = () => {
-  const [title, setTitle] = useState<string>("")
-  const [tag, setTag] = useState<Tag>([] as Tag)
-  const [tagValue, setTagValue] = useState<string>("")
-  const [content, setContent] = useState<string>("")
+  const [title, setTitle] = useState<string>("");
+  const [tag, setTag] = useState<Tag>([] as Tag);
+  const [tagValue, setTagValue] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [images, setImages] = useState<Image[]>([]);
 
   const navigate = useNavigate();
 
@@ -122,16 +128,17 @@ const WritePage = () => {
     const data = {
       title: title,
       content: content,
-      u_id: id,
+      id: id,
       tags: tag.map((item) => item.name),
+      images: images
     }
 
     console.log(data);
 
     await postBoard(data)
-    // .then(() => {
-    //   navigate(`/`);
-    // })
+      .then(() => {
+        navigate(`/`);
+      })
   }
 
   const imageHandler = () => {
@@ -147,14 +154,16 @@ const WritePage = () => {
       const file = input.files?.[0];
       if (!file) return;
 
-      const url = await postImage(file, id);
+      const image: Image = await postImage(file, id);
 
       // 4. quill에 이미지를 삽입한다.
       const quill = quillRef.current;
       const range = quill?.getEditor().getSelection()?.index;
       if (range !== undefined && quill) {
-        quill.getEditor().insertEmbed(range, 'image', url);
+        quill.getEditor().insertEmbed(range, 'image', image.url);
       }
+
+      setImages([...images, image]);
     }
   }
 
