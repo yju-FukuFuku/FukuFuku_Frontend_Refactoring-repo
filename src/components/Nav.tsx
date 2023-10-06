@@ -107,17 +107,29 @@ const Header = styled.header`
 `
 
 const HeaderInner = styled.div`
-  max-width: 1240px;
+  max-width: 1728px;
   margin: 0 auto;
   position: relative;
 
-  @media screen and(max-width: 1023px) {
+  @media all and (max-width:1919px) {
+    width: 1376px;
+  }
+
+  @media all and (max-width:1440px) {
+    width: 1024px;
+  }
+
+  @media all and (max-width:1056px) {
+    width: calc(100% - 2rem);
+  } 
+
+  /* @media screen and(max-width: 1023px) {
     max-width: 900px;
   }
 
   @media screen and(max-width: 767px) {
     max-width: 300px;
-  }
+  } */
 `
 
 const HeaderWrapper = styled.div`
