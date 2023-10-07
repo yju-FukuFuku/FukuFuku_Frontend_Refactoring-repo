@@ -248,6 +248,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 90%;
+  margin: 0 auto;
 `
 
 const TagContainer = styled.div`
@@ -257,6 +259,7 @@ const TagContainer = styled.div`
   flex-wrap: wrap;
   position: relative;
   margin: 20px 0;
+  padding-left: 10px;
 `
 
 const TagItem = styled.div`
