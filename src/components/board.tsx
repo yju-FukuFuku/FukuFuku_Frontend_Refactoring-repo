@@ -94,26 +94,30 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   margin: 1.5rem auto;
-  position: relative;
+  /* position: relative; */
   top: 100px;
   width: 1728px;
 
   @media all and (max-width:1919px) {
-    width: 1376px;
+    width: 1440px;
   }
 
-  @media all and (max-width:1440px) {
-    width: 1024px;
+  @media all and (max-width:1600px) {
+    width: 1152px;
+  }
+
+  @media all and (max-width:1300px) {
+    width: 864px;
   }
 
   @media all and (max-width:1056px) {
     width: calc(100% - 2rem);
-  } 
+  }
 `
 
 const PostArray = styled.div`
   display: flex;
-  margin: -1rem;
+  /* margin: -1rem; */
   flex-wrap: wrap;
 
   @media (max-width: 767px){
@@ -141,10 +145,13 @@ const Post = styled.div`
 
   @media all and (max-width:1056px) {
     width: calc(50% - 2rem);
+    height: calc(22rem + ((100vw - 767px) / 3.6125));
   }
   @media (max-width: 767px){
     margin: 0;
     width: 100%;
+    height: calc(22rem + ((100vw - 320px) / 2));
+    margin-bottom: 1rem;
   }
 `
 
@@ -157,7 +164,7 @@ const PostImgBox = styled.div`
 const PostImg = styled.img`
   position: absolute;
   top: 0px;
-  onject-fit: contain
+  object-fit: contain;
   width: 100%;
   height: 100%;
   left: 50%;
