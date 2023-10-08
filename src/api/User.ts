@@ -1,4 +1,5 @@
 import api from '.';
+import axios from 'axios';
 
 // 닉네임 중복체크
 export async function getCheck(nickName: string | null) {
@@ -38,6 +39,12 @@ export function introChange(id: number, introduction: string) {
   }
 
   return api.patch("/user/editIntroduction", data);
+}
+
+// 자기가 쓴 글 목록
+export const getMyBoard = async (nickName : string | undefined) => {
+  const { data } = await axios.get(`/user/${nickName}`)
+  return data;
 }
 
 type User = {

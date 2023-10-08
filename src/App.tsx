@@ -1,7 +1,6 @@
 import { Routes, Route, Outlet } from 'react-router-dom'
 import HomePage from './pages/HomePage'
-import MyPage from './pages/MyPage/'
-import MyListPage from './pages/MyPage/WriteList'
+import MyPage from './pages/MyPage'
 import Nav from './components/Nav'
 import './App.css'
 import SearchPage from './pages/SearchPage'
@@ -12,6 +11,7 @@ import SavesPage from './pages/SavesPage'
 import LikePage from './pages/LikeListPage'
 import TagPage from './pages/TagPage'
 import styled from 'styled-components'
+import WriteListPage from './pages/WriteListPage'
 
 const Content = styled.div`
   position: relative;
@@ -41,7 +41,7 @@ function App() {
             <Route path='/recent' element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
             <Route path='/setting' element={<MyPage />} />
-            <Route path='/:userName' element={<MyListPage />} />
+            <Route path='/:userName' element={<WriteListPage />} />
             <Route path='/write/:postId' element={<SavesPage />} />
             <Route path='/like' element={<LikePage />} />
             <Route path='/boards/:boardId' element={<BoardPage />} />
