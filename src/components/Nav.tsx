@@ -70,7 +70,7 @@ const Nav = () => {
                     }
 
                   </Icon>
-                ) : (
+                ) : ( 
                   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID as string}>
                     <GoogleLogin
                       type={"icon"}

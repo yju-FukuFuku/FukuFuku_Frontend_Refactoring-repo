@@ -6,11 +6,31 @@
 }
 
 .myPage {
-  position: relative;
-  top: 72px;
   display: block;
   width: 768px;
   margin: 0 auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar button {
+  background-color: transparent;
+  color: black;
+  font-size: 1.5rem;
+  border: none;
+  padding: 10px;
+}
+
+.navbar button:hover {
+  background-color: rgb(194, 194, 194);
+}
+
+.navbar button:first-child {
+  border-right: 1px solid rgb(194, 194, 194);
 }
 
 .myPage hr {
@@ -125,10 +145,10 @@
 
 /* LIST - 쓴 글 목록 */
 .myList {
-  margin-top: 50px;
+  overflow: scroll;
 }
 .myList .body {
-  margin-top: 6rem;
+  margin-top: 3rem;
 }
 .serBox {
   box-sizing: inherit;
@@ -180,6 +200,9 @@
 .list h2 {
   margin: 15px 0;
 }
+.list .a{
+  text-decoration: none;
+}
 .tagWrapper {
   width: 100%;
   margin-top: 1rem;
@@ -224,7 +247,7 @@
 }
 .introBox h2 {
   display: block;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 .introBox .intro {
   width: 100%;
@@ -310,15 +333,8 @@
     width: 100%;
     margin: auto;
   }
-  .myList .Link {
-    width: 50%;
-    padding: 0px;
-  }
-  .myList .Link:first-child {
-    border-right: 1px;
-  }
-  .list .contentImg {
-    /* height: 250px; */
+  .myList .a{
+    text-decoration: none;
   }
   .list .subInfo {
     margin-bottom: 30px;

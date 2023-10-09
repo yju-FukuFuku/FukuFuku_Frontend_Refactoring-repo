@@ -18,22 +18,13 @@ const MainPage = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const containerRef = useRef<HTMLDivElement | null>(null);
   
-  // GetData
-  // const getData = () => {
-  //   console.log("데이터 렌더링")
-  //   //   
-  //   getBoards().then((data) => {
-  //     console.log(data)
-  //     setPost(data)
-  //   })
-  // }
-
   // 데이터 불러오기
   const loadMoreData = useCallback(async () => {
     if( loading || !hasMore) return;
     setLoading(true);
     try {
       const newData = await getBoard(page + 1, 6);
+      console.log(newData)
       setPosts([...posts, ...newData ]);
       if (newData.length === 0){
         setHasMore(false);
