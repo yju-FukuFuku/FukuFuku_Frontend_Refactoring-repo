@@ -1,6 +1,6 @@
 import { styled } from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RootState } from '../store';
+import { RootState, store } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/User';
 import { SearchRounded } from '@mui/icons-material';
@@ -15,7 +15,9 @@ const Nav = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.user);
-  
+
+  const isLogin = store.getState().token.isLogin;
+
   const handleClick = () => {
     navigate('/search');
   }
@@ -25,7 +27,7 @@ const Nav = () => {
     dispatch(clearUser());
     window.localStorage.clear();
     navigate('/');
-  } 
+  }
 
   const googleHandler = async (credential: string | undefined) => {
     login(credential);
@@ -51,31 +53,26 @@ const Nav = () => {
                 <SearchRounded sx={{ color: "#000", fontSize: '1.5rem' }} />
               </Icon>
               {
-                user.id ? (
-                  <Login onClick={handleLogOut}>
-                    <Sign>로그아웃</Sign>
-                  </Login>
-                ) : null
-              }
-              {
-                user.id ? (
-                  <Icon onClick={() => navigate('/setting')}>
-                    {user.picture ? (
-                      <img
-                        src={user.picture}
-                        alt="profile"
-                        style={{ width: '40px', height: '40px', borderRadius: '50%' }}
-                      />
-                    ) : null
-                    }
-
-                  </Icon>
+                isLogin ? (
+                  <>
+                    <Login onClick={handleLogOut}>
+                      <Sign>로그아웃</Sign>
+                    </Login>
+                    <Icon onClick={() => navigate('/setting')}>
+                      {user.picture ? (
+                        <img
+                          src={user.picture}
+                          alt="profile"
+                          style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                      ) : null}
+                    </Icon>
+                  </>
                 ) : (
                   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID as string}>
                     <GoogleLogin
                       type={"icon"}
                       shape={"pill"}
-                      onSuccess={({credential}) => {
+                      onSuccess={({ credential }) => {
                         googleHandler(credential);
                       }}
                     />
