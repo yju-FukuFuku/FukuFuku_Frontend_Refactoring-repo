@@ -25,7 +25,7 @@ const MyPage = () => {
   // 유저 정보 불러오기 (한 줄 소개, 닉네임, 이미지가 바뀔 떄마다)
   useEffect(() => {
     if (!user.isLogin) {
-      window.alert("로그인 후에 사용하실 수 있습니다.")
+      fire("로그인 후에 사용하실 수 있습니다.");
       navigate('/');
     }
     getData();
@@ -74,7 +74,7 @@ const MyPage = () => {
         fire("이미지 변경 성공", "success", "success");
       })
       .catch(({ response }) => {
-        const errorMessage = response.data.statusCode;
+        const errorMessage = response?.data?.statusCode;
         let message = "문제가 생겼습니다. 나중에 다시 시도해주세요.";
 
         if (errorMessage === 422) {
@@ -122,7 +122,7 @@ const MyPage = () => {
           ? "누군가 사용중인 닉네임입니다."
           : "문제가 생겼습니다. 나중에 다시 시도해주세요."
 
-        window.alert(message);
+        fire(message);
       })
     setInputName('');
     setReName(false);
@@ -138,7 +138,6 @@ const MyPage = () => {
     })
       .then(async (result) => {
         if (result.isConfirmed) {
-          // isDelete = true;
           const deleteObj = {
             data: {
               where: {
