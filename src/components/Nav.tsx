@@ -7,6 +7,7 @@ import { SearchRounded } from '@mui/icons-material';
 import Category from './Category';
 import { login } from '../api/Login';
 import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google';
+import { deleteAccessToken } from '../store/Auth';
 
 const Nav = () => {
   const { pathname } = useLocation();
@@ -25,6 +26,7 @@ const Nav = () => {
   const handleLogOut = () => {
     googleLogout();
     dispatch(clearUser());
+    dispatch(deleteAccessToken());
     window.localStorage.clear();
     navigate('/');
   }
