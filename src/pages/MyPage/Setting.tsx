@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react'
 import style from './myPage.module.css'
 import Swal from 'sweetalert2'  // 경고창 라이브러리
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../../store';
 import { clearUser, setUser } from '../../store/User';
 import { useNavigate } from 'react-router-dom';
 import { deleteUser,editName, introChange } from '../../api/User';
 import { editUserImage } from '../../api/Image';
 import { fire } from '../../util/fire';
+import { deleteAccessToken } from '../../store/Auth';
 
 const Setting = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const userEmail = user.email || '불러오지 못했습니다.';
-  
+  const dispatch = useDispatch();
+
   const [userId, setUserId] = useState<number>(0);
   const [userName, setName] = useState<string>('');
   const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
@@ -113,6 +115,7 @@ const Setting = () => {
         userInfo.nickName = data.data.nickName;
         store.dispatch(setUser(userInfo));
         fire("닉네임 변경 성공", "success", "success");
+        setName(user.nickName as string);
       })
       .catch(({ response }) => {
         const isConflict = response.data.statusCode === 409;
@@ -146,6 +149,7 @@ const Setting = () => {
           deleteUser(deleteObj)
             .then(() => {
               dispatch(clearUser());
+              dispatch(deleteAccessToken());
               window.localStorage.clear();
               navigate('/');
             })
@@ -276,7 +280,3 @@ const Setting = () => {
 }
 
 export default Setting
-
-function dispatch(arg0: any) {
-  throw new Error('Function not implemented.');
-}
