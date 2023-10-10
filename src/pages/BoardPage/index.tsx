@@ -395,6 +395,8 @@ const BodyWrapper = styled.div`
 
 const Content = styled.div`
   font-size: 1.5rem;
+  overflow: auto;
+  overflow-wrap: break-word;
 `
 
 export default PostPage
