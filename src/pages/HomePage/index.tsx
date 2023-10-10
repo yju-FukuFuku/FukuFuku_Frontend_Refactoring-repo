@@ -4,6 +4,7 @@ import { styled } from 'styled-components'
 import Board from '../../components/board'
 import { getBoard } from '../../api/BoardAPI'
 import { PostType } from '../../components/board'
+import { debounce } from '@mui/material'
 
 const MainPage = () => {
 
@@ -37,6 +38,8 @@ const MainPage = () => {
       setPosts([...posts, ...newData ]);
       if (newData.length === 0){
         setHasMore(false);
+        console.log("more end");
+        
       }
       setPage(page + 1)
     } catch(error) {
@@ -53,16 +56,22 @@ const MainPage = () => {
     if(!container) return;
     
     const handleScroll = () => {
-      if (container.scrollHeight - container.clientHeight <= container.scrollTop + 100) {
+      console.log("scrollHeight  " + container.scrollHeight);
+      console.log("clientHeight  " + container.clientHeight);
+      console.log("scrollTop  " + window.scrollY);
+      
+      if (container.scrollHeight - container.clientHeight <= window.scrollY) {
+        console.log("loadMore");
+        
         loadMoreData();
       }
     };
-    container.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', debounce(handleScroll));
 
     return () => {
-      container.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', debounce(handleScroll));
     };
-  }, [loadMoreData])
+  }, [])
 
   
 
@@ -91,7 +100,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 2vw;
-  overflow: scroll;
+  /* overflow: scroll; */
 
   @media (max-width: 767px){
     padding: 0;
