@@ -6,6 +6,8 @@ import {
 
 import { Menu, MenuItem, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { store } from '../store';
+import { fire } from '../util/fire';
 
 const Category = () => {
 
@@ -51,7 +53,16 @@ const Category = () => {
       </CategoryLeft>
 
       <CategoryRight>
-        <Write onClick={() => navigate('/write')}>
+        <Write onClick={() => {
+          const isLogin = store.getState().token.isLogin;
+
+          if (!isLogin) {
+            fire("로그인 후에 이용 가능합니다.");
+            return;
+          }
+
+          navigate('/write');
+        }}>
           <Typography sx={{ color: '#000', fontWeight: 600 }}>새 글 작성</Typography>
         </Write>
 
