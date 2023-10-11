@@ -3,7 +3,6 @@ import WriteList from "./WriteList"
 import style from "./myPage.module.css"
 import { useSelector } from "react-redux"
 import { RootState } from "../../store"
-import { Link } from "react-router-dom"
 import { useState } from "react"
 
 const MyPage = () => {

@@ -43,27 +43,27 @@ const Board = ({ posts }: BoardProps) => {
                 <PostImgBox>
                   <PostImg src={item.boardImage[0]?.url || "https://yju-fukufuku.s3.amazonaws.com/logo.svg"} alt="image" />
                 </PostImgBox>
-              </PostLink>
-              <Body>
-                <PostLink to={`/boards/${item.id}`}>
-                  <H4>
-                    {item.title}
-                  </H4>
-                  {/* <BodyContent>
+                <Body>
+                  <PostLink to={`/boards/${item.id}`}>
+                    <H4>
+                      {item.title}
+                    </H4>
+                    {/* <BodyContent>
                   </BodyContent> */}
-                </PostLink>
-                <SubInfo>
-                  <span>{item.createdAt.split("T")[0]}</span>
-                  {/* <Separator></Separator> */}
-                  <span>{item.boardTag}</span>
-                </SubInfo>
-              </Body>
-              <WriterBox>
-                <Writer>
-                  <Profile src={`${item.user.picture}`} alt="profile" />
-                  <span>{item.user.nickName}</span>
-                </Writer>
-              </WriterBox>
+                  </PostLink>
+                  <SubInfo>
+                    <span>{item.createdAt.split("T")[0]}</span>
+                    {/* <Separator></Separator> */}
+                    <span>{item.boardTag}</span>
+                  </SubInfo>
+                </Body>
+                <WriterBox>
+                  <Writer>
+                    <Profile src={`${item.user.picture}`} alt="profile" />
+                    <span>{item.user.nickName}</span>
+                  </Writer>
+                </WriterBox>
+              </PostLink>
             </Post>
           ))
         }
