@@ -451,13 +451,16 @@ const BodyWrapper = styled.div`
 `
 
 const Content = styled.div`
-font-size: 1.5rem;
+  font-size: 1.5rem;
+  overflow: auto;
+  overflow-wrap: break-word;
 `
 const FavoriteBox = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  
 `
 
 export default PostPage
