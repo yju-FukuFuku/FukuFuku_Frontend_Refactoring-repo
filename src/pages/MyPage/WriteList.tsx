@@ -3,7 +3,7 @@ import style from './myPage.module.css'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { getMyBoard } from '../../api/User';
-import Specific from '../../components/specific';
+import Specific from '../../components/Specific';
 
 interface Tag { 
   tag: { name: string; }
