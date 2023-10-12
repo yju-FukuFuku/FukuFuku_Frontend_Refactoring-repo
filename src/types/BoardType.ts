@@ -12,6 +12,7 @@ export type BoardType = {
     tag: TagType;
   }[];
   comment: CommentType[];
+  images: ImagesType[];
 };
 
 export type TagType = {
@@ -28,14 +29,18 @@ export type CommentType = {
   user: UserType;
 };
 
+export type BoardTagType = {
+  id: number;
+  b_id: number;
+  tagId: number;
+  board: BoardType;
+};
+
 export type BoardWriteType = {
   id: number | null;
   title: string;
   content: string;
-  images: {
-    url: string;
-    key: string;
-  }[];
+  images: ImagesType[];
   tags: string[];
 };
 
@@ -45,8 +50,9 @@ export type BoardEditType = {
   title: string;
   content: string;
   tags: string[];
-  images: {
-    url: string;
-    key: string;
-  }[];
+  images: ImagesType[];
+};
+
+export type ImagesType = {
+  url: string;
 };
