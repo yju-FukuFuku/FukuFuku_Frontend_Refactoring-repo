@@ -36,7 +36,12 @@ export const postImage = async (image: File, id: number | null) => {
 
   return imageData;
 };
+};
 
+export async function editUserImage(image: FormData, id: number) {
+  console.log(image.get("file"));
+  const { data } = await api.put(`/user/editImage`, image, {
+    headers: {
 export async function editUserImage(image: FormData, id: number) {
   console.log(image.get("file"));
   const { data } = await api.put(`/user/editImage`, image, {
@@ -45,5 +50,9 @@ export async function editUserImage(image: FormData, id: number) {
       data: `${id}`,
     },
   });
+      data: `${id}`,
+    },
+  });
   return data;
 }
+
