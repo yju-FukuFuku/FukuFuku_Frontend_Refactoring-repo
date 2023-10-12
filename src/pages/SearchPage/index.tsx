@@ -148,6 +148,7 @@ const Content = styled.div`
 
 const BoardContent = styled.div`
   font-size: 1rem;
+  overflow: auto;
 `;
 
 const Wrapper = styled.div`

@@ -53,6 +53,7 @@ const PostPage = () => {
   // 글 내용에서 h1~h6 태그를 찾아서 id를 부여해주고 그 id를 배열에 담아줌
   const idTag = () => {
     if (!document) return;
+    if (!document) return;
 
     const content = document.getElementById("content");
     const header = content?.querySelectorAll("h1, h2, h3");
@@ -82,6 +83,7 @@ const PostPage = () => {
   };
 
   // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
+  if (!board) {
   if (!board) {
     return (
       <Container>
@@ -167,6 +169,7 @@ const PostPage = () => {
                 : null}
             </TagWrapper>
 
+
             <SideContainer>
               <SideWrapper>
                 <SideTool fixed={fixed ? "true" : "false"}>
@@ -186,6 +189,7 @@ const PostPage = () => {
                 </SideTool>
               </SideWrapper>
             </SideContainer>
+
 
             <SideContainer>
               <SideNavWrapper>
@@ -209,6 +213,7 @@ const PostPage = () => {
             </SideContainer>
           </HeadWrapper>
 
+
           <BodyWrapper>
             <Content
               id="content"
@@ -216,11 +221,13 @@ const PostPage = () => {
             />
           </BodyWrapper>
 
+
           <ProfileWrapper>
             <div className={styles.main__profile}>
               <a href="#">
                 <img src={board.user.picture} alt="profile" />
               </a>
+
 
               <div className={styles.profile__info}>
                 <a href="#">{board.user.nickName}</a>

@@ -162,7 +162,7 @@ const PostImgBox = styled.div`
 const PostImg = styled.img`
   position: absolute;
   top: 0px;
-  onject-fit: cover;
+  object-fit: contain;
   width: 100%;
   height: 100%;
   left: 50%;
