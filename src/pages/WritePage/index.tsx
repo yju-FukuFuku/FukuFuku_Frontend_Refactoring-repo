@@ -125,16 +125,16 @@ const WritePage = () => {
       id: user.id,
       title: title,
       content: content,
-      images: [],
+      images: images,
       tags: tag.map((item) => item.name),
     };
 
-    // try {
-    //   const response = await postBoard(data);
-    //   navigate(`/boards/${response.data.id}`);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const response = await postBoard(data);
+      navigate(`/boards/${response.data.id}`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const imageHandler = () => {
@@ -156,7 +156,7 @@ const WritePage = () => {
       const quill = quillRef.current;
       const range = quill?.getEditor().getSelection()?.index;
       if (range !== undefined && quill) {
-        quill.getEditor().insertEmbed(range, "image", url);
+        quill.getEditor().insertEmbed(range, "image", url.url);
       }
     };
   };
