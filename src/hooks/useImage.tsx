@@ -1,13 +1,12 @@
 export default function useImage(str: string) {
-  const regex = /<img[^>]+src="?([^"\s]+)"?\s*\/>/g;
+  // img 태그 추출
+  const regex = /<img[^>]+src="([^">]+)"/g;
   const result = [];
-  let match: RegExpExecArray | null;
+  let match;
 
   while ((match = regex.exec(str))) {
-    result.push(match[1]);
+    result.push({ url: match[1] });
   }
 
-  console.log(result);
-
-  // return result;
+  return result;
 }
