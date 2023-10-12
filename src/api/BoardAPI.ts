@@ -7,7 +7,6 @@ export const postBoard = async (data: BoardWriteType) => {
   const boardData = {
     data,
   };
-
   const res = await api.post("/boards", boardData);
   return res;
 };
@@ -23,8 +22,6 @@ export async function fetchBoard(data: BoardEditType) {
   const editData = {
     data,
   };
-  console.log(editData);
-
   await api.patch(`/boards/edit`, editData);
 }
 
@@ -43,15 +40,11 @@ export async function deleteBoard(id: number, u_id: number | null) {
     },
   };
 
-  console.log(deleteData);
-
   await api.delete(`/boards/${id}`, deleteData);
 }
 
 export async function getBoardByTag(tag: string) {
-  console.log(tag);
-
-  const res = await api.get(`/tagName/${tag}`);
+  const res = await axios.get(`/tags/tagName/${tag}`);
   return res.data;
 }
 
