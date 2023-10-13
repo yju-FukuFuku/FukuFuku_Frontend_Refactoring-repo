@@ -1,66 +1,39 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom';
-import { styled } from 'styled-components';
-
-interface Board {
-  id: number;
-  title: string;
-  content: string;
-  view: number;
-  createdAt: string;
-  img?: string;
-  user: {
-    nickname: string;
-    email: string;
-    lastName: string;
-    firstName: string;
-    picture: string;
-  }
-}[]
-
-interface BoardTag {
-  id: number;
-  boardId: number;
-  tagId: number;
-  board: Board;
-}
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { styled } from "styled-components";
+import { BoardTagType } from "../../types/BoardType";
+import { getBoardByTag } from "../../api/BoardAPI";
 
 const TagPage = () => {
-
-  const { tagName } = useParams()
-  const [postData, setPostData] = useState<Board[]>()
+  const { tagName } = useParams();
+  const [postData, setPostData] = useState<BoardTagType[]>();
 
   // 태그 아이디 가져오기
   const getTag = async () => {
     if (tagName) {
-      const encodedTagName = encodeURIComponent(tagName)
-      await axios.get(`http://localhost:3000/tags/tagName/${encodedTagName}`)
-      .then((res) => {
-        getBoardTag(res.data.board_tag)
-      })
-      .catch((error) => {
-        console.log(error)
-      })  
+      const encodedTagName = encodeURIComponent(tagName);
+      try {
+        const data = await getBoardByTag(encodedTagName);
+        setPostData(data.board_tag);
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }
-
-  const getBoardTag = (boardTag: BoardTag[]) => {
-    const boardArray: Board[] = []
-    boardTag.map((item) => {
-      boardArray.push(item.board)
-    })
-    getBoard(boardArray)
-  }
-
-  const getBoard = (board: Board[]) => {
-    setPostData(board)
   };
-  
+
+  const summary = (content: string) => {
+    const contentArr = content.split(/<[^>]*>/);
+    const contentText = contentArr.filter((item) => item !== "");
+    if (contentText[0].length > 100) {
+      return contentText[0].slice(0, 100) + "...";
+    }
+    return contentText[0];
+  };
+
   useEffect(() => {
-    getTag()
-  }, [])
-  
+    getTag();
+  }, []);
+
   return (
     <Container>
       <Content>
@@ -71,28 +44,28 @@ const TagPage = () => {
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
               <Profile>
-                <ProfileImg src={item.user.picture} />
-                <ProfileName>{item.user.nickname ? item.user.nickname : item.user.firstName + item.user.lastName}</ProfileName>
+                <ProfileImg src={item.board.user.picture} />
+                <ProfileName>{item.board.user.nickName}</ProfileName>
               </Profile>
               <PostLink to={`/boards/${item.id}`}>
-                {
-                  item.img && (
-                    <PostImgBox>
-                      <PostImg src={item.img} />
-                    </PostImgBox>
-                  ) 
-                }
+                {item.board.images && (
+                  <PostImgBox>
+                    <PostImg src={item.board.images[0].url} />
+                  </PostImgBox>
+                )}
               </PostLink>
-              <PostLink to={`/boards/${item.id}`}>
-                <H3>{ item.title }</H3>
+              <PostLink to={`/boards/${item.board.id}`}>
+                <H3>{item.board.title}</H3>
               </PostLink>
               <PostContent>
-                <BoardContent dangerouslySetInnerHTML={{__html: item.content}} />
+                <BoardContent
+                  dangerouslySetInnerHTML={{
+                    __html: summary(item.board.content),
+                  }}
+                />
               </PostContent>
               <SubInFo>
-                <span>
-                  {item.createdAt.split('T')[0]}
-                </span>
+                <span>{item.board.createdAt.split("T")[0]}</span>
                 <Separator>·</Separator>
                 <span>comment</span>
                 <Separator>·</Separator>
@@ -103,16 +76,16 @@ const TagPage = () => {
         </Wrapper>
       </Content>
     </Container>
-  )
-}
+  );
+};
 
-export default TagPage
+export default TagPage;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-`
+`;
 
 const Content = styled.div`
   display: flex;
@@ -121,61 +94,65 @@ const Content = styled.div`
   position: relative;
   top: 100px;
   width: 768px;
-`
+`;
 
 const BoardContent = styled.div`
   font-size: 1rem;
-`
+
+  img {
+    display: none;
+  }
+`;
 
 const Wrapper = styled.div`
-  box-sizing: inherit
-`
+  box-sizing: inherit;
+`;
 
 const SearchPost = styled.div`
   padding: 2rem 0;
   line-height: 1.5;
-`
+`;
 
 const Profile = styled.div`
   display: flex;
   -webkit-box-align: center;
   align-items: center;
   margin-bottom: 1.5rem;
-`
+`;
 
 const ProfileImg = styled.img`
   width: 3rem;
-  height: 3rem;  
+  height: 3rem;
   border-radius: 1.5rem;
   margin-right: 1rem;
-`
+`;
 
 const ProfileName = styled.div`
   font-size: 0.875rem;
   font-weight: bold;
-`
+`;
 
 const PostImgBox = styled.div`
-  width:100%;
+  width: 768px;
   padding-top: 52.356%;
   margin-bottom: 1rem;
   position: relative;
-`
+`;
 
 const PostImg = styled.img`
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 100%;
+  max-width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
-`
+`;
 
 const H3 = styled.h3`
   font-size: 1.5rem;
   margin: 0;
-`
+`;
 
 const PostContent = styled.p`
   font-size: 1rem;
@@ -183,34 +160,34 @@ const PostContent = styled.p`
   margin-bottom: 2rem;
   word-break: keep-all;
   overflow-wrap: break-word;
-`
+`;
 
 const SubInFo = styled.div`
   display: flex;
-  align-item: center;
+  align-items: center;
   margin-top: 1rem;
   font-size: 0.875rem;
   color: rgb(155, 155, 155);
-`
+`;
 
 const Separator = styled.div`
   margin: 0px 0.5rem;
-`
+`;
 
 const TagName = styled.div`
   display: flex;
   font-size: 3rem;
   font-weight: 600;
-`
+`;
 
 const TagLength = styled.div`
   font-size: 1rem;
   margin-top: 1rem;
   margin-bottom: 2rem;
   color: #868e96;
-`
+`;
 
 const PostLink = styled(Link)`
-color: inherit;
-text-decoration: none;
-`
+  color: inherit;
+  text-decoration: none;
+`;
