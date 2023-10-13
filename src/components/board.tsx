@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { styled } from 'styled-components'
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
 
 interface User {
   id: number;
@@ -9,7 +9,7 @@ interface User {
 }
 
 interface boardImage {
-  url?: string
+  url?: string;
 }
 
 // 타입 지정
@@ -25,7 +25,7 @@ export type PostType = {
   user: User;
   boardImage: boardImage[];
   boardTag: string[];
-}
+};
 
 interface BoardProps {
   posts: PostType[];
@@ -36,59 +36,57 @@ const Board = ({ posts }: BoardProps) => {
   const PostList = () => {
     return (
       <PostArray>
-        {
-          posts?.map((item) => (
-            <Post key={item.id}>
-              <PostLink to={`/boards/${item.id}`}>
-                <PostImgBox>
-                  <PostImg src={item.boardImage[0]?.url || "https://yju-fukufuku.s3.amazonaws.com/logo.svg"} alt="image" />
-                </PostImgBox>
-                <Body>
-                  <PostLink to={`/boards/${item.id}`}>
-                    <H4>
-                      {item.title}
-                    </H4>
-                    {/* <BodyContent>
+        {posts?.map((item) => (
+          <Post key={item.id}>
+            <PostLink to={`/boards/${item.id}`}>
+              <PostImgBox>
+                <PostImg
+                  src={
+                    item.boardImage[0]?.url ||
+                    "https://yju-fukufuku.s3.amazonaws.com/logo.svg"
+                  }
+                  alt="image"
+                />
+              </PostImgBox>
+              <Body>
+                <PostLink to={`/boards/${item.id}`}>
+                  <H4>{item.title}</H4>
+                  {/* <BodyContent>
                   </BodyContent> */}
-                  </PostLink>
-                  <SubInfo>
-                    <span>{item.createdAt.split("T")[0]}</span>
-                    {/* <Separator></Separator> */}
-                    <span>{item.boardTag}</span>
-                  </SubInfo>
-                </Body>
-                <WriterBox>
-                  <Writer>
-                    <Profile src={`${item.user.picture}`} alt="profile" />
-                    <span>{item.user.nickName}</span>
-                  </Writer>
-                </WriterBox>
-              </PostLink>
-            </Post>
-          ))
-        }
+                </PostLink>
+                <SubInfo>
+                  <span>{item.createdAt.split("T")[0]}</span>
+                  {/* <Separator></Separator> */}
+                  <span>{item.boardTag}</span>
+                </SubInfo>
+              </Body>
+              <WriterBox>
+                <Writer>
+                  <Profile src={`${item.user.picture}`} alt="profile" />
+                  <span>{item.user.nickName}</span>
+                </Writer>
+              </WriterBox>
+            </PostLink>
+          </Post>
+        ))}
       </PostArray>
-    )
-  }
+    );
+  };
 
   return (
     <Container>
-      <Content>
-        {
-          PostList()
-        }
-      </Content>
+      <Content>{PostList()}</Content>
     </Container>
-  )
-}
+  );
+};
 
-export default Board
+export default Board;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-`
+`;
 
 const Content = styled.div`
   display: flex;
@@ -98,32 +96,32 @@ const Content = styled.div`
   top: 100px;
   width: 1728px;
 
-  @media all and (max-width:1919px) {
+  @media all and (max-width: 1919px) {
     width: 1440px;
   }
 
-  @media all and (max-width:1600px) {
+  @media all and (max-width: 1600px) {
     width: 1152px;
   }
 
-  @media all and (max-width:1300px) {
+  @media all and (max-width: 1300px) {
     width: 864px;
   }
 
-  @media all and (max-width:1056px) {
+  @media all and (max-width: 1056px) {
     width: calc(100% - 2rem);
   }
-`
+`;
 
 const PostArray = styled.div`
   display: flex;
   /* margin: -1rem; */
   flex-wrap: wrap;
 
-  @media (max-width: 767px){
-      margin: 0px;
+  @media (max-width: 767px) {
+    margin: 0px;
   }
-`
+`;
 
 const Post = styled.div`
   display: flex;
@@ -143,23 +141,23 @@ const Post = styled.div`
     transform: translateY(-10px);
   }
 
-  @media all and (max-width:1056px) {
+  @media all and (max-width: 1056px) {
     width: calc(50% - 2rem);
     height: calc(22rem + ((100vw - 767px) / 3.6125));
   }
-  @media (max-width: 767px){
+  @media (max-width: 767px) {
     margin: 0;
     width: 100%;
     height: calc(22rem + ((100vw - 320px) / 2));
     margin-bottom: 1rem;
   }
-`
+`;
 
 const PostImgBox = styled.div`
   width: 100%;
   position: relative;
   padding-top: 52.1921%;
-`
+`;
 
 const PostImg = styled.img`
   position: absolute;
@@ -169,14 +167,14 @@ const PostImg = styled.img`
   height: 100%;
   left: 50%;
   transform: translateX(-50%);
-`
+`;
 
 const Body = styled.div`
   display: flex;
   padding: 1rem;
   flex: 1 1 0%;
   flex-direction: column;
-`
+`;
 
 const H4 = styled.h4`
   font-size: 1rem;
@@ -186,7 +184,7 @@ const H4 = styled.h4`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-`
+`;
 
 const BodyContent = styled.div`
   height: 3.9375rem;
@@ -201,19 +199,19 @@ const BodyContent = styled.div`
   -webkit-box-orient: vertical;
   box-sizing: inherit;
   line-height: 1.5;
-`
+`;
 
 const PostLink = styled(Link)`
   color: inherit;
   text-decoration: none;
   margin-bottom: 2rem;
-`
+`;
 
 const SubInfo = styled.div`
   font-size: 0.75rem;
   line-height: 1.5;
   color: rgb(155, 155, 155);
-`
+`;
 
 const WriterBox = styled.div`
   display: flex;
@@ -222,20 +220,20 @@ const WriterBox = styled.div`
   font-size: 0.75rem;
   line-height: 1.5;
   border-top: 1px solid rgb(235, 235, 235);
-`
+`;
 
 const Writer = styled.div`
   display: flex;
-  align-items:center;
-`
+  align-items: center;
+`;
 
 const Separator = styled.div`
   margin: 0px 0.5rem;
-`
+`;
 
 const Profile = styled.img`
   width: 1.5rem;
   height: 1.5rem;
   margin-right: 0.5rem;
   border-radius: 50%;
-`
+`;
