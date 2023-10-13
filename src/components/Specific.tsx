@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import useDebounce from '../hooks/useDebounce';
 import axios from 'axios';
+import { getSearchData } from '../api/BoardAPI';
 interface Tag { 
   tag: { name: string; }
 }[]
@@ -22,7 +23,7 @@ export type PostType = {
 
 type Props = {
   boardList: Array<PostType>
-  userName: string | undefined
+  userName: string
 }
 
 const Specific = ( { boardList, userName } : Props ) => {
@@ -55,15 +56,12 @@ const Specific = ( { boardList, userName } : Props ) => {
 
   const debounce = useDebounce(searchValue, 500)
 
-  const getSearchData = async (debounce: string) => {
-    await axios.get(`http://localhost:3000/boards/user/${userName}?keyword=${debounce}`)
-      .then((res) => setSearchBoard(res.data))
-      .catch((error) => console.log(error))
- }
-
   useEffect(() => {
     if (debounce) {
-      getSearchData(debounce)
+      getSearchData(userName, debounce)
+        .then((res) => {
+          setSearchBoard(res)
+        })
       // 데이터 추가
       // changeNavigate(debounce)
     }

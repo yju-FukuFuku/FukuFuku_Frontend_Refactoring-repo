@@ -12,6 +12,8 @@
 }
 
 .navbar {
+  width: 768px;
+  margin: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,18 +21,24 @@
 
 .navbar button {
   background-color: transparent;
-  color: black;
   font-size: 1.5rem;
-  border: none;
   padding: 10px;
+  cursor: pointer;
 }
 
-.navbar button:hover {
-  background-color: rgb(194, 194, 194);
+.navButtonBox {
+  width: 50%;
+  text-align: center;
+  color: black;
+  border: none;
 }
 
-.navbar button:first-child {
-  border-right: 1px solid rgb(194, 194, 194);
+.navButtonBox2 {
+  width: 50%;
+  text-align: center;
+  border: none;
+  color: rgb(5, 199, 199);
+  border-bottom: 1px solid rgb(5, 199, 199);
 }
 
 .myPage hr {
@@ -52,7 +60,7 @@
 /* PROFILE */
 .profileBox {
   display: flex;
-  margin-top: 3.5rem;
+  margin-top: 3rem;
 }
 .profile {
   text-align: center;
