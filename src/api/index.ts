@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { store } from '../store';
-import { deleteAccessToken, setAccessToken } from '../store/Auth';
-import { getRefreshToken, removeRefreshToken } from '../store/Cookie';
-import { clearUser } from '../store/User';
+import axios from "axios";
+import { store } from "../store";
+import { deleteAccessToken, setAccessToken } from "../store/Auth";
+import { getRefreshToken, removeRefreshToken } from "../store/Cookie";
+import { clearUser } from "../store/User";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -63,7 +63,8 @@ api.interceptors.response.use(
       }
       return Promise.reject(error);
     }
-  });
+  }
+);
 
 export const logOut = () => {
   store.dispatch(clearUser());
@@ -75,6 +76,6 @@ export const logOut = () => {
 
 export const verifyUser = () => {
   api.get("auth");
-}
+};
 
 export default api;
