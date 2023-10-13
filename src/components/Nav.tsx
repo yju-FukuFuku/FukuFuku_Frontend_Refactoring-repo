@@ -1,23 +1,20 @@
 import { styled } from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RootState, store } from '../store';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearUser } from '../store/User';
+import { RootState } from '../store';
+import { useSelector } from 'react-redux';
 import { SearchRounded } from '@mui/icons-material';
 import Category from './Category';
 import { login } from '../api/Login';
 import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google';
-import { deleteAccessToken } from '../store/Auth';
+import { logOut } from '../api';
 
 const Nav = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-
   const user = useSelector((state: RootState) => state.user);
 
-  const isLogin = store.getState().token.isLogin;
+  const isLogin = useSelector((state: RootState) => state.token.isLogin);
 
   const handleClick = () => {
     navigate('/search');
@@ -25,10 +22,7 @@ const Nav = () => {
 
   const handleLogOut = () => {
     googleLogout();
-    dispatch(clearUser());
-    dispatch(deleteAccessToken());
-    window.localStorage.clear();
-    navigate('/');
+    logOut();
   }
 
   const googleHandler = async (credential: string | undefined) => {
@@ -60,7 +54,7 @@ const Nav = () => {
                     <Login onClick={handleLogOut}>
                       <Sign>로그아웃</Sign>
                     </Login>
-                    <Icon onClick={() => navigate('/setting')}>
+                    <Icon onClick={() => navigate('/mypage')}>
                       {user.picture ? (
                         <img
                           src={user.picture}
