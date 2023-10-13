@@ -1,19 +1,23 @@
-import axios from 'axios';
-import { store } from '../store';
-import { setAccessToken } from '../store/Auth';
-import { getRefreshToken } from '../store/Cookie';
-import { clearUser } from '../store/User';
-import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { RootState, store } from "../store";
+import { setAccessToken } from "../store/Auth";
+import { getRefreshToken } from "../store/Cookie";
+import { clearUser } from "../store/User";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 api.interceptors.request.use(async (config) => {
   const token = store.getState().token.accessToken;
+
+  console.log(token);
 
   if (token) {
     config.headers.Authorization = `${token}`;
@@ -22,43 +26,49 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-api.interceptors.response.use(async (response) => {
-  return response;
-}, async (error) => {
-  const originalRequest = error.config;
-  if (error.response.status === 410 && !originalRequest._retry) {
+api.interceptors.response.use(
+  async (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 410 && !originalRequest._retry) {
+      console.log("토큰 재발급");
+      const refreshToken = getRefreshToken();
+      const currentAccessToken = store.getState().token.accessToken;
 
-    console.log("토큰 재발급");
-    const refreshToken = getRefreshToken();
-    const currentAccessToken = store.getState().token.accessToken;
+      console.log(refreshToken, currentAccessToken);
 
-    console.log(refreshToken, currentAccessToken);
+      originalRequest._retry = true;
+      try {
+        const response = await api.post(
+          "/auth/refresh",
+          {
+            refreshToken,
+          },
+          {
+            headers: {
+              Authorization: `${currentAccessToken}`,
+            },
+          }
+        );
 
-    originalRequest._retry = true;
-    try {
-      const response = await api.post('/auth/refresh', {
-        refreshToken
-      }, {
-        headers: {
-          'Authorization': `${currentAccessToken}`
-        }
-      });
+        const { accessToken } = response.data.data;
+        const payload = { accessToken };
+        store.dispatch(setAccessToken(payload));
 
-      const { accessToken } = response.data.data;
-      const payload = { accessToken };
-      store.dispatch(setAccessToken(payload));
-
-      originalRequest.headers.Authorization = `${accessToken}`;
-      return api(originalRequest);
-    } catch (error) {
-      window.alert("다시 로그인 하세요.");
-      store.dispatch(clearUser());
-      window.localStorage.clear();
-      const navigate = useNavigate();
-      navigate('/');
+        originalRequest.headers.Authorization = `${accessToken}`;
+        return api(originalRequest);
+      } catch (error) {
+        window.alert("다시 로그인 하세요.");
+        store.dispatch(clearUser());
+        window.localStorage.clear();
+        const navigate = useNavigate();
+        navigate("/");
+      }
     }
+    return Promise.reject(error);
   }
-  return Promise.reject(error);
-});
+);
 
 export default api;
