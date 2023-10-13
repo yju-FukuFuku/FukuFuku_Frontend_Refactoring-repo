@@ -79,7 +79,7 @@ export const getBoard = async (page: number, pageSize: number) => {
   //   const { data } = await axios.get(`/boards`);
   //       return data;
   //   }
-  const { data } = await axios.get(`/boards?page=${page}`);  //?_page=${page}&_limit=${pageSize}
+  const { data } = await axios.get(`/boards?page=${page}`); //?_page=${page}&_limit=${pageSize}
   console.log(page);
   return data;
 };
