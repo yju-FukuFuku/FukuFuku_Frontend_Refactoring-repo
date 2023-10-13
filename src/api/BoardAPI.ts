@@ -79,7 +79,7 @@ export const getBoard = async (page: number, pageSize: number) => {
   //   const { data } = await axios.get(`/boards`);
   //       return data;
   //   }
-  const { data } = await axios.get(`/boards`); //?_page=${page}&_limit=${pageSize}
+  const { data } = await axios.get(`/boards?page=${page}`); //?_page=${page}&_limit=${pageSize}
   console.log(page);
   return data;
 };
@@ -89,6 +89,13 @@ export const getLikeBoard = async (page: string) => {
   console.log(page);
   return data;
 };
+
+// 검색된 게시글
+export const getSearchData = async (nickName: string, debounce: string) => {
+  const { data } = await axios.get(`/boards/user/${nickName}?keyword=${debounce}`)
+
+  return data
+}
 
 // date를 받아서 startDate와 endDate를 구해주는 함수
 function getCurrentDate(date?: dateType) {

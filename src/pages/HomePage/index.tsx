@@ -8,35 +8,54 @@ import { debounce } from '@mui/material'
 
 const MainPage = () => {
 
+  
+
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const [page, setPage] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [request, setRequest] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   // 데이터 렌더링
   useEffect(() => {
     loadMoreData()
   }, [])
 
-  const [posts, setPosts] = useState<PostType[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (request && hasMore) {
+      loadMoreData()
+    }
+  }, [request])
   
   // 데이터 불러오기
   const loadMoreData = useCallback(async () => {
     if( loading || !hasMore) return;
     setLoading(true);
     try {
-      const newData = await getBoard(page + 1, 6);
+      const newData = await getBoard(page, 6);
       console.log(newData)
-      setPosts([...posts, ...newData ]);
-      if (newData.length === 0){
+      if (JSON.stringify(posts) === JSON.stringify(newData)) {
+        console.log("같음");
+        return;
+      }
+      setPosts((prev) => [...prev, ...newData]);
+      console.log("new Data");
+      console.log(posts);
+      
+      if (newData.length <= 9){
         setHasMore(false);
         console.log("more end");
         
       }
-      setPage(page + 1)
+      setPage(prev => prev + 1);
+      console.log("page up");
+      
     } catch(error) {
       console.error('Error loading more data: ', error);
     } finally {
       setLoading(false);
+      setRequest(false);
     }
   }, [loading, hasMore, page, posts])
   
@@ -51,20 +70,23 @@ const MainPage = () => {
       console.log("clientHeight  " + container.clientHeight);
       console.log("scrollTop  " + window.scrollY);
       
-      if (container.scrollHeight - container.clientHeight <= window.scrollY) {
+      if (container.scrollHeight - container.clientHeight + 100 <= window.scrollY) {
         console.log("loadMore");
-        
-        loadMoreData();
+        setRequest(true);
       }
     };
     window.addEventListener('scroll', debounce(handleScroll));
 
     return () => {
       window.removeEventListener('scroll', debounce(handleScroll));
+      setRequest(false);
     };
   }, [])
 
-  
+  useEffect(() => {
+    console.log("page 변경");
+    console.log(page);
+  }, [page])
 
   return (
     <>

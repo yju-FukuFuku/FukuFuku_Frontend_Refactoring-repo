@@ -24,7 +24,7 @@ type BoardType = {
 };
 
 const WriteListPage = () => {
-  const { userName } = useParams(); // 받아오는 userId( 닉네임 )
+  const { userName } = useParams(); // 받아오는 userId( 닉네임 ) 
 
   const [user, setUser] = useState<BoardType>();
 
@@ -82,18 +82,6 @@ const WriteListPage = () => {
     };
   }, [fetchMoreData]);
 
-  // SEARCH
-  const [searchValue, setSearchValue] = useState<string>("");
-  const navigate = useNavigate();
-
-  // 검색 값 가져오기
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-    navigate(`/search?query=${e.target.value}`);
-  };
-
-  const debounce = useDebounce(searchValue, 500);
-
   return (
     <div className={style.container}>
       <div className={style.myPage}>
@@ -113,7 +101,10 @@ const WriteListPage = () => {
         <hr />
         {/* ARRAY 출력 */}
         <div className={style.myList} ref={containerRef}>
-          <Specific boardList={userData} userName={userName} />
+          { userName ?  
+            <Specific boardList = { userData } userName = { userName }/>
+            : ''
+          }
         </div>
       </div>
     </div>
