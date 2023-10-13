@@ -178,6 +178,12 @@
 .list {
   margin-bottom: 60px;
 }
+
+.list .postLink{
+  color: inherit;
+  text-decoration: none;
+}
+
 .list .contentImg {
   display: flex;
   align-items: center;

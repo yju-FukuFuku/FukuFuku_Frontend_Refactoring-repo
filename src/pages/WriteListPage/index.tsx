@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import style from '../MyPage/myPage.module.css'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getUserBoard } from '../../api/BoardAPI';
 // import { getMyBoard } from '../../api/User';
-import Specific from '../../components/specific';
-import { PostType } from '../../components/specific';
+import Specific from '../../components/Specific';
+import { PostType } from '../../components/Specific';
+import useDebounce from '../../hooks/useDebounce';
 
 interface Tag { 
   tag: { name: string; }
@@ -33,6 +34,7 @@ const WriteListPage = () => {
 
   // ARRAY
   const [userData, setData] = useState<PostType[]>([])  // 게시판 저장
+  const [searchData, setSearchData] = useState<PostType[]>([]) // 검색된 게시판 저장
   // let boardCount = 0
 
   const [boardPage, setBoardPage] = useState<number>(1);
@@ -77,6 +79,18 @@ const WriteListPage = () => {
      };
   }, [fetchMoreData]); 
 
+  // SEARCH
+  const [searchValue, setSearchValue] = useState<string>('');
+  const navigate = useNavigate();
+
+  // 검색 값 가져오기
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+    navigate(`/search?query=${e.target.value}`)
+  }
+
+  const debounce = useDebounce(searchValue, 500)
+
   return (
     <div className={style.container}>
       <div className={style.myPage}>
@@ -84,7 +98,7 @@ const WriteListPage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src={ user?.picture } alt="img" />
+              <img src={ user?.picture } alt="img" className={style.myImage}/>
             </div>
             <h2>{ userName }</h2>
           </div>
