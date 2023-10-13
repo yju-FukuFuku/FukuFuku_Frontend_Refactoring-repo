@@ -40,7 +40,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path='/recent' element={<HomePage />} />
             <Route path='/search' element={<SearchPage />} />
-            <Route path='/setting' element={<MyPage />} />
+            <Route path='/mypage' element={<MyPage />} />
             <Route path='/:userName' element={<WriteListPage />} />
             <Route path='/write/:postId' element={<SavesPage />} />
             <Route path='/like' element={<LikePage />} />
