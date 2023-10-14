@@ -1,10 +1,8 @@
 import axios from "axios";
-import { RootState, store } from "../store";
-import { setAccessToken } from "../store/Auth";
-import { getRefreshToken } from "../store/Cookie";
+import { store } from "../store";
+import { deleteAccessToken, setAccessToken } from "../store/Auth";
+import { getRefreshToken, removeRefreshToken } from "../store/Cookie";
 import { clearUser } from "../store/User";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 const api = axios.create({
   baseURL: "http://localhost:3000",
@@ -60,15 +58,24 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `${accessToken}`;
         return api(originalRequest);
       } catch (error) {
-        window.alert("다시 로그인 하세요.");
-        store.dispatch(clearUser());
-        window.localStorage.clear();
-        const navigate = useNavigate();
-        navigate("/");
+        window.alert("세션이 만료되었습니다. 다시 로그인 하세요.");
+        logOut();
       }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
   }
 );
+
+export const logOut = () => {
+  store.dispatch(clearUser());
+  store.dispatch(deleteAccessToken());
+  removeRefreshToken();
+  window.localStorage.clear();
+  window.location.href = "http://localhost:5173";
+};
+
+export const verifyUser = () => {
+  api.get("auth");
+};
 
 export default api;
