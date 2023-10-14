@@ -1,19 +1,13 @@
-import api from '.';
+import api from ".";
+import { BoardLikeWriteType } from "../types/BoardType";
 
-interface LikeData {
-  u_id: number;
-  b_id: number;
-}
+export const likeBoard = async (data: BoardLikeWriteType) => {
+  console.log("like");
 
-export const like = (u_id: number, b_id: number, isUnLike: boolean = false) => {
-  const data: LikeData = {
-    u_id,
-    b_id
-  }
+  return await api.post("/like", { data });
+};
 
-  if (isUnLike) {
-    return api.delete("/like", { data: { data } });
-  }
-
-  return api.post("/like", { data });
-}
+export const unLikeBoard = async (data: BoardLikeWriteType) => {
+  console.log("unlike");
+  return await api.delete("/like", { data: { data } });
+};

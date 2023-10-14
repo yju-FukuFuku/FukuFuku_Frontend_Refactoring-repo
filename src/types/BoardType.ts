@@ -13,6 +13,11 @@ export type BoardType = {
   }[];
   comment: CommentType[];
   images: ImagesType[];
+  like: BoardLikeType[];
+};
+
+export type BoardLikeType = {
+  u_id: number;
 };
 
 export type TagType = {
@@ -55,4 +60,9 @@ export type BoardEditType = {
 
 export type ImagesType = {
   url: string;
+};
+
+export type BoardLikeWriteType = {
+  u_id: number;
+  b_id: number;
 };
