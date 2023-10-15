@@ -96,6 +96,7 @@ const WritePage = () => {
     setTag(tags.map((item) => ({ name: item })));
   };
 
+  const images = useImage(content);
   // 저장 눌렀을 때
   const save = async () => {
     // 만약 지금 수정하는 중이라면
@@ -106,7 +107,7 @@ const WritePage = () => {
         title: title,
         content: content,
         tags: tag.map((item) => item.name),
-        images: [],
+        images: images,
       };
 
       await fetchBoard(data)
@@ -118,8 +119,6 @@ const WritePage = () => {
         });
       return;
     }
-
-    const images = useImage(content);
 
     const data = {
       id: user.id,
