@@ -6,16 +6,18 @@ import { Link } from "react-scroll";
 import { Skeleton } from "@mui/material";
 import Comment from "../../components/Comment/Comment";
 import styles from "./board.module.scss";
-import { RootState, store } from "../../store";
+import { RootState } from "../../store";
 import { deleteBoard, getBoardById } from "../../api/BoardAPI";
 import { BoardType } from "../../types/BoardType";
 import { useSelector } from "react-redux";
+import { likeBoard, unLikeBoard } from "../../api/Like";
 
 const PostPage = () => {
   const { boardId } = useParams();
   const [board, setBoard] = useState<BoardType>();
   const [fixed, setFixed] = useState<boolean>(false);
   const [headerArray, setHeaderArray] = useState<string[]>([]);
+  const [like, setLike] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -23,17 +25,23 @@ const PostPage = () => {
 
   // 게시글 가져오기
   useEffect(() => {
-    const getBoard = async () => {
-      try {
-        const board = await getBoardById(Number(boardId));
-        setBoard(board);
-        idTag();
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getBoard();
   }, []);
+
+  useEffect(() => {
+    checkLike();
+  }, [board]);
+
+  const getBoard = async () => {
+    try {
+      const board = await getBoardById(Number(boardId));
+      setBoard(board);
+      checkLike();
+      idTag();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // 스크롤 위치를 확인하고 옆에 사이드에 있는 목차, 좋아요 버튼을 fixed 로 바꿔주는 함수
   useEffect(() => {
@@ -80,6 +88,45 @@ const PostPage = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const checkLike = () => {
+    if (!user.id) return;
+
+    const like = board?.like.find((item) => item.u_id === user.id);
+
+    if (like) {
+      setLike(true);
+    } else {
+      setLike(false);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!user.id) return;
+
+    const data = {
+      b_id: Number(boardId),
+      u_id: user.id,
+    };
+
+    if (like === false) {
+      try {
+        await likeBoard(data);
+        getBoard();
+        setLike(true);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        await unLikeBoard(data);
+        getBoard();
+        setLike(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   // board 가 빈 객체이면 로딩중을 띄워주고, 아니면 게시글을 보여줌
@@ -139,8 +186,10 @@ const PostPage = () => {
                     {board.createdAt.slice(0, 10)}
                   </span>
                 )}
+                <span className={styles.separator}>·</span>
+                <span className={styles.views}>{board.views}</span>
               </Info>
-              {store.getState().user.id === board.u_id && (
+              {user.id === board.u_id && (
                 <Toolbox>
                   <span className={styles.tool__edit} onClick={editBoard}>
                     수정
@@ -172,7 +221,8 @@ const PostPage = () => {
               <SideWrapper>
                 <SideTool fixed={fixed ? "true" : "false"}>
                   <Favorite
-                    color="disabled"
+                    onClick={handleLike}
+                    color={like ? "error" : "disabled"}
                     sx={{
                       mb: 1,
                       backgroundColor: "white",
@@ -183,7 +233,7 @@ const PostPage = () => {
                       "&:hover": { color: "black", border: "1px solid black" },
                     }}
                   />
-                  {board.views}
+                  {board.like.length}
                 </SideTool>
               </SideWrapper>
             </SideContainer>
@@ -239,7 +289,6 @@ const PostPage = () => {
 
 const Container = styled.div`
   width: 100%;
-  top: 150px;
   position: relative;
   height: 1000vh;
 `;
