@@ -67,7 +67,7 @@ type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
 //     return data;
 // }
 
-export const getBoard = async (page: number, pageSize: number) => {
+export const getBoard = async (lastId: number, pageSize: number) => {
   // 기본 요청 경로(date는 필수)
   // if (date) {
   //   const responseDate = getCurrentDate(date);
@@ -79,8 +79,8 @@ export const getBoard = async (page: number, pageSize: number) => {
   //   const { data } = await axios.get(`/boards`);
   //       return data;
   //   }
-  const { data } = await axios.get(`/boards?page=${page}`); //?_page=${page}&_limit=${pageSize}
-  console.log(page);
+  const { data } = await axios.get(`/boards?lastId=${lastId}`); //?_page=${page}&_limit=${pageSize}
+  // console.log(lastId);
   return data;
 };
 
@@ -92,10 +92,12 @@ export const getLikeBoard = async (page: string) => {
 
 // 검색된 게시글
 export const getSearchData = async (nickName: string, debounce: string) => {
-  const { data } = await axios.get(`/boards/user/${nickName}?keyword=${debounce}`)
+  const { data } = await axios.get(
+    `/boards/user/${nickName}?keyword=${debounce}`
+  );
 
-  return data
-}
+  return data;
+};
 
 // date를 받아서 startDate와 endDate를 구해주는 함수
 function getCurrentDate(date?: dateType) {
