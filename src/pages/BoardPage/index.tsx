@@ -187,7 +187,7 @@ const PostPage = () => {
                   </span>
                 )}
                 <span className={styles.separator}>·</span>
-                <span className={styles.views}>{board.views}</span>
+                <span className={styles.views}>조회 수: {board.views}</span>
               </Info>
               {user.id === board.u_id && (
                 <Toolbox>
