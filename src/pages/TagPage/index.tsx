@@ -24,7 +24,7 @@ const TagPage = () => {
   const summary = (content: string) => {
     const contentArr = content.split(/<[^>]*>/);
     const contentText = contentArr.filter((item) => item !== "");
-    if (contentText[0].length > 100) {
+    if (contentText[0]?.length > 100) {
       return contentText[0].slice(0, 100) + "...";
     }
     return contentText[0];
