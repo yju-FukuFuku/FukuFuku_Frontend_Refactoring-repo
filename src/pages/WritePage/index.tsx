@@ -1,5 +1,3 @@
-import ReactQuill from "react-quill";
-
 import "./writepage.module.scss";
 import { styled } from "styled-components";
 import { Button, TextField } from "@mui/material";
@@ -12,6 +10,12 @@ import axios from "axios";
 import { postImage } from "../../api/Image";
 import { useSelector } from "react-redux";
 import useImage from "../../hooks/useImage";
+import Loading from "../../components/Loading";
+import { useImageCompression } from "../../hooks/useImageCompression";
+
+import ReactQuill, { Quill } from "react-quill";
+import { ImageResize } from "quill-image-resize-module-ts";
+Quill.register("modules/ImageResize", ImageResize);
 
 const StyledTextField = styled(TextField)({
   "& .MuiInputBase-root": {
@@ -42,6 +46,7 @@ const WritePage = () => {
   const [tag, setTag] = useState<Tag>([] as Tag);
   const [tagValue, setTagValue] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -98,6 +103,8 @@ const WritePage = () => {
 
   // 저장 눌렀을 때
   const save = async () => {
+    const images = useImage(content);
+
     // 만약 지금 수정하는 중이라면
     if (editId) {
       const data = {
@@ -106,7 +113,7 @@ const WritePage = () => {
         title: title,
         content: content,
         tags: tag.map((item) => item.name),
-        images: [],
+        images: images,
       };
 
       await fetchBoard(data)
@@ -118,8 +125,6 @@ const WritePage = () => {
         });
       return;
     }
-
-    const images = useImage(content);
 
     const data = {
       id: user.id,
@@ -150,13 +155,20 @@ const WritePage = () => {
       const file = input.files?.[0];
       if (!file) return;
 
-      const url = await postImage(file, user.id);
+      setLoading(true);
+      try {
+        const compressionFile = await useImageCompression(file);
+        const url = await postImage(compressionFile, user.id);
 
-      // 4. quill에 이미지를 삽입한다.
-      const quill = quillRef.current;
-      const range = quill?.getEditor().getSelection()?.index;
-      if (range !== undefined && quill) {
-        quill.getEditor().insertEmbed(range, "image", url.url);
+        // 4. quill에 이미지를 삽입한다.
+        const quill = quillRef.current;
+        const range = quill?.getEditor().getSelection()?.index;
+        if (range !== undefined && quill) {
+          quill.getEditor().insertEmbed(range, "image", url.url);
+        }
+        setLoading(false);
+      } catch {
+        setLoading(false);
       }
     };
   };
@@ -172,6 +184,10 @@ const WritePage = () => {
         handlers: {
           image: imageHandler,
         },
+      },
+      ImageResize: {
+        parchment: Quill.import("parchment"),
+        modules: ["Resize", "DisplaySize"],
       },
     };
   }, []);
@@ -219,6 +235,7 @@ const WritePage = () => {
           value={content}
           style={{ height: "400px", paddingBottom: "40px" }}
         />
+        {loading && <Loading />}
       </EditorContainer>
 
       <EditorFooter>
