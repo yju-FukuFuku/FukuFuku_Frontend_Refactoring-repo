@@ -7,15 +7,10 @@ import { clearUser } from "../store/User";
 const api = axios.create({
   baseURL: "http://localhost:3000",
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 api.interceptors.request.use(async (config) => {
   const token = store.getState().token.accessToken;
-
-  console.log(token);
 
   if (token) {
     config.headers.Authorization = `${token}`;
@@ -31,11 +26,8 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     if (error.response.status === 410 && !originalRequest._retry) {
-      console.log("토큰 재발급");
       const refreshToken = getRefreshToken();
       const currentAccessToken = store.getState().token.accessToken;
-
-      console.log(refreshToken, currentAccessToken);
 
       originalRequest._retry = true;
       try {
