@@ -1,41 +1,42 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import style from './myPage.module.css'
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { getMyBoard } from '../../api/User';
-import Specific from '../../components/Specific';
+import { useState, useEffect, useRef, useCallback } from "react";
+import style from "./myPage.module.css";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { getMyBoard } from "../../api/User";
+import Specific from "../../components/Specific";
 
-interface Tag { 
-  tag: { name: string; }
-}[]
+interface Tag {
+  tag: { name: string };
+}
+[];
 
 type PostType = {
   id: number;
   u_id: string;
   content: string;
   title: string;
-  views: number,
-  createdAt: string,
-  boardImage: Array<string>,
-  like: Array<string>,
-  board_tag: Array<Tag>,
-}
+  views: number;
+  createdAt: string;
+  boardImage: Array<string>;
+  like: Array<string>;
+  board_tag: Array<Tag>;
+};
 
 const MyWritePage = () => {
-  const [tag, setTag] = useState<string[]>([''])  // 태그 불러오기
+  const [tag, setTag] = useState<string[]>([""]); // 태그 불러오기
 
   const user = useSelector((state: RootState) => state.user);
-  const [content, setContent] = useState<string | undefined>('')    // 한 줄 소개
-  const [userName, setName] = useState<string>('')
+  const [content, setContent] = useState<string | undefined>(""); // 한 줄 소개
+  const [userName, setName] = useState<string>("");
 
   useEffect(() => {
-    setContent(user.introduction || `${user.nickName} 입니다.`)
-    setName(user.nickName ? user.nickName : (userName ? userName : ''));
-    fetchMoreData()
-  }, [userName])
+    setContent(user.introduction || `${user.nickName} 입니다.`);
+    setName(user.nickName ? user.nickName : userName ? userName : "");
+    fetchMoreData();
+  }, [userName]);
 
   // ARRAY
-  const [myData, setData] = useState<PostType[]>([])  // 게시판 저장
+  const [myData, setData] = useState<PostType[]>([]); // 게시판 저장
   // let boardCount = 0
 
   const [boardPage, setBoardPage] = useState<number>(1);
@@ -44,41 +45,44 @@ const MyWritePage = () => {
   // GetData
   const fetchMoreData = useCallback(async () => {
     // fetch(`https://jsonplaceholder.typicode.com/albums?_page=${boardPage}&_limit=10`)
-    if(!hasMore) return;
-    if(!userName) return;
+    if (!hasMore) return;
+    if (!userName) return;
 
     try {
-      const post = await getMyBoard(userName)
-      setData([...myData, ...post ]);
-      console.log(post)
-      if (myData.length === 0){
+      const post = await getMyBoard(userName);
+      setData([...myData, ...post]);
+      console.log(post);
+      if (myData.length === 0) {
         setHasMore(false);
       }
-      setBoardPage(boardPage + 1)
-    } catch(error) {
-      console.error('Error loading more data: ', error);
-    } 
-  }, [boardPage, hasMore, myData, userName])
+      setBoardPage(boardPage + 1);
+    } catch (error) {
+      console.error("Error loading more data: ", error);
+    }
+  }, [boardPage, hasMore, myData, userName]);
 
   // INFINITY SCROLL - 스크롤 값을 불러와 배열 나눠서 가져오기.
   const containerRef = useRef<HTMLDivElement | null>(null);
-  
+
   useEffect(() => {
-     // 스크롤 체크  
-     const container = containerRef.current;
-     if(!container) return;
-     
-     const handleScroll = () => {
-      if (container.scrollHeight - container.clientHeight <= container.scrollTop + 100) {
+    // 스크롤 체크
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (
+        container.scrollHeight - container.clientHeight <=
+        container.scrollTop + 100
+      ) {
         fetchMoreData();
       }
-     };
+    };
 
-     container.addEventListener('scroll', handleScroll);
-     return () => {
-       container.removeEventListener('scroll', handleScroll);
-     };
-  }, [fetchMoreData]); 
+    container.addEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [fetchMoreData]);
 
   // // 검색된 값 GET ARRAY
   // const getSearchList = () => {
@@ -113,35 +117,37 @@ const MyWritePage = () => {
   // }
 
   return (
-    <div className={style.container} >
+    <div className={style.container}>
       <div className={style.myPage}>
         {/* PROFILE */}
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img src='/public/images/짱구.jpeg' alt="image" className={style.myImage}/>
+              <img
+                src="/public/images/짱구.jpeg"
+                alt="image"
+                className={style.myImage}
+              />
             </div>
-            <h2>{ userName }</h2>
+            <h2>{userName}</h2>
           </div>
           <div className={style.introBox}>
             <h2>한 줄 소개</h2>
-            <div className={style.intro}>
-              { content }
-            </div>
+            <div className={style.intro}>{content}</div>
           </div>
         </div>
         <hr />
         {/* ARRAY 출력 */}
         <div className={style.myList} ref={containerRef}>
-          { userName && myData ? 
-            <Specific boardList= { myData } userName = { userName }/>
-            : ''}
+          {userName && myData ? (
+            <Specific boardList={myData} userName={userName} />
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>
-  )
+  );
+};
 
-
-}
-
-export default MyWritePage
+export default MyWritePage;
