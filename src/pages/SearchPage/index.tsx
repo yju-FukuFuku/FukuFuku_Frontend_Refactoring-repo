@@ -5,32 +5,16 @@ import {
   styled as muiStyled,
 } from "@mui/material/styles"; // @mui/styles 패키지에서 styled 불러오기
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Search, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import useDebounce from "../../hooks/useDebounce";
-
-interface Board {
-  id: number;
-  title: string;
-  content: string;
-  view: number;
-  createdAt: string;
-  img?: string;
-  user: {
-    nickname: string;
-    email: string;
-    lastName: string;
-    firstName: string;
-    picture: string;
-  };
-}
-[];
+import { SearchBoardType } from "../../types/BoardType";
 
 const SearchPage = () => {
   // data 불러오기
-  const [postData, setPostData] = useState<Board[]>();
+  const [postData, setPostData] = useState<SearchBoardType[]>();
 
   const getData = async (debounce: string) => {
     await axios
@@ -70,16 +54,12 @@ const SearchPage = () => {
               {/* 게시판 만들기 */}
               <Profile>
                 <ProfileImg src={item.user.picture} />
-                <ProfileName>
-                  {item.user.nickname
-                    ? item.user.nickname
-                    : item.user.firstName + item.user.lastName}
-                </ProfileName>
+                <ProfileName>{item.user.nickName}</ProfileName>
               </Profile>
               <PostLink to={`/boards/${item.id}`}>
                 {item.img && (
                   <PostImgBox>
-                    <PostImg src={item.img} />
+                    <PostImg src={item.img} alt="img" />
                   </PostImgBox>
                 )}
               </PostLink>
@@ -149,6 +129,9 @@ const Content = styled.div`
 const BoardContent = styled.div`
   font-size: 1rem;
   overflow: auto;
+  img {
+    display: none;
+  }
 `;
 
 const Wrapper = styled.div`

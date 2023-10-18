@@ -25,8 +25,7 @@ const MyPage = () => {
             setSetting(true);
           }}
         >
-          {" "}
-          내 정보{" "}
+          내 정보
         </button>
         <button
           className={setting ? style.navButtonBox : style.navButtonBox2}

@@ -4,27 +4,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { getMyBoard } from "../../api/User";
 import Specific from "../../components/Specific";
-
-interface Tag {
-  tag: { name: string };
-}
-[];
-
-type PostType = {
-  id: number;
-  u_id: string;
-  content: string;
-  title: string;
-  views: number;
-  createdAt: string;
-  boardImage: Array<string>;
-  like: Array<string>;
-  board_tag: Array<Tag>;
-};
+import { UserBoardType } from "../../types/BoardType";
 
 const MyWritePage = () => {
-  const [tag, setTag] = useState<string[]>([""]); // 태그 불러오기
-
   const user = useSelector((state: RootState) => state.user);
   const [content, setContent] = useState<string | undefined>(""); // 한 줄 소개
   const [userName, setName] = useState<string>("");
@@ -36,7 +18,7 @@ const MyWritePage = () => {
   }, [userName]);
 
   // ARRAY
-  const [myData, setData] = useState<PostType[]>([]); // 게시판 저장
+  const [myData, setData] = useState<UserBoardType[]>([]); // 게시판 저장
   // let boardCount = 0
 
   const [boardPage, setBoardPage] = useState<number>(1);

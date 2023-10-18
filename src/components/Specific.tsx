@@ -3,43 +3,20 @@ import style from "../pages/MyPage/myPage.module.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
-import axios from "axios";
 import { getSearchData } from "../api/BoardAPI";
 import styled from "styled-components";
-interface Tag {
-  tag: { name: string };
-}
-[];
+import { UserBoardType } from "../types/BoardType";
 
-export type PostType = {
-  id: number;
-  u_id: string;
-  content: string;
-  title: string;
-  views: number;
-  createdAt: string;
-  boardImage: Array<string>;
-  like: Array<string>;
-  board_tag: Array<Tag>;
-};
-
-type Props = {
-  boardList: Array<PostType>;
+const Specific = ({
+  boardList,
+  userName,
+}: {
+  boardList: UserBoardType[];
   userName: string;
-};
-
-const Specific = ({ boardList, userName }: Props) => {
-  const [tag, setTag] = useState<string[]>([""]); // 태그 불러오기
-
+}) => {
   // ARRAY
-  const [board, setBoard] = useState<PostType[]>([]); // 게시판 저장
-  const [searchBoard, setSearchBoard] = useState<PostType[]>([]); // 검색된 값 저장
-
-  // TAG - ??
-  const getTags = (tags: Tag[]) => {
-    const tagArray = tags.map((item) => item.tag.name);
-    setTag(tagArray);
-  };
+  const [board, setBoard] = useState<UserBoardType[]>([]); // 게시판 저장
+  const [searchBoard, setSearchBoard] = useState<UserBoardType[]>([]); // 검색된 값 저장
 
   // 배열 데이터 저장
   useEffect(() => {
@@ -48,7 +25,6 @@ const Specific = ({ boardList, userName }: Props) => {
 
   // SEARCH
   const [searchValue, setSearchValue] = useState<string>("");
-  const navigate = useNavigate();
 
   // 검색 값 가져오기
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +63,7 @@ const Specific = ({ boardList, userName }: Props) => {
                   <img
                     src={
                       item.boardImage.length != 0
-                        ? item.boardImage[0]
+                        ? item.boardImage[0].url
                         : "https://yju-fukufuku.s3.amazonaws.com/logo.svg"
                     }
                     alt="img"
@@ -104,7 +80,12 @@ const Specific = ({ boardList, userName }: Props) => {
                 </div>
               </Link>
               <div className={style.subInfo}>
-                <span>약 17시간 전</span>
+                <span>{item.createdAt}</span>
+                {item.board_tag
+                  ? item.board_tag.map((tagItem) => (
+                      <span key={tagItem.tag.id}>{tagItem.tag.name}</span>
+                    ))
+                  : null}
               </div>
               <hr />
             </div>
