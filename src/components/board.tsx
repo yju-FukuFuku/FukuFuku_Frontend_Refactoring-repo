@@ -48,25 +48,25 @@ const Board = ({ posts }: BoardProps) => {
                   alt="image"
                 />
               </PostImgBox>
-            </PostLink>
-            <Body>
-              <PostLink to={`/boards/${item.id}`}>
-                <H4>{item.title}</H4>
-                {/* <BodyContent>
+              <Body>
+                <PostLink to={`/boards/${item.id}`}>
+                  <H4>{item.title}</H4>
+                  {/* <BodyContent>
                   </BodyContent> */}
-              </PostLink>
-              <SubInfo>
-                <span>{item.createdAt.split("T")[0]}</span>
-                {/* <Separator></Separator> */}
-                <span>{item.boardTag}</span>
-              </SubInfo>
-            </Body>
-            <WriterBox>
-              <Writer>
-                <Profile src={`${item.user.picture}`} alt="profile" />
-                <span>{item.user.nickName}</span>
-              </Writer>
-            </WriterBox>
+                </PostLink>
+                <SubInfo>
+                  <span>{item.createdAt.split("T")[0]}</span>
+                  {/* <Separator></Separator> */}
+                  <span>{item.boardTag}</span>
+                </SubInfo>
+              </Body>
+              <WriterBox>
+                <Writer>
+                  <Profile src={`${item.user.picture}`} alt="profile" />
+                  <span>{item.user.nickName}</span>
+                </Writer>
+              </WriterBox>
+            </PostLink>
           </Post>
         ))}
       </PostArray>
@@ -97,11 +97,15 @@ const Content = styled.div`
   width: 1728px;
 
   @media all and (max-width: 1919px) {
-    width: 1376px;
+    width: 1440px;
   }
 
-  @media all and (max-width: 1440px) {
-    width: 1024px;
+  @media all and (max-width: 1600px) {
+    width: 1152px;
+  }
+
+  @media all and (max-width: 1300px) {
+    width: 864px;
   }
 
   @media all and (max-width: 1056px) {

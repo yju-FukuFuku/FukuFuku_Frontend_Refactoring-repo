@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 import axios from 'axios';
 import { Button } from '@mui/material';
-import { store } from '../../store';
+import { RootState } from '../../store';
 import { getReply } from '../../api/Comments';
+import { useSelector } from 'react-redux';
 
 interface ReCommentProps {
   comment: {
@@ -39,7 +40,7 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
   const [edit, setEdit] = useState<boolean>(false)
   const [editComment, setEditComment] = useState<string>('')
 
-  const user = store.getState().user;
+  const user = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
     const validUser = () => {
@@ -106,7 +107,7 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
       return;
     }
 
-    const name = user.nickName ? user.nickName : `${user?.firstName ?? 'Unknown'} ${user?.lastName ?? ''}`;
+    const name = user.nickName;
 
     const data = {
       content: commentValue,
@@ -115,7 +116,7 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
       commenter: name,
       img: user.picture,
     }
-
+    
     await axios.post('/replys', data)
     .then(() => {
       getReplys();
@@ -206,8 +207,8 @@ const ReComment = ({ comment, handleDelete }: ReCommentProps) => {
           show && (
             <ReplyContainer>
             {
-              replys.map((reply: Reply) => (
-                <ReComment comment={reply} handleDelete={replyDelete} />
+              replys.map((reply: Reply, index) => (
+                <ReComment key={index} comment={reply} handleDelete={replyDelete} />
               ))
             }
 

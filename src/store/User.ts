@@ -26,7 +26,16 @@ export const userSlice = createSlice({
   } as UserState,
   reducers: {
     setUser: (state, action) => {
-      const { id, email, picture, firstName, lastName, isAdmin, nickName, introduction } = action.payload;
+      const {
+        id,
+        email,
+        picture,
+        firstName,
+        lastName,
+        isAdmin,
+        nickName,
+        introduction,
+      } = action.payload;
       state.id = id;
       state.email = email;
       state.picture = picture;
@@ -47,11 +56,10 @@ export const userSlice = createSlice({
       state.nickName = null;
       state.introduction = null;
       state.isLogin = false;
-    }
-  }
+    },
+  },
 });
 
 export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;
-

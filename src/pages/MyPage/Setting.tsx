@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../../store';
 import { clearUser, setUser } from '../../store/User';
 import { useNavigate } from 'react-router-dom';
-import { deleteUser,editName, introChange } from '../../api/User';
+import { deleteUser, editName, introChange } from '../../api/User';
 import { editUserImage } from '../../api/Image';
 import { fire } from '../../util/fire';
 import { deleteAccessToken } from '../../store/Auth';
@@ -24,10 +24,6 @@ const Setting = () => {
   const [introCheck, setIntroCheck] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!user.isLogin) {
-      fire("로그인 후에 사용하실 수 있습니다.");
-      navigate('/');
-    }
     getData();
   }, []);
 

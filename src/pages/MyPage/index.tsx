@@ -4,9 +4,12 @@ import style from "./myPage.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useState } from "react";
+import { verifyUser } from "../../api";
 
 const MyPage = () => {
   const user = useSelector((state: RootState) => state.user);
+
+  verifyUser();
 
   const [setting, setSetting] = useState<boolean>(true);
 
