@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import useDebounce from "../../hooks/useDebounce";
 import { SearchBoardType } from "../../types/BoardType";
+import { getImageSrc } from "../../components/ImageParser";
 
 const SearchPage = () => {
   // data 불러오기
@@ -43,6 +44,7 @@ const SearchPage = () => {
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
+    console.log(postData);
     if (postData?.length !== 0 && searchValue != "") {
       return (
         <Wrapper>
@@ -52,15 +54,13 @@ const SearchPage = () => {
           {postData?.map((item) => (
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
-              <Profile>
-                <ProfileImg src={item.user.picture} />
-                <ProfileName>{item.user.nickName}</ProfileName>
-              </Profile>
               <PostLink to={`/boards/${item.id}`}>
-                {item.img && (
+                {getImageSrc(item.content) ? (
                   <PostImgBox>
-                    <PostImg src={item.img} alt="img" />
+                    <PostImg src={getImageSrc(item.content)} alt="img" />
                   </PostImgBox>
+                ) : (
+                  ""
                 )}
               </PostLink>
               <PostLink to={`/boards/${item.id}`}>
@@ -73,11 +73,11 @@ const SearchPage = () => {
               </PostContent>
               <SubInFo>
                 <span>{item.createdAt.split("T")[0]}</span>
-                <Separator>·</Separator>
-                <span>comment</span>
-                <Separator>·</Separator>
-                <span>like</span>
               </SubInFo>
+              <Profile>
+                <ProfileImg src={item.user.picture} />
+                <ProfileName>{item.user.nickName}</ProfileName>
+              </Profile>
             </SearchPost>
           ))}
         </Wrapper>
@@ -147,12 +147,12 @@ const Profile = styled.div`
   display: flex;
   -webkit-box-align: center;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin: 1rem;
 `;
 
 const ProfileImg = styled.img`
-  width: 3rem;
-  height: 3rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 1.5rem;
   margin-right: 1rem;
 `;
@@ -228,7 +228,3 @@ const PostLink = styled(Link)`
   color: inherit;
   text-decoration: none;
 `;
-
-function then(arg0: (res: any) => void) {
-  throw new Error("Function not implemented.");
-}
