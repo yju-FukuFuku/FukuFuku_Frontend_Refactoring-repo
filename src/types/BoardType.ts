@@ -16,6 +16,33 @@ export type BoardType = {
   like: BoardLikeType[];
 };
 
+export type UserBoardType = {
+  id: number;
+  u_id: string;
+  content: string;
+  title: string;
+  views: number;
+  createdAt: string;
+  boardImage: ImagesType[];
+  like: string[];
+  board_tag: {
+    tag: TagType;
+  }[];
+};
+
+export type SearchBoardType = {
+  id: number;
+  title: string;
+  content: string;
+  view: number;
+  createdAt: string;
+  img: string;
+  user: UserType;
+  board_tag: {
+    tag: TagType;
+  }[];
+};
+
 export type BoardLikeType = {
   u_id: number;
 };

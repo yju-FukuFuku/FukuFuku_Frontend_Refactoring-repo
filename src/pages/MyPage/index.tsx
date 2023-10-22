@@ -8,7 +8,7 @@ import { verifyUser } from "../../api";
 
 const MyPage = () => {
   const user = useSelector((state: RootState) => state.user);
-  
+
   verifyUser();
 
   const [setting, setSetting] = useState<boolean>(true);
@@ -19,9 +19,23 @@ const MyPage = () => {
       style={{ display: `${user.isLogin ? "block" : "none"}` }}
     >
       <div className={style.navbar}>
-        <button className= { setting ? style.navButtonBox2 : style.navButtonBox } onClick={() => {setSetting(true) }}> 내 정보 </button>
-        <button className= { setting ? style.navButtonBox : style.navButtonBox2 } onClick={() => {setSetting(false)}}> 쓴 글 목록 </button>
-
+        <button
+          className={setting ? style.navButtonBox2 : style.navButtonBox}
+          onClick={() => {
+            setSetting(true);
+          }}
+        >
+          내 정보
+        </button>
+        <button
+          className={setting ? style.navButtonBox : style.navButtonBox2}
+          onClick={() => {
+            setSetting(false);
+          }}
+        >
+          {" "}
+          쓴 글 목록{" "}
+        </button>
       </div>
       <div className={style.myPage}>
         {setting ? <Setting /> : <WriteList />}

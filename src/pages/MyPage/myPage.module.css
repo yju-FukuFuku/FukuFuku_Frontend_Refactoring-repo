@@ -41,6 +41,10 @@
   border-bottom: 1px solid rgb(5, 199, 199);
 }
 
+.Content img{
+  display: none;
+}
+
 .myPage hr {
   width: 100%;
   opacity: 20%;

@@ -2,9 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import style from "../MyPage/myPage.module.css";
 import { useNavigate, useParams } from "react-router-dom";
 // import { getMyBoard } from '../../api/User';
+
 import Specific from "../../components/Specific";
-import { PostType } from "../../components/Specific";
 import useDebounce from "../../hooks/useDebounce";
+import { UserBoardType } from "../../types/BoardType";
+import { getUserBoard } from "../../api/BoardAPI";
 
 interface Tag {
   tag: { name: string };
@@ -20,11 +22,11 @@ type BoardType = {
   isAdmin: null;
   nickName: string;
   introduction: string;
-  board: Array<PostType>;
+  board: Array<UserBoardType>;
 };
 
 const WriteListPage = () => {
-  const { userName } = useParams(); // 받아오는 userId( 닉네임 ) 
+  const { userName } = useParams(); // 받아오는 userId( 닉네임 )
 
   const [user, setUser] = useState<BoardType>();
 
@@ -33,8 +35,7 @@ const WriteListPage = () => {
   }, []);
 
   // ARRAY
-  const [userData, setData] = useState<PostType[]>([]); // 게시판 저장
-  const [searchData, setSearchData] = useState<PostType[]>([]); // 검색된 게시판 저장
+  const [userData, setData] = useState<UserBoardType[]>([]); // 게시판 저장
   // let boardCount = 0
 
   const [boardPage, setBoardPage] = useState<number>(1);
@@ -101,10 +102,11 @@ const WriteListPage = () => {
         <hr />
         {/* ARRAY 출력 */}
         <div className={style.myList} ref={containerRef}>
-          { userName ?  
-            <Specific boardList = { userData } userName = { userName }/>
-            : ''
-          }
+          {userName ? (
+            <Specific boardList={userData} userName={userName} />
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </div>
