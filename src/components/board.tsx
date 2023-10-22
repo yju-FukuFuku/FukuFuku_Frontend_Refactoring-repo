@@ -65,6 +65,15 @@ const Board = ({ posts }: BoardProps) => {
                   <Profile src={`${item.user.picture}`} alt="profile" />
                   <span>{item.user.nickName}</span>
                 </Writer>
+                <LikeBox>
+                  <LikeIconContainer>
+                    <LikeIcon
+                      d="m 18 1 l -6 4 l -6 -4 l -6 5 v 7 l 12 10 l 12 -10 V 6 Z"
+                      fill="black"
+                    ></LikeIcon>
+                  </LikeIconContainer>
+                  {item.like.length}
+                </LikeBox>
               </WriterBox>
             </PostLink>
           </Post>
@@ -233,4 +242,19 @@ const Profile = styled.img`
   height: 1.5rem;
   margin-right: 0.5rem;
   border-radius: 50%;
+`;
+
+const LikeBox = styled.span`
+  display: flex;
+  align-items: center;
+`;
+
+const LikeIconContainer = styled.svg`
+  width: 14.4px;
+  height: 13.2px;
+  margin-right: 0.3rem;
+`;
+
+const LikeIcon = styled.path`
+  transform: scale(0.6);
 `;
