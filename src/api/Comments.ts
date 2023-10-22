@@ -1,5 +1,6 @@
 import axios from "axios";
 import api from ".";
+import { CommentPost } from "../types/CommentType";
 
 type Comment = {
   content: string;
@@ -23,14 +24,37 @@ export const postComment = async (comment: Comment) => {
 
 // 댓글 삭제
 export const deleteComment = async (commentId: number) => {
-  await axios
-    .delete(`/comments/${commentId}`)
-    .then((res) => console.log(res.status));
+  const res = await axios.delete(`/comments/${commentId}`);
+  return res;
 };
 
 // 댓글 수정
-export const editComment = async (commentId: number, content: string) => {
-  const res = await axios.patch(`/comments/${commentId}`, content);
+export const editCommentApi = async (
+  commentId: number,
+  data: { content: string }
+) => {
+  const res = await axios.patch(`/comments/${commentId}`, data);
+  return res;
+};
+
+// 대댓글 생성
+export const replyPost = async (reply: CommentPost) => {
+  const res = await api.post("/replys", reply);
+  return res.data;
+};
+
+// 대댓글 수정
+export const replyEdit = async (
+  commentId: number,
+  data: { content: string }
+) => {
+  const res = await axios.patch(`/replys/${commentId}`, data);
+  return res;
+};
+
+// 대댓글 삭제
+export const replyDeleteApi = async (replyId: number) => {
+  const res = await axios.delete(`/replys/${replyId}`);
   return res;
 };
 

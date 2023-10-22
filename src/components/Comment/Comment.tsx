@@ -3,10 +3,9 @@ import { styled } from "styled-components";
 import styles from "./comment.module.scss";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { RootState } from "../../store";
 import { Button } from "@mui/material";
-import { getComment, postComment } from "../../api/Comments";
+import { deleteComment, getComment, postComment } from "../../api/Comments";
 import { useSelector } from "react-redux";
 
 interface Comment {
@@ -64,8 +63,9 @@ const Comment = () => {
   };
 
   const handleDelete = async (id: number) => {
+    if (confirm("정말 삭제하시겠습니까?") === false) return;
     try {
-      await axios.delete(`/comments/${id}`);
+      await deleteComment(id);
       getComments();
     } catch (error) {
       console.log(error);
