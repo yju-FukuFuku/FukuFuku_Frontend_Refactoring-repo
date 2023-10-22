@@ -1,58 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import { styled } from 'styled-components'
-import
-{
-  TrendingUp,
-  AccessTime,
-  MoreVert
-} from '@mui/icons-material';
+import React, { useState } from "react";
+import { styled } from "styled-components";
+import { MoreVert } from "@mui/icons-material";
 
-import { Menu, MenuItem, Select, Tab, Tabs, Typography } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-const StyledTabs = styled(Tabs)(
-  {
-    "& .MuiTabs-indicator": {
-      backgroundColor: "#000"
-    },
-    "& .MuiTab-textColorPrimary": {
-      color: "lightgray",
-      fontWeight: 300
-    },
-    "& .MuiTab-textColorPrimary.Mui-selected": {
-      color: "#000"
-    }
-  }
-)
+import { Menu, MenuItem, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { store } from "../store";
+import { fire } from "../util/fire";
 
 const Category = () => {
-
-  const [page, setPage] = useState<number>(0);
-
   const [anchorEl, setAnchorEl] = useState<null | SVGSVGElement>(null);
-  const open = Boolean(anchorEl);
-  const [date, setDate] = useState<string>('이번 주');
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
-  const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (pathname === '/') {
-      setPage(0);
-      setDate('이번 주');
-    } else if (pathname === '/recent') {
-      setPage(1);
-    }
-  }, [pathname])  
+  const open = Boolean(anchorEl);
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setPage(newValue);
-    if (newValue === 0) {
-      navigate('/');
-    } else if(newValue === 1) {
-      navigate('/recent');
-    }
-  }
+  const options = [{ name: "트렌딩" }, { name: "최신" }];
+
+  const selectCategory = (index: number, name: string) => {
+    setSelectedIndex(index);
+    if (name === "트렌딩") navigate("/");
+    else navigate("/recent");
+  };
 
   const menuHandleClick = (event: React.MouseEvent<SVGSVGElement>) => {
     setAnchorEl(event.currentTarget);
@@ -63,113 +32,165 @@ const Category = () => {
 
   return (
     <CategoryWrapper>
-    <StyledTabs 
-    value={page} 
-    onChange={handleChange}>
-      <Tab
-        label={
-          <CategoryItem>
-            <TrendingUp fontSize="medium" sx={{ mr: '5px' }} />
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                cursor: 'pointer', 
-                ...page === 0 && { fontWeight: 700 }, ...page !== 0 && { fontWeight: 300 }
-              }}
-            >
-              트렌딩
-            </Typography>
-          </CategoryItem>
-        }
-      />
-      <Tab
-        label={
-          <CategoryItem>
-            <AccessTime fontSize="medium" sx={{ mr: '5px' }} />
-            <Typography variant="h6" sx={{ cursor: 'pointer', ...page === 1 && { fontWeight: 700 }, ...page !== 1 && { fontWeight: 300 }}}>
-              최신
-            </Typography>
-          </CategoryItem>
-        }
-      />
-    </StyledTabs>
-  
-    {
-      pathname === '/' && (
-        <>
-          <Select
-            value={date}
-            onChange={(e) => setDate(e.target.value as string)}
-            sx={{width: '110px', height: '40px', marginLeft: '10px', boxShadow: 'none', border: '1px solid lightgray', borderRadius: '5px', boxSizing: 'border-box'}}
+      <CategoryLeft>
+        {options.map((option, index) => (
+          <ItemText
+            className={index === selectedIndex ? "active" : ""}
+            key={option.name}
+            onClick={() => selectCategory(index, option.name)}
           >
-            <MenuItem value={"오늘"}>오늘</MenuItem>
-            <MenuItem value={"이번 주"}>이번 주</MenuItem>
-            <MenuItem value={"이번 달"}>이번 달</MenuItem>
-            <MenuItem value={"올해"}>올해</MenuItem>
-          </Select>
-        </>
-      )
-    }
-    
+            {option.name}
+          </ItemText>
+        ))}
+        <Line $selectedIndex={selectedIndex} />
+      </CategoryLeft>
 
-    <MoreVert 
-      sx={{position: 'absolute', right: 0, cursor: 'pointer'}}
-      id="mav-menu-button"
-      onClick={menuHandleClick}
-    />
+      <CategoryRight>
+        <Write
+          onClick={() => {
+            const isLogin = store.getState().token.isLogin;
 
-    <MenuWrapper>
-      <Menu 
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        sx={{left: 0}}
-      >
-        <MenuItem 
-          onClick={handleClose}
-          sx={{fontWeight: 700, width: '150px', height: '40px', borderBottom: '1px solid lightgray', display: 'flex', alignItems: 'center'}}
-        >공지사항</MenuItem>
+            if (!isLogin) {
+              fire("로그인 후에 이용 가능합니다.");
+              return;
+            }
 
-        <MenuItem 
-          onClick={handleClose}
-          sx={{fontWeight: 700, width: '150px', height: '40px', display: 'flex', alignItems: 'center'}}
-        >태그 목록</MenuItem>
+            navigate("/write");
+          }}
+        >
+          <Typography sx={{ color: "#000", fontWeight: 600 }}>
+            새 글 작성
+          </Typography>
+        </Write>
 
-      </Menu>
-    </MenuWrapper>
-    
-  </CategoryWrapper>
-  )
-}
+        <MoreVert
+          sx={{ cursor: "pointer", color: "#ECECEC" }}
+          id="mav-menu-button"
+          onClick={menuHandleClick}
+        />
+      </CategoryRight>
 
-export default Category
+      <MenuWrapper>
+        <Menu
+          open={open}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+          sx={{ left: 0 }}
+        >
+          <MenuItem
+            onClick={handleClose}
+            sx={{
+              fontWeight: 700,
+              width: "150px",
+              height: "40px",
+              borderBottom: "1px solid lightgray",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            공지사항
+          </MenuItem>
+
+          <MenuItem
+            onClick={handleClose}
+            sx={{
+              fontWeight: 700,
+              width: "150px",
+              height: "40px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            태그 목록
+          </MenuItem>
+        </Menu>
+      </MenuWrapper>
+    </CategoryWrapper>
+  );
+};
+
+export default Category;
 
 const CategoryWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
+  width: 1696px;
   margin: 0 auto;
-  width: 1700px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+
+  @media all and (max-width: 1919px) {
+    width: 1408px;
+  }
+
+  @media all and (max-width: 1600px) {
+    width: 1120px;
+  }
+
+  @media all and (max-width: 1300px) {
+    width: 832px;
+  }
+
+  @media all and (max-width: 1056px) {
+    width: calc(100% - 2rem - 32px);
+  }
+`;
+
+const CategoryLeft = styled.div`
+  display: flex;
   position: relative;
+  width: 14rem;
+`;
 
-  @media screen and (max-width: 1023px) {
-    width: 900px;
-  }
-
-  @media screen and (max-width: 767px) {
-    width: 400px;
-  }
-`
-
-const CategoryItem = styled.div`
+const CategoryRight = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const ItemText = styled.div`
+  width: 7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  font-size: 1.125rem;
+  color: #868e96;
   cursor: pointer;
-  width: 90px;
-  height: 20px;
-`
+
+  &.active {
+    font-weight: 700;
+    color: #000;
+  }
+`;
+
+const Line = styled.div<{ $selectedIndex: number }>`
+  left: ${({ $selectedIndex }) => ($selectedIndex === 0 ? "0" : "50%")};
+  width: 50%;
+  height: 2px;
+  position: absolute;
+  bottom: 0;
+  background-color: #000;
+  transition: all 0.3s ease-in-out;
+`;
+
+const Write = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  margin-right: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  width: 100px;
+  height: 40px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ececec;
+  }
+`;
 
 const MenuWrapper = styled.div`
   position: absolute;
-`
+`;

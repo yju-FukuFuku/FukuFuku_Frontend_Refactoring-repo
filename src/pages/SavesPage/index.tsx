@@ -99,7 +99,6 @@ const Content = styled.div`
 
   @media all and (max-width:767px) {
     margin: 0 1rem;
-    overflow: hidden;
     width: 100%;
   } 
 `

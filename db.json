@@ -1,21 +1,155 @@
+
 {
-  "accounts": [
+  "users": [
     {
-      "name": "test",
-      "password": "test"
+      "id": 1,
+      "email": "user1@example.com",
+      "picture": "user1.jpg",
+      "firstName": "John",
+      "lastName": "Doe",
+      "isAdmin": 1,
+      "nickName": "johnd",
+      "introduction": "Hello, I'm John!",
+      "board": [1, 2],
+      "comment": [1, 2],
+      "reply": [1, 2],
+      "like": [1, 2]
     },
     {
-      "id": "1234",
-      "password": "asd5050"
+      "id": 2,
+      "email": "user2@example.com",
+      "picture": "user2.jpg",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "isAdmin": null,
+      "nickName": "janes",
+      "introduction": "Nice to meet you!",
+      "board": [3],
+      "comment": [3],
+      "reply": [3],
+      "like": [3]
+    }
+  ],
+  "likes": [
+    {
+      "id": 1,
+      "b_id": 1,
+      "u_id": 1
     },
     {
-      "id": "1234f",
-      "password": "asd123"
+      "id": 2,
+      "b_id": 2,
+      "u_id": 1
     },
     {
-      "id": "hetame",
-      "password": "asd5050",
-      "profile_image": "/images/user.png"
+      "id": 3,
+      "b_id": 3,
+      "u_id": 2
+    }
+  ],
+  "boards": [
+    {
+      "id": 1,
+      "title": "First Board",
+      "content": "This is the content of the first board.",
+      "like": [1],
+      "views": 100,
+      "createdAt": "2023-07-18T12:34:56.789Z",
+      "comment": [1, 2],
+      "u_id": 1
+    },
+    {
+      "id": 2,
+      "title": "Second Board",
+      "content": "This is the content of the second board.",
+      "like": [2],
+      "views": 50,
+      "createdAt": "2023-07-18T12:45:23.456Z",
+      "comment": [3],
+      "u_id": 1
+    },
+    {
+      "id": 3,
+      "title": "Third Board",
+      "content": "This is the content of the third board.",
+      "like": [3],
+      "views": 75,
+      "createdAt": "2023-07-18T13:00:00.000Z",
+      "comment": [],
+      "u_id": 2
+    },
+    {
+      "id": 4,
+      "title": "First Board",
+      "content": "This is the content of the first board.",
+      "like": [1],
+      "views": 100,
+      "createdAt": "2023-07-18T12:34:56.789Z",
+      "comment": [1, 2],
+      "u_id": 1
+    }
+    
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "commenter": "Alice",
+      "content": "This is the first comment.",
+      "img": "comment1.jpg",
+      "like": 10,
+      "reply": [1],
+      "boardId": 1,
+      "u_id": 1
+    },
+    {
+      "id": 2,
+      "commenter": "Bob",
+      "content": "This is the second comment.",
+      "img": "comment2.jpg",
+      "like": 5,
+      "reply": [2],
+      "boardId": 1,
+      "u_id": 1
+    },
+    {
+      "id": 3,
+      "commenter": "Eve",
+      "content": "This is the third comment.",
+      "img": "comment3.jpg",
+      "like": 15,
+      "reply": [3],
+      "boardId": 2,
+      "u_id": 2
+    }
+    
+  ],
+  "replies": [
+    {
+      "id": 1,
+      "commenter": "Carol",
+      "img": "reply1.jpg",
+      "content": "This is the first reply.",
+      "like": 2,
+      "c_id": 1,
+      "u_id": 2
+    },
+    {
+      "id": 2,
+      "commenter": "Dave",
+      "img": "reply2.jpg",
+      "content": "This is the second reply.",
+      "like": 3,
+      "c_id": 2,
+      "u_id": 1
+    },
+    {
+      "id": 3,
+      "commenter": "Frank",
+      "img": "reply3.jpg",
+      "content": "This is the third reply.",
+      "like": 1,
+      "c_id": 3,
+      "u_id": 1
     }
   ]
 }

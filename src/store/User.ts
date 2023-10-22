@@ -8,6 +8,8 @@ interface UserState {
   lastName: string | null;
   isAdmin: boolean | null;
   nickName: string | null;
+  isLogin: boolean;
+  introduction?: string | null;
 }
 
 export const userSlice = createSlice({
@@ -20,10 +22,20 @@ export const userSlice = createSlice({
     lastName: null,
     isAdmin: null,
     nickName: null,
+    isLogin: false,
   } as UserState,
   reducers: {
     setUser: (state, action) => {
-      const { id, email, picture, firstName, lastName, isAdmin, nickName } = action.payload;
+      const {
+        id,
+        email,
+        picture,
+        firstName,
+        lastName,
+        isAdmin,
+        nickName,
+        introduction,
+      } = action.payload;
       state.id = id;
       state.email = email;
       state.picture = picture;
@@ -31,11 +43,23 @@ export const userSlice = createSlice({
       state.lastName = lastName;
       state.isAdmin = isAdmin;
       state.nickName = nickName;
-    }
-  }
+      state.introduction = introduction;
+      state.isLogin = true;
+    },
+    clearUser: (state) => {
+      state.id = null;
+      state.email = null;
+      state.picture = null;
+      state.firstName = null;
+      state.lastName = null;
+      state.isAdmin = null;
+      state.nickName = null;
+      state.introduction = null;
+      state.isLogin = false;
+    },
+  },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;
-

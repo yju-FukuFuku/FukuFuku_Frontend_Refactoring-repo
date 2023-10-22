@@ -1,211 +1,190 @@
-import { styled } from 'styled-components'
-import 
-{
-  SearchRounded, 
-  LightMode
-} from '@mui/icons-material';
-
-import { Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import LoginModal from './Modal/LoginModal';
-import Category from './Category';
-import { useRecoilState } from "recoil";
-import { themeState } from '../atom';
-import { store } from '../store';
+import { styled } from "styled-components";
+import { useLocation, useNavigate } from "react-router-dom";
+import { RootState } from "../store";
+import { useSelector } from "react-redux";
+import { SearchRounded } from "@mui/icons-material";
+import Category from "./Category";
+import { login } from "../api/Login";
+import {
+  GoogleOAuthProvider,
+  GoogleLogin,
+  googleLogout,
+} from "@react-oauth/google";
+import { logOut } from "../api";
 
 const Nav = () => {
-  const [headMargin, setHeadMargin] = useState<boolean>(true);
-  const [prevScrollY, setPrevScrollY] = useState<number>(0);
-  const [modalopen, setModalopen] = useState<boolean>(false);
-
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const { isLogin } = store.getState().token;
-  const user = store.getState().user;
+  const user = useSelector((state: RootState) => state.user);
 
-  useEffect(() => {
-    if (isLogin) {
-      setModalopen(false);
-    }
-  }, [isLogin])
-
-  const handleScroll = useCallback(() => {
-    const currentScrollY = window.scrollY;
-    if (currentScrollY > prevScrollY) {
-      setHeadMargin(false);
-    } else {
-      setHeadMargin(true);
-    }
-    setPrevScrollY(currentScrollY);
-  }, [prevScrollY]);
-
-  useEffect(() => {
-    setPrevScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [handleScroll]);
+  const isLogin = useSelector((state: RootState) => state.token.isLogin);
 
   const handleClick = () => {
-    navigate('/search');
+    navigate("/search");
+  };
+
+  const handleLogOut = () => {
+    googleLogout();
+    logOut();
+  };
+
+  const googleHandler = async (credential: string | undefined) => {
+    login(credential);
+  };
+
+  if (pathname === "/write") {
+    return null;
   }
 
-  const [theme, setTheme] = useRecoilState(themeState);
-
-  const handleTheme = () => {
-    theme === true ? setTheme(false) : setTheme(true)
-    console.log("밝은 테마", theme);
-    
-  }
-  
   return (
     <>
-      <Container headmargin={headMargin ? 'true' : 'false'}>
-        <Wrapper>
-          
-          <Typography 
-            sx={{cursor: "pointer", fontFamily: 'Oswald, sans-serif'}} 
-            variant='h4'
-            onClick={() => navigate('/')}
-            color={theme === true ? "#212529" : "#ECECEC"}
-          >
-          Fukufuku
-          </Typography>
+      <Header>
+        <HeaderInner>
+          <HeaderWrapper>
+            <LogoText onClick={() => navigate("/")}>Fukufuku</LogoText>
 
-          <Item>
-            <Icon>
-              <LightMode onClick={handleTheme} />
-            </Icon>
-            <Icon onClick={handleClick}>
-              <SearchRounded />
-            </Icon>
-            {
-              isLogin ? (
-                <Write onClick={() => {navigate('/write')}}>
-                  <Typography sx={{ color: '#000', fontWeight: 600 }}>새글작성</Typography>
-                </Write>
-              ) : null
-            }
-
-            {
-              isLogin ? (
-                <Icon onClick={() => navigate('/mypage')}>
-                  { user.picture ? (
-                    <img 
-                      src={user.picture}
-                      alt="profile"
-                      style={{width: '40px', height: '40px', borderRadius: '50%'}}
-                    />
-                    ) : null
-                  }
-                  
-                </Icon>
+            <Item>
+              <Icon onClick={handleClick}>
+                <SearchRounded sx={{ color: "#000", fontSize: "1.5rem" }} />
+              </Icon>
+              {isLogin ? (
+                <>
+                  <Login onClick={handleLogOut}>
+                    <Sign>로그아웃</Sign>
+                  </Login>
+                  <Icon onClick={() => navigate("/mypage")}>
+                    {user.picture ? (
+                      <img
+                        src={user.picture}
+                        alt="profile"
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    ) : null}
+                  </Icon>
+                </>
               ) : (
-                <Login onClick={() => {setModalopen(true)}}>
-                  <Typography sx={{ color: `${theme === true ? "#ECECEC" : "#212529"}` }}>로그인</Typography>
-                </Login>
-              )
-            }
-            
-          </Item>
-
-        </Wrapper>
-
-        {
-          (pathname === '/' || pathname === '/recent') && (
-            <Category />
-          )
-        }
-
-      </Container>
-
-      {
-        modalopen && (
-          <LoginModal setModalopen={setModalopen} />
-        )
-      }
-
+                <GoogleOAuthProvider
+                  clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID as string}
+                >
+                  <GoogleLogin
+                    type={"icon"}
+                    shape={"pill"}
+                    onSuccess={({ credential }) => {
+                      googleHandler(credential);
+                    }}
+                  />
+                </GoogleOAuthProvider>
+              )}
+            </Item>
+          </HeaderWrapper>
+        </HeaderInner>
+        {pathname === "/" || pathname === "/recent" ? <Category /> : null}
+      </Header>
     </>
-  )
-}
+  );
+};
 
-export default Nav
+export default Nav;
 
-const Container = styled.div<{headmargin?: string}>`
+const Header = styled.header`
+  background-color: #d7eaff;
+  border-bottom: 1px solid #eee;
+  width: 100%;
   position: fixed;
-  width: 100vw;
-  justify-content: center;
-  background-color: #fff;
-  margin-top: ${props => props.headmargin === 'true' ? '0' : '-140px'};
-  background-color: ${props => props.theme.bgColor1};
-  transition: margin-top 0.3s ease-in-out;
-  z-index: 10;
-`
+  top: 0;
+  z-index: 999;
+`;
 
-const Wrapper = styled.div`
+const HeaderInner = styled.div`
+  max-width: 1696px;
+  margin: 0 auto;
+  position: relative;
+
+  @media all and (max-width: 1919px) {
+    width: 1408px;
+  }
+
+  @media all and (max-width: 1600px) {
+    width: 1120px;
+  }
+
+  @media all and (max-width: 1300px) {
+    width: 832px;
+  }
+
+  @media all and (max-width: 1056px) {
+    width: calc(100% - 2rem - 32px);
+  }
+
+  /* @media screen and(max-width: 1023px) {
+    max-width: 900px;
+  }
+
+  @media screen and(max-width: 767px) {
+    max-width: 300px;
+  } */
+`;
+
+const HeaderWrapper = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  align-items: center;
-  margin: 20px auto;
-  width: 1700px;
-
-  @media screen and (max-width: 1023px) {
-    width: 900px;
-  }
-
-  @media screen and (max-width: 767px) {
-    width: 400px;
-  }
-`
+  height: 60px;
+`;
 
 const Item = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const Login = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: ${props => props.theme.textColor1};
-  cursor: pointer;
-  margin-left: 10px;
-`
-
-const Write = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100px;
-  height: 40px;
+  width: 7rem;
+  height: 3rem;
   border-radius: 20px;
   background-color: #fff;
   cursor: pointer;
-  border: 1px solid #000;
-  margin-right: 1rem;
-`
+  margin-left: 10px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+
+  color: #000;
+  font-weight: 700;
+`;
 
 const Icon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 10px;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 3rem;
+  height: 3rem;
+  margin-left: 1rem;
 
   &:hover {
     background-color: #c2c2c2;
     border-radius: 50%;
   }
-`
+`;
+
+const LogoText = styled.div`
+  font-family: "Oswald", sans-serif;
+  font-size: 2rem;
+  cursor: pointer;
+  text-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+`;
+
+const Sign = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.125rem;
+`;

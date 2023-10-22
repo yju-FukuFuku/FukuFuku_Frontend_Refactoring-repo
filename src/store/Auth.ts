@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const TOKEN_TIME_OUT = 300 * 1000;
+export const TOKEN_TIME_OUT = import.meta.env.VITE_TOKEN_TIME_OUT;
 
 interface AuthState {
   accessToken: string | null;
@@ -25,10 +25,18 @@ export const authSlice = createSlice({
       state.accessToken = accessToken;
       state.isLogin = true;
       state.expireTime = new Date().getTime() + TOKEN_TIME_OUT;
-    }
-  }
+    },
+    setLogin: (state, action: PayloadAction<boolean>) => {
+      state.isLogin = action.payload;
+    },
+    deleteAccessToken: (state) => {
+      state.accessToken = null;
+      state.isLogin = false;
+      state.expireTime = 0;
+    },
+  },
 });
 
-export const { setAccessToken } = authSlice.actions;
+export const { setAccessToken, deleteAccessToken } = authSlice.actions;
 
 export default authSlice.reducer;

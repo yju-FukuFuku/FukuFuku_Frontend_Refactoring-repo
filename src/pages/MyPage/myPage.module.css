@@ -6,11 +6,43 @@
 }
 
 .myPage {
-  position: relative;
-  top: 72px;
   display: block;
   width: 768px;
   margin: 0 auto;
+}
+
+.navbar {
+  width: 768px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar button {
+  background-color: transparent;
+  font-size: 1.5rem;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.navButtonBox {
+  width: 50%;
+  text-align: center;
+  color: black;
+  border: none;
+}
+
+.navButtonBox2 {
+  width: 50%;
+  text-align: center;
+  border: none;
+  color: rgb(5, 199, 199);
+  border-bottom: 1px solid rgb(5, 199, 199);
+}
+
+.Content img{
+  display: none;
 }
 
 .myPage hr {
@@ -26,12 +58,13 @@
   border-radius: 5px;
   padding: 5px 15px;
   font-size: 18px;
+  cursor: pointer;
 }
 
 /* PROFILE */
 .profileBox {
   display: flex;
-  margin-top: 3.5rem;
+  margin-top: 3rem;
 }
 .profile {
   text-align: center;
@@ -55,6 +88,7 @@
 .profile .imgBtn {
   font-weight: 600;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .profile .modifyBtn {
@@ -87,6 +121,10 @@
   width: 100%;
   font-size: 16px;
 }
+.setting .wrapperInput {
+  height: 90px;
+  padding: 20px 0;
+}
 .setting .wrapperList > span:last-child {
   margin-left: auto;
 }
@@ -94,6 +132,7 @@
   background: none;
   text-decoration: underline;
   color: rgb(5, 199, 199);
+  cursor: pointer;
 }
 .setting .username {
   flex: 1 1 0%;
@@ -102,20 +141,26 @@
   border: 1px solid rgb(5, 199, 199);
   border-radius: 10px;
 }
+.setting .alert {
+  box-sizing: border-box;
+  padding: 0;
+}
 .setting .updateBtn {
   margin-left: auto;
+  cursor: pointer;
 }
 .setting .removeBtn {
   color: aliceblue;
   background-color: rgb(255, 60, 60);
+  cursor: pointer;
 }
 
 /* LIST - 쓴 글 목록 */
 .myList {
-  margin-top: 50px;
+  overflow: scroll;
 }
 .myList .body {
-  margin-top: 6rem;
+  margin-top: 3rem;
 }
 .serBox {
   box-sizing: inherit;
@@ -145,6 +190,12 @@
 .list {
   margin-bottom: 60px;
 }
+
+.list .postLink{
+  color: inherit;
+  text-decoration: none;
+}
+
 .list .contentImg {
   display: flex;
   align-items: center;
@@ -160,15 +211,39 @@
   display: block;
   object-fit: cover;
 }
+/* .swal-wide{
+  width:250px !important;
+  max-width: unset !important;
+} */
 .list h2 {
   margin: 15px 0;
+}
+.list .a{
+  text-decoration: none;
+}
+.tagWrapper {
+  width: 100%;
+  margin-top: 1rem;
+}
+.boardTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #faf9fa;
+  padding: 0 10px;
+  color: #12b886;
+  border-radius: 10%;
+  height: 30px;
+  margin-right: 0.3rem;
+  white-space: nowrap;
 }
 .list .subInfo {
   display: flex;
   align-items: center;
   margin-bottom: 60px;
 }
-.list span {
+.list .subInfo span {
   color: rgb(119, 119, 119);
   margin-right: 10px;
 }
@@ -190,7 +265,7 @@
 }
 .introBox h2 {
   display: block;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 .introBox .intro {
   width: 100%;
@@ -276,15 +351,8 @@
     width: 100%;
     margin: auto;
   }
-  .myList .Link {
-    width: 50%;
-    padding: 0px;
-  }
-  .myList .Link:first-child {
-    border-right: 1px;
-  }
-  .list .contentImg {
-    /* height: 250px; */
+  .myList .a{
+    text-decoration: none;
   }
   .list .subInfo {
     margin-bottom: 30px;
