@@ -4,6 +4,7 @@ import Board from "../../components/board";
 import { getBoard } from "../../api/BoardAPI";
 import { PostType } from "../../components/board";
 import { debounce } from "@mui/material";
+import { matchPath, useLocation } from "react-router-dom";
 
 const MainPage = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -12,11 +13,42 @@ const MainPage = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [request, setRequest] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { pathname } = useLocation();
+  const [option, setOption] = useState<"trendy" | "recent">("trendy");
+
+  useEffect(() => {
+    if (pathname == "/") {
+      setOption("trendy");
+    } else if (pathname == "/recent") {
+      setOption("recent");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (pathname == "/") {
+      setOption("trendy");
+      setPosts([]);
+      setLastId(0);
+      setLoading(false);
+      setHasMore(true);
+      setRequest(false);
+      console.log("trendy");
+    } else if (pathname == "/recent") {
+      setOption("recent");
+      setPosts([]);
+      setLastId(0);
+      setLoading(false);
+      setHasMore(true);
+      setRequest(false);
+      console.log("recent");
+      // window.location.reload();
+    }
+  }, [pathname]);
 
   // 데이터 렌더링
   useEffect(() => {
     loadMoreData();
-  }, []);
+  }, [option]);
 
   useEffect(() => {
     if (request && hasMore) {
@@ -29,7 +61,7 @@ const MainPage = () => {
     if (loading || !hasMore) return;
     setLoading(true);
     try {
-      const newData = await getBoard(lastId, 6);
+      const newData = await getBoard(lastId, option);
       console.log(newData);
       if (JSON.stringify(posts) === JSON.stringify(newData)) {
         console.log("같음");
@@ -52,7 +84,7 @@ const MainPage = () => {
       setLoading(false);
       setRequest(false);
     }
-  }, [loading, hasMore, lastId, posts]);
+  }, [loading, hasMore, lastId, posts, option]);
 
   // 스크롤
   useEffect(() => {

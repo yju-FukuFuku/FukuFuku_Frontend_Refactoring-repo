@@ -67,7 +67,7 @@ type dateType = "오늘" | "이번 주" | "이번 달" | "올해";
 //     return data;
 // }
 
-export const getBoard = async (lastId: number, pageSize: number) => {
+export const getBoard = async (lastId: number, option: "recent" | "trendy") => {
   // 기본 요청 경로(date는 필수)
   // if (date) {
   //   const responseDate = getCurrentDate(date);
@@ -79,7 +79,7 @@ export const getBoard = async (lastId: number, pageSize: number) => {
   //   const { data } = await axios.get(`/boards`);
   //       return data;
   //   }
-  const { data } = await axios.get(`/boards?lastId=${lastId}`); //?_page=${page}&_limit=${pageSize}
+  const { data } = await axios.get(`/boards?lastId=${lastId}&option=${option}`); //?_page=${page}&_limit=${pageSize}
   // console.log(lastId);
   return data;
 };
