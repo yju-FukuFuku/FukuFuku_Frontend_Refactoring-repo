@@ -5,32 +5,17 @@ import {
   styled as muiStyled,
 } from "@mui/material/styles"; // @mui/styles 패키지에서 styled 불러오기
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Search, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import useDebounce from "../../hooks/useDebounce";
-
-interface Board {
-  id: number;
-  title: string;
-  content: string;
-  view: number;
-  createdAt: string;
-  img?: string;
-  user: {
-    nickname: string;
-    email: string;
-    lastName: string;
-    firstName: string;
-    picture: string;
-  };
-}
-[];
+import { SearchBoardType } from "../../types/BoardType";
+import { getImageSrc } from "../../components/ImageParser";
 
 const SearchPage = () => {
   // data 불러오기
-  const [postData, setPostData] = useState<Board[]>();
+  const [postData, setPostData] = useState<SearchBoardType[]>();
 
   const getData = async (debounce: string) => {
     await axios
@@ -59,6 +44,7 @@ const SearchPage = () => {
 
   // 배열에서 검색한 값만 불러오기
   const getSearchList = () => {
+    console.log(postData);
     if (postData?.length !== 0 && searchValue != "") {
       return (
         <Wrapper>
@@ -68,19 +54,13 @@ const SearchPage = () => {
           {postData?.map((item) => (
             <SearchPost key={item.id}>
               {/* 게시판 만들기 */}
-              <Profile>
-                <ProfileImg src={item.user.picture} />
-                <ProfileName>
-                  {item.user.nickname
-                    ? item.user.nickname
-                    : item.user.firstName + item.user.lastName}
-                </ProfileName>
-              </Profile>
               <PostLink to={`/boards/${item.id}`}>
-                {item.img && (
+                {getImageSrc(item.content) ? (
                   <PostImgBox>
-                    <PostImg src={item.img} />
+                    <PostImg src={getImageSrc(item.content)} alt="img" />
                   </PostImgBox>
+                ) : (
+                  ""
                 )}
               </PostLink>
               <PostLink to={`/boards/${item.id}`}>
@@ -93,11 +73,11 @@ const SearchPage = () => {
               </PostContent>
               <SubInFo>
                 <span>{item.createdAt.split("T")[0]}</span>
-                <Separator>·</Separator>
-                <span>comment</span>
-                <Separator>·</Separator>
-                <span>like</span>
               </SubInFo>
+              <Profile>
+                <ProfileImg src={item.user.picture} />
+                <ProfileName>{item.user.nickName}</ProfileName>
+              </Profile>
             </SearchPost>
           ))}
         </Wrapper>
@@ -149,6 +129,9 @@ const Content = styled.div`
 const BoardContent = styled.div`
   font-size: 1rem;
   overflow: auto;
+  img {
+    display: none;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -164,12 +147,12 @@ const Profile = styled.div`
   display: flex;
   -webkit-box-align: center;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin: 1rem;
 `;
 
 const ProfileImg = styled.img`
-  width: 3rem;
-  height: 3rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 1.5rem;
   margin-right: 1rem;
 `;
@@ -245,7 +228,3 @@ const PostLink = styled(Link)`
   color: inherit;
   text-decoration: none;
 `;
-
-function then(arg0: (res: any) => void) {
-  throw new Error("Function not implemented.");
-}

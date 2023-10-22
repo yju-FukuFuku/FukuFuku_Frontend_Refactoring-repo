@@ -99,6 +99,12 @@ export const getSearchData = async (nickName: string, debounce: string) => {
   return data;
 };
 
+export const getUserBoard = async (nickName: string | undefined) => {
+  const { data } = await axios.get(`/boards/author/${nickName}`);
+  console.log(data);
+  return data[0];
+};
+
 // date를 받아서 startDate와 endDate를 구해주는 함수
 function getCurrentDate(date?: dateType) {
   const now = new Date();
