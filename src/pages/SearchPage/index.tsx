@@ -62,22 +62,22 @@ const SearchPage = () => {
                 ) : (
                   ""
                 )}
-              </PostLink>
-              <PostLink to={`/boards/${item.id}`}>
                 <H3>{item.title}</H3>
+                <PostContent>
+                  <BoardContent
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
+                </PostContent>
               </PostLink>
-              <PostContent>
-                <BoardContent
-                  dangerouslySetInnerHTML={{ __html: item.content }}
-                />
-              </PostContent>
               <SubInFo>
                 <span>{item.createdAt.split("T")[0]}</span>
               </SubInFo>
-              <Profile>
-                <ProfileImg src={item.user.picture} />
-                <ProfileName>{item.user.nickName}</ProfileName>
-              </Profile>
+              <PostLink to={`/boards/${item.user.nickName}`}>
+                <Profile>
+                  <ProfileImg src={item.user.picture} />
+                  <ProfileName>{item.user.nickName}</ProfileName>
+                </Profile>
+              </PostLink>
             </SearchPost>
           ))}
         </Wrapper>

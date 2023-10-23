@@ -6,6 +6,7 @@ import useDebounce from "../hooks/useDebounce";
 import { getSearchData } from "../api/BoardAPI";
 import styled from "styled-components";
 import { UserBoardType } from "../types/BoardType";
+import { getImageSrc } from "./ImageParser";
 
 const Specific = ({
   boardList,
@@ -59,16 +60,13 @@ const Specific = ({
           <div key={`list-${item.id}`}>
             <div className={style.list}>
               <Link to={`/boards/${item.id}`} className={style.postLink}>
-                <div className={style.contentImg}>
-                  <img
-                    src={
-                      item.boardImage.length != 0
-                        ? item.boardImage[0].url
-                        : "https://yju-fukufuku.s3.amazonaws.com/logo.svg"
-                    }
-                    alt="img"
-                  />
-                </div>
+                {getImageSrc(item.content) ? (
+                  <div className={style.contentImg}>
+                    <img src={getImageSrc(item.content)} alt="img" />
+                  </div>
+                ) : (
+                  ""
+                )}
                 <h2>{item.title}</h2>
                 <Content dangerouslySetInnerHTML={{ __html: item.content }} />
                 <div className={style.tagWrapper}>
