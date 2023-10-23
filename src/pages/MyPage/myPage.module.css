@@ -41,7 +41,7 @@
   border-bottom: 1px solid rgb(5, 199, 199);
 }
 
-.Content img{
+.Content img {
   display: none;
 }
 
@@ -157,7 +157,7 @@
 
 /* LIST - 쓴 글 목록 */
 .myList {
-  overflow: scroll;
+  overflow: auto;
 }
 .myList .body {
   margin-top: 3rem;
@@ -191,7 +191,7 @@
   margin-bottom: 60px;
 }
 
-.list .postLink{
+.list .postLink {
   color: inherit;
   text-decoration: none;
 }
@@ -218,7 +218,7 @@
 .list h2 {
   margin: 15px 0;
 }
-.list .a{
+.list .a {
   text-decoration: none;
 }
 .tagWrapper {
@@ -254,7 +254,6 @@
   height: 3rem;
   text-align: center;
 }
-
 
 /* INTRO */
 .introBox {
@@ -326,10 +325,10 @@
   }
 }  */
 /* Phone */
-@media all and (max-width:767px) {
+@media all and (max-width: 767px) {
   .myPage {
-  display: block;
-  width: 100%; 
+    display: block;
+    width: 100%;
   }
   .profileBox {
     display: block;
@@ -351,7 +350,7 @@
     width: 100%;
     margin: auto;
   }
-  .myList .a{
+  .myList .a {
     text-decoration: none;
   }
   .list .subInfo {
