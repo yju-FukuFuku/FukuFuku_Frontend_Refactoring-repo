@@ -11,6 +11,7 @@ import { deleteBoard, getBoardById } from "../../api/BoardAPI";
 import { BoardType } from "../../types/BoardType";
 import { useSelector } from "react-redux";
 import { likeBoard, unLikeBoard } from "../../api/Like";
+import Swal from "sweetalert2";
 
 const PostPage = () => {
   const { boardId } = useParams();
@@ -30,6 +31,7 @@ const PostPage = () => {
 
   useEffect(() => {
     checkLike();
+    idTag();
   }, [board]);
 
   const getBoard = async () => {
@@ -81,9 +83,17 @@ const PostPage = () => {
   };
 
   const delBoard = async () => {
+    if (confirm("정말 삭제하시겠습니까?") === false) return;
+
     await deleteBoard(Number(boardId), user.id)
       .then(() => {
         navigate("/");
+        Swal.fire({
+          icon: "success",
+          title: "삭제되었습니다.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -219,7 +229,7 @@ const PostPage = () => {
 
             <SideContainer>
               <SideWrapper>
-                <SideTool fixed={fixed ? "true" : "false"}>
+                <SideTool $fixed={fixed}>
                   <Favorite
                     onClick={handleLike}
                     color={like ? "error" : "disabled"}
@@ -240,7 +250,7 @@ const PostPage = () => {
 
             <SideContainer>
               <SideNavWrapper>
-                <SideNav fixed={fixed ? "true" : "false"}>
+                <SideNav $fixed={fixed}>
                   {headerArray.map((item, index) => (
                     <SideNavTitle key={index}>
                       <Link
@@ -290,7 +300,6 @@ const PostPage = () => {
 const Container = styled.div`
   width: 100%;
   position: relative;
-  height: 1000vh;
 `;
 
 const Wrapper = styled.div`
@@ -357,8 +366,8 @@ const SideNavWrapper = styled.div`
   position: absolute;
   left: 100%;
 `;
-const SideNav = styled.div<{ fixed: string }>`
-  position: ${(props) => (props.fixed === "true" ? "fixed" : "relative")};
+const SideNav = styled.div<{ $fixed: boolean }>`
+  position: ${({ $fixed }) => ($fixed ? "fixed" : "absolute")};
   top: 122px;
   width: 240px;
   max-height: calc(100vh - 128px);
@@ -379,7 +388,8 @@ const SideNavTitle = styled.div`
   transition: all 0.125s ease-in 0s;
 
   a.active {
-    transform: scale(1.1);
+    transform: scale(1.2);
+    font-weight: 600;
     color: #212529;
   }
 
@@ -388,8 +398,8 @@ const SideNavTitle = styled.div`
   }
 `;
 
-const SideTool = styled.div<{ fixed: string }>`
-  position: ${(props) => (props.fixed === "true" ? "fixed" : "absolute")};
+const SideTool = styled.div<{ $fixed: boolean }>`
+  position: ${({ $fixed }) => ($fixed ? "fixed" : "absolute")};
   background-color: #f8f9fa;
   top: 122px;
   display: flex;
