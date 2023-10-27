@@ -105,11 +105,13 @@ const MyWritePage = () => {
         <div className={style.profileBox}>
           <div className={style.profile}>
             <div className={style.myImage}>
-              <img
-                src="/public/images/짱구.jpeg"
-                alt="image"
-                className={style.myImage}
-              />
+              {user.picture ? (
+                <img
+                  src={user?.picture}
+                  alt="image"
+                  className={style.myImage}
+                />
+              ) : null}
             </div>
             <h2>{userName}</h2>
           </div>
