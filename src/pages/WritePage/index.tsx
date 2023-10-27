@@ -15,6 +15,7 @@ import { useImageCompression } from "../../hooks/useImageCompression";
 
 import ReactQuill, { Quill } from "react-quill";
 import { ImageResize } from "quill-image-resize-module-ts";
+import Swal from "sweetalert2";
 Quill.register("modules/ImageResize", ImageResize);
 
 const StyledTextField = styled(TextField)({
@@ -107,6 +108,7 @@ const WritePage = () => {
 
     // 만약 지금 수정하는 중이라면
     if (editId) {
+      if (confirm("수정하시겠습니까?") === false) return;
       const data = {
         id: user.id,
         b_id: Number(editId),
@@ -119,12 +121,25 @@ const WritePage = () => {
       await fetchBoard(data)
         .then(() => {
           navigate(`/boards/${editId}`);
+          Swal.fire({
+            icon: "success",
+            title: "글 수정 완료",
+            showConfirmButton: false,
+            timer: 1500,
+          });
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          Swal.fire({
+            icon: "error",
+            title: "글 수정 실패",
+            showConfirmButton: false,
+            timer: 1500,
+          });
         });
       return;
     }
+
+    if (confirm("저장하시겠습니까?") === false) return;
 
     const data = {
       id: user.id,
@@ -137,8 +152,19 @@ const WritePage = () => {
     try {
       const response = await postBoard(data);
       navigate(`/boards/${response.data.id}`);
+      Swal.fire({
+        icon: "success",
+        title: "글 작성 완료",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "글 작성 실패",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
   };
 

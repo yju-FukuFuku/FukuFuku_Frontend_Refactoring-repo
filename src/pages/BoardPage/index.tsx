@@ -11,6 +11,7 @@ import { deleteBoard, getBoardById } from "../../api/BoardAPI";
 import { BoardType } from "../../types/BoardType";
 import { useSelector } from "react-redux";
 import { likeBoard, unLikeBoard } from "../../api/Like";
+import Swal from "sweetalert2";
 
 const PostPage = () => {
   const { boardId } = useParams();
@@ -87,6 +88,12 @@ const PostPage = () => {
     await deleteBoard(Number(boardId), user.id)
       .then(() => {
         navigate("/");
+        Swal.fire({
+          icon: "success",
+          title: "삭제되었습니다.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -293,7 +300,6 @@ const PostPage = () => {
 const Container = styled.div`
   width: 100%;
   position: relative;
-  height: 1000vh;
 `;
 
 const Wrapper = styled.div`

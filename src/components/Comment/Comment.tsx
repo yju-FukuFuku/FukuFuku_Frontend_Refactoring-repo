@@ -111,7 +111,9 @@ const Comment = () => {
 
 export default Comment;
 
-const Container = styled.div``;
+const Container = styled.div`
+  margin-bottom: 5rem;
+`;
 
 const FooterWrapper = styled.div`
   width: 100%;
