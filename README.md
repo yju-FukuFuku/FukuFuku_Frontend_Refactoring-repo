@@ -1,6 +1,7 @@
 <div align="center">
 <h2>[2023] Fukufuku 📋</h2>
 블로그 플랫폼 </br>
+<img src="https://github.com/yju-FukuFuku/FukuFuku_Frontend_Refactoring-repo/assets/121005861/501e4372-65d3-4134-98df-63a09056d4f3" alt="FukuFuku" width="200" height="200" />
 </div>
 
 ## 목차
@@ -14,15 +15,22 @@
 
 ## 프로젝트 소개
 
-- **블로그 플랫폼**
-- **프로젝트 기간**: 2023.09.08 ~ 2023.10.20
-- **프로젝트 인원**: 4명
+> **블로그 플랫폼** </br> **프로젝트 기간**: 2023.09.08 ~ 2023.10.20 </br> **프로젝트 인원**: 4명
 
 ## 배포 주소
 
 ## Members 👤
 
-## Stacks 📚
+<div align="center">
+
+|                                      강주원                                       |                                      김규민                                      |                                      김지훈                                       |                                      박정민                                       |
+| :-------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: |
+| <img width="150px" src="https://avatars.githubusercontent.com/u/102473964?v=4" /> | <img width="150px" src="https://avatars.githubusercontent.com/u/68456336?v=4" /> | <img width="150px" src="https://avatars.githubusercontent.com/u/121005861?v=4" /> | <img width="150px" src="https://avatars.githubusercontent.com/u/121004915?v=4" /> |
+|                       [@Z00One](https://github.com/Z00One)                        |                   [@kyumin1227](https://github.com/kyumin1227)                   |                      [@hetame1](https://github.com/hetame1)                       |                      [@dorimu0](https://github.com/dorimu0)                       |
+
+</div>
+
+## Stacks 🛠
 
 ### Environment
 
